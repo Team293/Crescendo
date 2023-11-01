@@ -41,9 +41,10 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
  * the project.
  */
 public class Robot extends LoggedRobot {
+    public static CTREConfigs ctreConfigs;
 
-    public static final String LOGGER_KEY = "ChargedUp";
-    public static final String LOGGER_VALUE = "Robbinsville";
+    public static final String LOGGER_KEY = "SwerveDrive";
+    public static final String LOGGER_VALUE = "CHS";
     public static final String LOGGER_PATH = "/media/sda1/";
     public static final int LOGGER_MODULE = 1;
     public static final ModuleType LOGGER_MODULE_TYPE = ModuleType.kRev;
@@ -63,10 +64,7 @@ public class Robot extends LoggedRobot {
     @Override
     @SuppressWarnings("resource") // It's only instantiated once, it's fine
     public void robotInit() {
-
-        // UsbCamera camera = CameraServer.startAutomaticCapture();
-        // Set the resolution
-        // camera.setResolution(320, 240);
+        ctreConfigs = new CTREConfigs();
 
         Logger.getInstance().recordMetadata(LOGGER_KEY, LOGGER_VALUE); // Set a metadata value
 
@@ -85,12 +83,6 @@ public class Robot extends LoggedRobot {
         // Instantiate our RobotContainer. This will perform all our button bindings, and put our autonomous chooser on the dashboard.
         m_robotContainer = RobotContainer.getInstance();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
-        PortForwarder.add(5800, "limelight.local", 5800);
-        PortForwarder.add(5801, "limelight.local", 5801);
-        PortForwarder.add(5802, "limelight.local", 5802);
-        PortForwarder.add(5803, "limelight.local", 5803);
-        PortForwarder.add(5804, "limelight.local", 5804);
-        PortForwarder.add(5805, "limelight.local", 5805);
     }
 
     /**
