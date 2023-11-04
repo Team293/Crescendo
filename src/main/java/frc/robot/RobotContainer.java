@@ -31,7 +31,7 @@ public class RobotContainer {
     private static RobotContainer m_robotContainer = new RobotContainer();
     public final Drivetrain m_drivetrain = new Drivetrain();
 
-    // Joysticks
+    // Create two new controllers with the SpikeController class, which handles deadband and stick direction automatically
     public static final double DEADBAND = 0.05d;
     public final SpikeController m_driverController = new SpikeController(new XboxController(0), DEADBAND, "Driver");
     public final SpikeController m_operatorController = new SpikeController(new XboxController(0), DEADBAND, "Operator");

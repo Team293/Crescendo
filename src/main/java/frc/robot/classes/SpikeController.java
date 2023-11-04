@@ -3,18 +3,30 @@ package frc.robot.classes;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SpikeController {
     private final XboxController m_controller;
     private final double m_deadband;
     private final String m_name;
 
+    /**
+     * A generic controller class that handles deadband and stick direction on top of the XboxController class
+     * @param controller The controller to use
+     * @param deadband The deadband to use
+     * @param name The name of the controller
+     */
     public SpikeController(XboxController controller, double deadband, String name) {
         m_controller = controller;
         m_name = name;
         m_deadband = MathUtil.clamp(deadband, 0.0d, 1.0d);
     }
 
+    /**
+     * Checks if the given value is outside of the deadband, otherwise return 0
+     * @param value The value to check
+     * @param deadband The deadband to use
+     */
     public double deadband(double value, double deadband) {
         return Math.abs(value) >= deadband ? value : 0.0d;
     }
@@ -38,19 +50,27 @@ public class SpikeController {
     }
 
     public double getLeftX() {
-        return deadband(m_controller.getLeftX(), m_deadband);
+        double axisValue = deadband(m_controller.getLeftX(), m_deadband);
+        SmartDashboard.putNumber(m_name + "Left X", axisValue);
+        return axisValue;
     }
 
     public double getLeftY() {
-        return deadband(m_controller.getLeftY(), m_deadband);
+        double axisValue = deadband(m_controller.getLeftY(), m_deadband);
+        SmartDashboard.putNumber(m_name + " Left Y", axisValue);
+        return axisValue;
     }
 
     public double getRightX() {
-        return deadband(m_controller.getRightX(), m_deadband);
+        double axisValue = deadband(m_controller.getRightX(), m_deadband);
+        SmartDashboard.putNumber(m_name + " Right X", axisValue);
+        return axisValue;
     }
 
     public double getRightY() {
-        return deadband(m_controller.getRightY(), m_deadband);
+        double axisValue = deadband(m_controller.getRightY(), m_deadband);
+        SmartDashboard.putNumber(m_name + " Right Y", axisValue);
+        return axisValue;
     }
 
     public double getLeftTrigger() {

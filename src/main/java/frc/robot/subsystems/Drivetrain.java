@@ -42,6 +42,7 @@ public class Drivetrain extends SubsystemBase {
         gyro = new AHRS(SerialPort.Port.kMXP);
         gyro.reset();
 
+        // Create modules from the constant values in SwerveConstants
         m_swerveModules = new SwerveModule[] {
             new SwerveModule(0, SwerveConstants.Swerve.Mod0.constants),
             new SwerveModule(1, SwerveConstants.Swerve.Mod1.constants),
@@ -49,9 +50,11 @@ public class Drivetrain extends SubsystemBase {
             new SwerveModule(3, SwerveConstants.Swerve.Mod3.constants)
         };
 
+        // By pausing init for a second before setting module offsets, we avoid a bug with inverting motors
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
+        // Create a new swerve odometry object, similar to the Kinematics.java file before 
         m_swerveOdometry = new SwerveDriveOdometry(SwerveConstants.Swerve.swerveKinematics, getYaw(), getModulePositions());
     }
 
@@ -85,6 +88,12 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         m_swerveOdometry.update(getYaw(), getModulePositions());
+
+        // Add the current robot position to smartdashboard
+        Pose2d robotTranslation = m_swerveOdometry.getPoseMeters();
+        SmartDashboard.putNumber("Robot X (SwerveOdometry)", robotTranslation.getTranslation().getX());
+        SmartDashboard.putNumber("Robot Y (SwerveOdometry)", robotTranslation.getTranslation().getY());
+        SmartDashboard.putNumber("Robot Angle (SwerveOdometry)", robotTranslation.getRotation().getDegrees());
 
         for (SwerveModule module : m_swerveModules) {
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
