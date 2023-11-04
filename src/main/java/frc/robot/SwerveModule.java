@@ -17,13 +17,13 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 public class SwerveModule {
 
-    public int m_moduleNumber;
+    public final int m_moduleNumber;
     private Rotation2d m_angleOffset;
     private Rotation2d m_lastAngle;
 
-    private TalonFX m_angleMotor;
-    private TalonFX m_driveMotor;
-    private CANCoder m_angleEncoder;
+    private final TalonFX m_angleMotor;
+    private final TalonFX m_driveMotor;
+    private final CANCoder m_angleEncoder;
   
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(SwerveConstants.Swerve.driveKS, SwerveConstants.Swerve.driveKV, SwerveConstants.Swerve.driveKA);
 
