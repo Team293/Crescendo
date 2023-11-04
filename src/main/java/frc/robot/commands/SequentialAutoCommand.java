@@ -22,11 +22,6 @@ public class SequentialAutoCommand extends SequentialCommandGroup {
 		m_drivetrain = drivetrain;
 		m_startPosition = startPosition;
 
-		RobotContainer.getAutoBoard().setBoolean("AutoDone", false);
-
 		// Put in commands here
-
-		// Alert smart dashboard that autonomous is done
-		RobotContainer.getAutoBoard().setBoolean("AutoDone", true);
 	}
 }

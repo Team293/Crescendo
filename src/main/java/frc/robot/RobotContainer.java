@@ -3,7 +3,6 @@
 
 package frc.robot;
 
-import frc.robot.classes.SpikeBoard;
 import frc.robot.classes.SpikeController;
 import frc.robot.commands.OrientedDrive;
 import frc.robot.commands.SequentialAutoCommand;
@@ -15,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -31,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
     // Robots Subsystems
     private static RobotContainer m_robotContainer = new RobotContainer();
-    private static SpikeBoard m_autoBoard;
     public final Drivetrain m_drivetrain = new Drivetrain();
 
     // Joysticks
@@ -55,13 +52,6 @@ public class RobotContainer {
 
     public static RobotContainer getInstance() {
         return m_robotContainer;
-    }
-
-    public static SpikeBoard getAutoBoard() {
-        if (m_autoBoard == null) {
-        m_autoBoard = new SpikeBoard("Auto");
-        }
-        return m_autoBoard;
     }
 
     /**
@@ -112,6 +102,7 @@ public class RobotContainer {
         // to the blue left side
         Command autoCommand = null;
     
+  
         autoCommand = new SequentialAutoCommand(m_drivetrain, m_autoChooser.getSelected());
 
         return autoCommand;
