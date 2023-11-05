@@ -61,6 +61,10 @@ public class SpikeController {
         return axisValue;
     }
 
+    public boolean getLeftStickButton() {
+        return m_controller.getLeftStickButton();
+    }
+
     public double getRightX() {
         double axisValue = deadband(m_controller.getRightX(), m_deadband);
         SmartDashboard.putNumber(m_name + " Right X", axisValue);
@@ -71,6 +75,10 @@ public class SpikeController {
         double axisValue = deadband(m_controller.getRightY(), m_deadband);
         SmartDashboard.putNumber(m_name + " Right Y", axisValue);
         return axisValue;
+    }
+
+    public boolean getRightStickButton() {
+        return m_controller.getRightStickButton();
     }
 
     public double getLeftTrigger() {
@@ -103,5 +111,28 @@ public class SpikeController {
 
     public boolean getYButton() {
         return m_controller.getYButton();
+    }
+
+    public Rotation2d getDPad() {
+        if (m_controller.getPOV() == -1) {
+            return Rotation2d.fromDegrees(0);
+        }
+        return Rotation2d.fromDegrees(m_controller.getPOV());
+    }
+
+    public boolean dPadPressed() {
+        return m_controller.getPOV() != -1;
+    }
+
+    public boolean getStartButton() {
+        return m_controller.getStartButton();
+    }
+
+    public boolean getBackButton() {
+        return m_controller.getBackButton();
+    }
+
+    public XboxController getXboxController() {
+        return m_controller;
     }
 }
