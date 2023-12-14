@@ -34,7 +34,7 @@ public class RobotContainer {
     // Create two new controllers with the SpikeController class, which handles deadband and stick direction automatically
     public static final double DEADBAND = 0.05d;
     public final SpikeController m_driverController = new SpikeController(new XboxController(0), DEADBAND, "Driver");
-    public final SpikeController m_operatorController = new SpikeController(new XboxController(0), DEADBAND, "Operator");
+    public final SpikeController m_operatorController = new SpikeController(new XboxController(1), DEADBAND, "Operator");
 
     public final SendableChooser<Command> m_driveChooser = new SendableChooser<>();
     public final SendableChooser<StartPositions> m_autoChooser = new SendableChooser<>();
