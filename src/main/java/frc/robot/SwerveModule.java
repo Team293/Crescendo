@@ -52,7 +52,17 @@ public class SwerveModule {
         m_driveMotor.setNeutralMode(neutralMode);
     }
 
+    public void stop() {
+        m_driveMotor.set(ControlMode.PercentOutput, 0);
+        m_angleMotor.set(ControlMode.PercentOutput, 0);
+    }
+
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+        if (desiredState.speedMetersPerSecond < 0.2) {
+            stop();
+            return;
+        }
+        
         desiredState = CTREModuleState.optimize(desiredState, getState().angle);
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
