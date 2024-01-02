@@ -58,19 +58,19 @@ public class Drivetrain extends SubsystemBase {
         m_swerveOdometry = new SwerveDriveOdometry(SwerveConstants.Swerve.swerveKinematics, getYaw(), getModulePositions());
     }
 
-    public void drive(Translation2d translation, Rotation2d rotation, boolean fieldRelative, boolean isOpenLoop) {
+    public void drive(Translation2d translation, double rotationSpeed, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates = 
             SwerveConstants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                     translation.getX(),
                                     translation.getY(),
-                                    rotation.getDegrees(),
+                                    rotationSpeed,
                                     getYaw()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(),
                                     translation.getY(),
-                                    rotation.getDegrees())
+                                    rotationSpeed)
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveConstants.Swerve.maxSpeed);
 
@@ -155,6 +155,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void stop() {
-        drive(new Translation2d(0, 0), getYaw(), true, false);
+        drive(new Translation2d(0, 0), 0, true, false);
     }
 }

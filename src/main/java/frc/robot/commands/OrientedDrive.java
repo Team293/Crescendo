@@ -48,9 +48,14 @@ public class OrientedDrive extends CommandBase {
 
         Translation2d robotTranslation = new Translation2d(translationMagnitude, translationAngle);
 
-        double rotation = m_controller.getRightX() * MAX_ROTATION_VELOCITY_RAD;
+        double rotation = 0;
 
-        m_drivetrain.drive(robotTranslation, Rotation2d.fromDegrees(rotation), m_fieldOriented, false);
+        if (m_controller.getXButton()) {
+            rotation = -1;
+        } else if (m_controller.getBButton()) {
+            rotation = 1;
+        }
 
+        m_drivetrain.drive(robotTranslation, rotation, m_fieldOriented, true);
     }
 }
