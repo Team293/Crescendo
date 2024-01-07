@@ -25,8 +25,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -41,17 +39,8 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
  * the project.
  */
 public class Robot extends LoggedRobot {
-
-    public static final String LOGGER_KEY = "ChargedUp";
-    public static final String LOGGER_VALUE = "Robbinsville";
-    public static final String LOGGER_PATH = "/media/sda1/";
-    public static final int LOGGER_MODULE = 1;
-    public static final ModuleType LOGGER_MODULE_TYPE = ModuleType.kRev;
-    public static final boolean LOGGER_USE_TIMING = false;
-    public static final String LOGGER_SUFFIX = "_sim";
-
+    public static CTREConfigs ctreConfigs;
     private Command m_autonomousCommand;
-
     private RobotContainer m_robotContainer;
 
     /**
@@ -63,34 +52,9 @@ public class Robot extends LoggedRobot {
     @Override
     @SuppressWarnings("resource") // It's only instantiated once, it's fine
     public void robotInit() {
-
-        // UsbCamera camera = CameraServer.startAutomaticCapture();
-        // Set the resolution
-        // camera.setResolution(320, 240);
-
-        Logger.getInstance().recordMetadata(LOGGER_KEY, LOGGER_VALUE); // Set a metadata value
-
-        if (isReal()) {
-            Logger.getInstance().addDataReceiver(new WPILOGWriter(LOGGER_PATH)); // Log to a USB stick
-            Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-            new PowerDistribution(LOGGER_MODULE, LOGGER_MODULE_TYPE); // Enables power distribution logging
-        } else {
-            setUseTiming(LOGGER_USE_TIMING); // Run as fast as possible
-            String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-            Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
-            Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, LOGGER_SUFFIX))); // Save outputs to a new log
-        }
-
-        Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
-        // Instantiate our RobotContainer. This will perform all our button bindings, and put our autonomous chooser on the dashboard.
+        ctreConfigs = new CTREConfigs();
+        
         m_robotContainer = RobotContainer.getInstance();
-        HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
-        PortForwarder.add(5800, "limelight.local", 5800);
-        PortForwarder.add(5801, "limelight.local", 5801);
-        PortForwarder.add(5802, "limelight.local", 5802);
-        PortForwarder.add(5803, "limelight.local", 5803);
-        PortForwarder.add(5804, "limelight.local", 5804);
-        PortForwarder.add(5805, "limelight.local", 5805);
     }
 
     /**
