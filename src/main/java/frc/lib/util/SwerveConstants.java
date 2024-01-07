@@ -88,6 +88,12 @@ public final class SwerveConstants {
         public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
 
+        // Updated encoder offsets, need to convert to degrees and set as angleOffset
+        // Front left: -6368
+        //back left: 19290
+        //front right: -6886
+        // back right: -6484
+
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
         public static final class Mod0 { //TODO: This must be tuned to specific robot
