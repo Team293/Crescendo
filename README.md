@@ -1,3 +1,3 @@
-# SPIKE 293 Hopewell High School Robotics Team ChargedUp Code
+# SPIKE 293 Hopewell High School Robotics Team Crescendo Code
 
-This is the code used during the 2022-2023 seasion: ChargedUp
+This is the code used during the 2023-2024 seasion: Crescendo
