@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 
-public class Wait extends CommandBase {
+public class Wait extends Command {
     private double m_waitTime;
     private double m_startTime;
 

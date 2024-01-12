@@ -79,7 +79,7 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public void setNeutralMode(NeutralMode nm) {
+    public void setNeutralMode(NeutralModeValue nm) {
         for (SwerveModule module : m_swerveModules) {
             module.setNeutralMode(nm);
         }
