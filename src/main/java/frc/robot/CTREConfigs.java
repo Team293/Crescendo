@@ -35,7 +35,7 @@ public final class CTREConfigs {
         anglePIDConfigs.kD = moduleConstants.angleKD; // SwerveConstants.Swerve.angleKD
 
         /* Angle - Set Inverted*/
-        swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.angleGearRatio).angleMotorInvert;
+        swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).angleMotorInvert;
 
         /* Swerve Drive Motor Configuration */
         swerveDriveFXConfig = new TalonFXConfiguration();

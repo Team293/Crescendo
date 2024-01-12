@@ -45,8 +45,8 @@ public class COTSFalconSwerveConstants {
         double angleKF = 0.0;
  
         InvertedValue driveMotorInvert = InvertedValue.Clockwise_Positive;
-        InvertedValue angleMotorInvert = InvertedValue.Clockwise_Positive;
-        InvertedValue canCoderInvert = InvertedValue.Clockwise_Positive;
+        InvertedValue angleMotorInvert = InvertedValue.CounterClockwise_Positive;
+        InvertedValue canCoderInvert = InvertedValue.CounterClockwise_Positive;
         return new COTSFalconSwerveConstants(wheelDiameter, angleGearRatio, driveGearRatio, angleKP, angleKI, angleKD, angleKF, driveMotorInvert, angleMotorInvert, canCoderInvert);
     }
 
@@ -55,7 +55,7 @@ public class COTSFalconSwerveConstants {
         double wheelDiameter = Units.inchesToMeters(4.0);
  
         /** 12.8 : 1 */
-        double angleGearRatio = (12.8 / 1.0);
+        double angleGearRatio = (14.15 / 1.0);
  
         double angleKP = 0.2;
         double angleKI = 0.0;
