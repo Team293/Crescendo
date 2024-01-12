@@ -10,13 +10,14 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveConstants;
+import frc.lib.util.SPIKESwerveModConstants;
 
 public final class CTREConfigs {
-    public static TalonFXConfiguration swerveAngleFXConfig;
-    public static TalonFXConfiguration swerveDriveFXConfig;
-    public static CANcoderConfiguration swerveCANcoderConfig;
+    public TalonFXConfiguration swerveAngleFXConfig;
+    public TalonFXConfiguration swerveDriveFXConfig;
+    public CANcoderConfiguration swerveCANcoderConfig;
 
-    public CTREConfigs(){
+    public CTREConfigs(SPIKESwerveModConstants moduleConstants){
         /* Swerve Angle Motor Configurations */
         swerveAngleFXConfig = new TalonFXConfiguration();
         CurrentLimitsConfigs angleSupplyLimit = new CurrentLimitsConfigs();
@@ -29,9 +30,9 @@ public final class CTREConfigs {
         angleSupplyLimit.SupplyTimeThreshold = SwerveConstants.Swerve.angleSupplyTimeThreshold;
         
         /* Angle - Set PID */
-        anglePIDConfigs.kP = SwerveConstants.Swerve.angleKP;
-        anglePIDConfigs.kI = SwerveConstants.Swerve.angleKI;
-        anglePIDConfigs.kD = SwerveConstants.Swerve.angleKD;
+        anglePIDConfigs.kP = moduleConstants.angleKP;
+        anglePIDConfigs.kI = moduleConstants.angleKI;
+        anglePIDConfigs.kD = moduleConstants.angleKD; // SwerveConstants.Swerve.angleKD
 
         /* Angle - Set Inverted*/
         swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.angleGearRatio).angleMotorInvert;

@@ -7,8 +7,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import frc.lib.util.CTREModuleState;
 import frc.lib.util.Conversions;
+import frc.lib.util.SPIKESwerveModConstants;
 import frc.lib.util.SwerveConstants;
-import frc.lib.util.SwerveModuleConstants;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -21,6 +21,7 @@ public class SwerveModule {
     public final int m_moduleNumber;
     private Rotation2d m_angleOffset;
     private Rotation2d m_lastAngle;
+    private CTREConfigs m_configs;
 
     private final TalonFX m_angleMotor;
     private final TalonFX m_driveMotor;
@@ -31,7 +32,9 @@ public class SwerveModule {
   
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(SwerveConstants.Swerve.driveKS, SwerveConstants.Swerve.driveKV, SwerveConstants.Swerve.driveKA);
 
-    public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
+    public SwerveModule(int moduleNumber, SPIKESwerveModConstants moduleConstants) {
+        m_configs = new CTREConfigs(moduleConstants);
+        
         m_moduleNumber = moduleNumber;
         m_angleOffset  = moduleConstants.angleOffset;
 
@@ -116,17 +119,17 @@ public class SwerveModule {
     }
 
     public void configAngleEncoder() {
-        m_angleEncoder.getConfigurator().apply(CTREConfigs.swerveCANcoderConfig);
+        m_angleEncoder.getConfigurator().apply(m_configs.swerveCANcoderConfig);
     }
         
     public void configAngleMotor() {
-        m_angleMotor.getConfigurator().apply(CTREConfigs.swerveAngleFXConfig);
+        m_angleMotor.getConfigurator().apply(m_configs.swerveAngleFXConfig);
         m_angleMotor.setNeutralMode(SwerveConstants.Swerve.driveNeutralMode);
         resetToAbsolute();
     }
 
     public void configDriveMotor() {
-        m_driveMotor.getConfigurator().apply(CTREConfigs.swerveDriveFXConfig);
+        m_driveMotor.getConfigurator().apply(m_configs.swerveDriveFXConfig);
         m_driveMotor.setNeutralMode(SwerveConstants.Swerve.driveNeutralMode);
         m_driveMotor.setPosition(0);
     }

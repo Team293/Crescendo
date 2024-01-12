@@ -101,8 +101,13 @@ public final class SwerveConstants {
             public static final int angleMotorID = 1;
             public static final int canCoderID = 2;
             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(44.9 + 90.0);
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            
+            public static final double angleKP = SwerveConstants.Swerve.angleKP;
+            public static final double angleKI = SwerveConstants.Swerve.angleKI;
+            public static final double angleKD = SwerveConstants.Swerve.angleKD;
+
+            public static final SPIKESwerveModConstants constants = 
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
         }
 
         /* Front Right Module - Module 1 */
@@ -111,8 +116,13 @@ public final class SwerveConstants {
             public static final int angleMotorID = 4;
             public static final int canCoderID = 5;
             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-101.3 + 90.0);
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+
+            public static final double angleKP = SwerveConstants.Swerve.angleKP;
+            public static final double angleKI = SwerveConstants.Swerve.angleKI;
+            public static final double angleKD = SwerveConstants.Swerve.angleKD;
+
+            public static final SPIKESwerveModConstants constants = 
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
         }
         
         /* Back Left Module - Module 2 */
@@ -121,8 +131,13 @@ public final class SwerveConstants {
             public static final int angleMotorID = 7;
             public static final int canCoderID = 8;
             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(328.1 + 90.0);
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+
+            public static final double angleKP = SwerveConstants.Swerve.angleKP;
+            public static final double angleKI = SwerveConstants.Swerve.angleKI;
+            public static final double angleKD = SwerveConstants.Swerve.angleKD;
+
+            public static final SPIKESwerveModConstants constants = 
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
         }
 
         /* Back Right Module - Module 3 */
@@ -131,8 +146,13 @@ public final class SwerveConstants {
             public static final int angleMotorID = 10;
             public static final int canCoderID = 11;
             public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-43.8 + 90.0);
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+
+            public static final double angleKP = SwerveConstants.Swerve.angleKP;
+            public static final double angleKI = SwerveConstants.Swerve.angleKI;
+            public static final double angleKD = SwerveConstants.Swerve.angleKD;
+
+            public static final SPIKESwerveModConstants constants = 
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
         }
     }
 
