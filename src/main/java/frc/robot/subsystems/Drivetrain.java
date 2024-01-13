@@ -31,7 +31,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState; 
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class Drivetrain extends SubsystemBase {
     public SwerveDriveOdometry m_swerveOdometry;
@@ -54,12 +54,12 @@ public class Drivetrain extends SubsystemBase {
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
-        // Create a new swerve odometry object, similar to the Kinematics.java file before 
+        // Create a new swerve odometry object, similar to the Kinematics.java file before
         m_swerveOdometry = new SwerveDriveOdometry(SwerveConstants.Swerve.swerveKinematics, getYaw(), getModulePositions());
     }
 
     public void drive(Translation2d translation, double rotationSpeed, boolean fieldRelative, boolean isOpenLoop) {
-        SwerveModuleState[] swerveModuleStates = 
+        SwerveModuleState[] swerveModuleStates =
             SwerveConstants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                     translation.getX(),
@@ -96,7 +96,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Robot Angle (SwerveOdometry)", robotTranslation.getRotation().getDegrees());
 
         for (SwerveModule module : m_swerveModules) {
-            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Cancoder", module.getCANcoder().getDegrees());
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Angle", module.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Meters/Sec", module.getState().speedMetersPerSecond);
         }
