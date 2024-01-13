@@ -122,7 +122,16 @@ public class SwerveModule {
      * @return The angle of the module
      */
     public Rotation2d getCANcoder() {
-        return Rotation2d.fromDegrees(Conversions.CANcoderToDegrees(m_angleEncoder.getAbsolutePosition().getValue(), SwerveConstants.Swerve.angleGearRatio) + m_angleOffset.getDegrees());
+        return Rotation2d.fromDegrees(
+            Conversions.CANcoderToDegrees(
+                /* The reason I set the gear ratio to 1 is because I believe that the
+                CANcoder is reading the rotation of the module itself, not the angle motor
+                so the ratio would be 1:1 */
+                m_angleEncoder.getAbsolutePosition().getValue(), 1
+            )
+            // Might have to swap the sign of the offset to negative (check this)
+            + m_angleOffset.getDegrees()
+        );
     }
 
     /**
