@@ -22,13 +22,13 @@ public final class CTREConfigs {
         swerveAngleFXConfig = new TalonFXConfiguration();
         CurrentLimitsConfigs angleSupplyLimit = new CurrentLimitsConfigs();
         Slot0Configs anglePIDConfigs = new Slot0Configs();
-        
+
         /* Angle - Set Current Limits */
         angleSupplyLimit.SupplyCurrentLimitEnable = SwerveConstants.Swerve.angleSupplyCurrentLimitEnable;
         angleSupplyLimit.SupplyCurrentLimit = SwerveConstants.Swerve.angleSupplyCurrentLimit;
         angleSupplyLimit.SupplyCurrentThreshold = SwerveConstants.Swerve.angleSupplyCurrentThreshold;
         angleSupplyLimit.SupplyTimeThreshold = SwerveConstants.Swerve.angleSupplyTimeThreshold;
-        
+
         /* Angle - Set PID */
         anglePIDConfigs.kP = moduleConstants.angleKP;
         anglePIDConfigs.kI = moduleConstants.angleKI;
@@ -36,6 +36,9 @@ public final class CTREConfigs {
 
         /* Angle - Set Inverted*/
         swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).angleMotorInvert;
+
+        /* Angle - Set Continuous Wrap */
+        swerveAngleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
         /* Swerve Drive Motor Configuration */
         swerveDriveFXConfig = new TalonFXConfiguration();
@@ -52,7 +55,7 @@ public final class CTREConfigs {
         drivePIDConfigs.kP = SwerveConstants.Swerve.driveKP;
         drivePIDConfigs.kI = SwerveConstants.Swerve.driveKI;
         drivePIDConfigs.kD = SwerveConstants.Swerve.driveKD;
-        
+
         /* Drive - Set Inverted*/
         swerveDriveFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).driveMotorInvert;
 
