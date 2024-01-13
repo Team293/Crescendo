@@ -50,6 +50,6 @@ public class OrientedDrive extends Command {
 
         // Implement rotation, currently broken
 
-        m_drivetrain.drive(robotTranslation, 0, m_fieldOriented, true);
+        m_drivetrain.drive(robotTranslation, 0, m_fieldOriented, false);
     }
 }
