@@ -27,14 +27,14 @@ public class SwerveModule {
     private final TalonFX m_driveMotor;
     private final CANcoder m_angleEncoder;
 
-    private PositionVoltage m_angleSetter = new PositionVoltage(0);
+    private PositionVoltage m_angleSetter = new PositionVoltage(0).withSlot(0);
     private VelocityTorqueCurrentFOC m_velocitySetter = new VelocityTorqueCurrentFOC(0);
-  
+
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(SwerveConstants.Swerve.driveKS, SwerveConstants.Swerve.driveKV, SwerveConstants.Swerve.driveKA);
 
     public SwerveModule(int moduleNumber, SPIKESwerveModConstants moduleConstants) {
         m_configs = new CTREConfigs(moduleConstants);
-        
+
         m_moduleNumber = moduleNumber;
         m_angleOffset  = moduleConstants.angleOffset;
 
@@ -68,7 +68,7 @@ public class SwerveModule {
             stop();
             return;
         }
-        
+
         desiredState = CTREModuleState.optimize(desiredState, getState().angle);
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
@@ -110,7 +110,7 @@ public class SwerveModule {
     public Rotation2d getAngle() {
         return Rotation2d.fromDegrees(Conversions.falconToDegrees(m_angleMotor.getPosition().getValue(), SwerveConstants.Swerve.angleGearRatio));
     }
-    
+
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
             Conversions.falconToMeters(m_driveMotor.getPosition().getValue(), SwerveConstants.Swerve.wheelCircumference, SwerveConstants.Swerve.driveGearRatio),
@@ -121,7 +121,7 @@ public class SwerveModule {
     public void configAngleEncoder() {
         m_angleEncoder.getConfigurator().apply(m_configs.swerveCANcoderConfig);
     }
-        
+
     public void configAngleMotor() {
         m_angleMotor.getConfigurator().apply(m_configs.swerveAngleFXConfig);
         m_angleMotor.setNeutralMode(SwerveConstants.Swerve.driveNeutralMode);
