@@ -122,7 +122,7 @@ public class SwerveModule {
      * @return The angle of the module
      */
     public Rotation2d getCANcoder() {
-        return Rotation2d.fromDegrees(m_angleEncoder.getAbsolutePosition().getValue() * 360);
+        return Rotation2d.fromDegrees(Conversions.CANcoderToDegrees(m_angleEncoder.getAbsolutePosition().getValue(), SwerveConstants.Swerve.angleGearRatio) + m_angleOffset.getDegrees());
     }
 
     /**
