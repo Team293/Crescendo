@@ -14,6 +14,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.lib.util.Conversions;
 import frc.lib.util.SwerveConstants;
 import frc.robot.SwerveModule;
 import frc.robot.classes.Position2D;
@@ -96,9 +97,10 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Robot Angle (SwerveOdometry)", robotTranslation.getRotation().getDegrees());
 
         for (SwerveModule module : m_swerveModules) {
-            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Cancoder", module.getCANcoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Angle", module.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Module (degrees)", module.getAngle().getDegrees() );
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " CANcoder (degrees)", module.getCANcoder().getDegrees() % 360);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Meters/Sec", module.getState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Target rotations", module.m_targetRotations);
         }
     }
 

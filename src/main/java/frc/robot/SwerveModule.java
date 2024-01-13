@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.CTREModuleState;
 import frc.lib.util.Conversions;
 import frc.lib.util.SPIKESwerveModConstants;
@@ -13,6 +13,7 @@ import frc.lib.util.SwerveConstants;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -22,13 +23,14 @@ public class SwerveModule {
     private Rotation2d m_angleOffset;
     private Rotation2d m_lastAngle;
     private CTREConfigs m_configs;
+    public double m_targetRotations;
 
     private final TalonFX m_angleMotor;
     private final TalonFX m_driveMotor;
     private final CANcoder m_angleEncoder;
 
     private PositionVoltage m_angleSetter = new PositionVoltage(0).withSlot(0);
-    private VelocityTorqueCurrentFOC m_velocitySetter = new VelocityTorqueCurrentFOC(0);
+    private VelocityVoltage m_velocitySetter = new VelocityVoltage(0).withSlot(0);
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(SwerveConstants.Swerve.driveKS, SwerveConstants.Swerve.driveKV, SwerveConstants.Swerve.driveKA);
 
@@ -50,12 +52,16 @@ public class SwerveModule {
         // Angle motor config
         m_angleMotor = new TalonFX(moduleConstants.angleMotorID);
         configAngleMotor();
-
+        
         // Drive motor config
         m_driveMotor = new TalonFX(moduleConstants.driveMotorID);
         configDriveMotor();
-
+        
         m_lastAngle = getState().angle;
+        
+        // Enable safety for motors
+        m_angleMotor.setSafetyEnabled(true);
+        m_driveMotor.setSafetyEnabled(true);
     }
 
     /**
@@ -102,7 +108,7 @@ public class SwerveModule {
             m_driveMotor.set(percentOutput);
         } else {
             double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, SwerveConstants.Swerve.wheelCircumference, SwerveConstants.Swerve.driveGearRatio);
-            m_driveMotor.setControl(m_velocitySetter.withVelocity(velocity).withFeedForward(feedforward.calculate(desiredState.speedMetersPerSecond)));
+            m_driveMotor.setControl(m_velocitySetter.withVelocity(velocity));
         }
     }
 
@@ -110,10 +116,12 @@ public class SwerveModule {
      * Sets the angle of the angle motor
      * @param desiredState The desired state of the module
      */
-    private void setAngle(SwerveModuleState desiredState) {
+    public void setAngle(SwerveModuleState desiredState) {
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConstants.Swerve.maxSpeed * 0.01)) ? m_lastAngle : desiredState.angle; // Prevent rotating module if speed is less than 1%. Prevents jittering
 
-        m_angleMotor.setControl(m_angleSetter.withPosition(Conversions.degreesToFalcon(angle.getDegrees(), SwerveConstants.Swerve.angleGearRatio)));
+        m_targetRotations = Conversions.degreesToFalconRotations(angle.getDegrees(), SwerveConstants.Swerve.angleGearRatio);
+
+        m_angleMotor.setControl(m_angleSetter.withPosition(m_targetRotations));
         m_lastAngle = angle;
     }
 
@@ -127,7 +135,7 @@ public class SwerveModule {
                 /* The reason I set the gear ratio to 1 is because I believe that the
                 CANcoder is reading the rotation of the module itself, not the angle motor
                 so the ratio would be 1:1 */
-                m_angleEncoder.getAbsolutePosition().getValue(), 1
+                m_angleEncoder.getAbsolutePosition().getValue(), 1.0
             )
             // Might have to swap the sign of the offset to negative (check this)
             + m_angleOffset.getDegrees()
@@ -140,7 +148,7 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            Conversions.falconToMPS(m_driveMotor.getPosition().getValue(), SwerveConstants.Swerve.wheelCircumference, SwerveConstants.Swerve.driveGearRatio),
+            Conversions.falconRPSToMPS(m_driveMotor.getVelocity().getValue(), SwerveConstants.Swerve.wheelCircumference, SwerveConstants.Swerve.driveGearRatio),
             getAngle()
         );
     }
@@ -150,7 +158,7 @@ public class SwerveModule {
      * @return The angle of the module
      */
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(Conversions.falconToDegrees(m_angleMotor.getPosition().getValue(), SwerveConstants.Swerve.angleGearRatio));
+        return Rotation2d.fromDegrees(Conversions.falconRotationsToDegrees(m_angleMotor.getPosition().getValue(), SwerveConstants.Swerve.angleGearRatio) + m_angleOffset.getDegrees());
     }
 
     /**
@@ -169,7 +177,7 @@ public class SwerveModule {
      */
     public void resetToAbsolute() {
         // Convert the CANcoder's degrees to motor rotations
-        double rotations = Conversions.degreesToFalcon(getCANcoder().getDegrees() - m_angleOffset.getDegrees(), SwerveConstants.Swerve.angleGearRatio);
+        double rotations = Conversions.degreesToFalconRotations(getCANcoder().getDegrees() - m_angleOffset.getDegrees(), SwerveConstants.Swerve.angleGearRatio);
         m_angleMotor.setPosition(rotations);
     }
 

@@ -57,13 +57,13 @@ public class COTSFalconSwerveConstants {
         /** 12.8 : 1 */
         double angleGearRatio = (12.8 / 1.0);
 
-        double angleKP = 0.2;
+        double angleKP = 10.0;
         double angleKI = 0.0;
-        double angleKD = 0.0;
+        double angleKD = 0.04;
         double angleKF = 0.0;
 
         InvertedValue driveMotorInvert = InvertedValue.Clockwise_Positive;
-        InvertedValue angleMotorInvert = InvertedValue.Clockwise_Positive;
+        InvertedValue angleMotorInvert = InvertedValue.CounterClockwise_Positive;
         InvertedValue canCoderInvert = InvertedValue.Clockwise_Positive;
         return new COTSFalconSwerveConstants(wheelDiameter, angleGearRatio, driveGearRatio, angleKP, angleKI, angleKD, angleKF, driveMotorInvert, angleMotorInvert, canCoderInvert);
     }

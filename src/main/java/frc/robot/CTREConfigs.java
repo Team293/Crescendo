@@ -56,6 +56,10 @@ public final class CTREConfigs {
         drivePIDConfigs.kI = SwerveConstants.Swerve.driveKI;
         drivePIDConfigs.kD = SwerveConstants.Swerve.driveKD;
 
+        drivePIDConfigs.kS = SwerveConstants.Swerve.driveKS;
+        drivePIDConfigs.kV = SwerveConstants.Swerve.driveKV;
+        drivePIDConfigs.kA = SwerveConstants.Swerve.driveKA;
+
         /* Drive - Set Inverted*/
         swerveDriveFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).driveMotorInvert;
 
