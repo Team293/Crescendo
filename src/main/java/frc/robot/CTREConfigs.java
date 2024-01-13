@@ -30,9 +30,9 @@ public final class CTREConfigs {
         angleSupplyLimit.SupplyTimeThreshold = SwerveConstants.Swerve.angleSupplyTimeThreshold;
 
         /* Angle - Set PID */
-        anglePIDConfigs.kP = moduleConstants.angleKP;
-        anglePIDConfigs.kI = moduleConstants.angleKI;
-        anglePIDConfigs.kD = moduleConstants.angleKD; // SwerveConstants.Swerve.angleKD
+        anglePIDConfigs.kP = SwerveConstants.Swerve.angleKP;
+        anglePIDConfigs.kI = SwerveConstants.Swerve.angleKI;
+        anglePIDConfigs.kD = SwerveConstants.Swerve.angleKD;
 
         /* Angle - Set Inverted*/
         swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).angleMotorInvert;

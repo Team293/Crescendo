@@ -61,16 +61,14 @@ public final class SwerveConstants {
         public static final double closedLoopRamp = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = chosenModule.angleKP;
-        public static final double angleKI = chosenModule.angleKI;
-        public static final double angleKD = chosenModule.angleKD;
-        public static final double angleKF = chosenModule.angleKF;
+        public static final double angleKP = 1.0;
+        public static final double angleKI = 0.0;
+        public static final double angleKD = 0.0;
 
         /* Drive Motor PID Values */
         public static final double driveKP = 0.005; //TODO: This must be tuned to specific robot
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
-        public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values 
          * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
@@ -89,10 +87,10 @@ public final class SwerveConstants {
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
 
         // Updated encoder offsets, need to convert to degrees and set as angleOffset
-        // Front left: -6368
-        //back left: 19290
-        //front right: -6886
-        // back right: -6484
+        // Front left: -6368 = 320.625
+        //back left: 19290 = 150.8203125 
+        //front right: -6886 = 229.5703125
+        // back right: -6484 =  300.234375 
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
@@ -100,14 +98,10 @@ public final class SwerveConstants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(44.9 + 90.0);
-            
-            public static final double angleKP = COTSFalconSwerveConstants.SDSMK4(0).angleKP;
-            public static final double angleKI = COTSFalconSwerveConstants.SDSMK4(0).angleKI;
-            public static final double angleKD = COTSFalconSwerveConstants.SDSMK4(0).angleKD;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(320.625);
 
             public static final SPIKESwerveModConstants constants = 
-                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
         /* Front Right Module - Module 1 */
@@ -115,14 +109,10 @@ public final class SwerveConstants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 4;
             public static final int canCoderID = 5;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-101.3 + 90.0);
-
-            public static final double angleKP = COTSFalconSwerveConstants.SDSMK4(0).angleKP;
-            public static final double angleKI = COTSFalconSwerveConstants.SDSMK4(0).angleKI;
-            public static final double angleKD = COTSFalconSwerveConstants.SDSMK4(0).angleKD;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(150.8203125);
 
             public static final SPIKESwerveModConstants constants = 
-                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
         
         /* Back Left Module - Module 2 */
@@ -130,14 +120,10 @@ public final class SwerveConstants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 8;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(328.1 + 90.0);
-
-            public static final double angleKP = COTSFalconSwerveConstants.SDSMK4(0).angleKP;
-            public static final double angleKI = COTSFalconSwerveConstants.SDSMK4(0).angleKI;
-            public static final double angleKD = COTSFalconSwerveConstants.SDSMK4(0).angleKD;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(229.5703125);
 
             public static final SPIKESwerveModConstants constants = 
-                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
         /* Back Right Module - Module 3 */
@@ -145,14 +131,10 @@ public final class SwerveConstants {
             public static final int driveMotorID = 9;
             public static final int angleMotorID = 10;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-43.8 + 90.0);
-
-            public static final double angleKP = COTSFalconSwerveConstants.SDSMK4(0).angleKP;
-            public static final double angleKI = COTSFalconSwerveConstants.SDSMK4(0).angleKI;
-            public static final double angleKD = COTSFalconSwerveConstants.SDSMK4(0).angleKD;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(300.234375 );
 
             public static final SPIKESwerveModConstants constants = 
-                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, angleKP, angleKI, angleKD);
+                new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
     }
 
