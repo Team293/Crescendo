@@ -42,6 +42,7 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain() {
         gyro = new AHRS(SerialPort.Port.kMXP);
         gyro.reset();
+        zeroGyro();
 
         // Create modules from the constant values in SwerveConstants
         m_swerveModules = new SwerveModule[] {
@@ -57,6 +58,10 @@ public class Drivetrain extends SubsystemBase {
 
         // Create a new swerve odometry object, similar to the Kinematics.java file before
         m_swerveOdometry = new SwerveDriveOdometry(SwerveConstants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+    
+        for (SwerveModule module : m_swerveModules) {
+            module.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), false);
+        }
     }
 
     public void drive(Translation2d translation, double rotationSpeed, boolean fieldRelative, boolean isOpenLoop) {
@@ -66,7 +71,7 @@ public class Drivetrain extends SubsystemBase {
                                     translation.getX(),
                                     translation.getY(),
                                     rotationSpeed,
-                                    getYaw()
+                                    Rotation2d.fromDegrees(0) // getYaw()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(),
@@ -97,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Robot Angle (SwerveOdometry)", robotTranslation.getRotation().getDegrees());
 
         for (SwerveModule module : m_swerveModules) {
-            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Module (degrees)", module.getAngle().getDegrees() );
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Module (degrees)", module.getAngle().getDegrees() % 360);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " CANcoder (degrees)", module.getCANcoder().getDegrees() % 360);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Meters/Sec", module.getState().speedMetersPerSecond);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Target rotations", module.m_targetRotations);

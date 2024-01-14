@@ -4,12 +4,14 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 
 import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveConstants;
+import frc.lib.util.SwerveConstants.Swerve;
 import frc.lib.util.SPIKESwerveModConstants;
 
 public final class CTREConfigs {
@@ -23,6 +25,15 @@ public final class CTREConfigs {
         CurrentLimitsConfigs angleSupplyLimit = new CurrentLimitsConfigs();
         Slot0Configs anglePIDConfigs = new Slot0Configs();
 
+        /* Angle - Set Inverted*/
+        swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(0).angleMotorInvert;
+        swerveAngleFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        /* Angle - Set Continuous Wrap Configs */
+        swerveAngleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
+        swerveAngleFXConfig.Feedback.RotorToSensorRatio = 1.0;
+        swerveAngleFXConfig.Feedback.SensorToMechanismRatio = COTSFalconSwerveConstants.SDSMK4(0).angleGearRatio;
+
         /* Angle - Set Current Limits */
         angleSupplyLimit.SupplyCurrentLimitEnable = SwerveConstants.Swerve.angleSupplyCurrentLimitEnable;
         angleSupplyLimit.SupplyCurrentLimit = SwerveConstants.Swerve.angleSupplyCurrentLimit;
@@ -34,22 +45,27 @@ public final class CTREConfigs {
         anglePIDConfigs.kI = SwerveConstants.Swerve.angleKI;
         anglePIDConfigs.kD = SwerveConstants.Swerve.angleKD;
 
-        /* Angle - Set Inverted*/
-        swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).angleMotorInvert;
+        anglePIDConfigs.kS = SwerveConstants.Swerve.angleKS;
+        anglePIDConfigs.kV = SwerveConstants.Swerve.angleKV;
+        anglePIDConfigs.kA = SwerveConstants.Swerve.angleKA;
 
-        /* Angle - Set Continuous Wrap Configs */
-        swerveAngleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
-        swerveAngleFXConfig.Feedback.SensorToMechanismRatio = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).angleGearRatio; // Set the gear ratio of the motor to the mechanism
-
-        /* Angle - Set Remote Sensor Configs */
-        // We should consider whether or not to use this. We would have to see which way
-        swerveAngleFXConfig.Feedback.FeedbackRemoteSensorID = moduleConstants.cancoderID;
-        swerveAngleFXConfig.Feedback.RotorToSensorRatio = 1.0 / SwerveConstants.Swerve.angleGearRatio; // Set the gear ratio of the motor to the sensor (1:12.8) (12.8 rotations of the motor = 1 rotation of the CANcoder)
+        /* Angle - Disable Limit Switches */
+        swerveAngleFXConfig.HardwareLimitSwitch.ForwardLimitEnable = false;
+        swerveAngleFXConfig.HardwareLimitSwitch.ReverseLimitEnable = false;
+        swerveAngleFXConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+        swerveAngleFXConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
         /* Swerve Drive Motor Configuration */
         swerveDriveFXConfig = new TalonFXConfiguration();
         CurrentLimitsConfigs driveSupplyLimit = new CurrentLimitsConfigs();
         Slot0Configs drivePIDConfigs = new Slot0Configs();
+
+        /* Drive - Set Inverted*/
+        swerveDriveFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).driveMotorInvert;
+        swerveDriveFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        /* Drive - Gear Ratio */
+        swerveDriveFXConfig.Feedback.SensorToMechanismRatio = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).driveGearRatio;
 
         /* Drive - Set Current Limits */
         driveSupplyLimit.SupplyCurrentLimitEnable = SwerveConstants.Swerve.driveSupplyCurrentLimitEnable;
@@ -65,9 +81,6 @@ public final class CTREConfigs {
         drivePIDConfigs.kS = SwerveConstants.Swerve.driveKS;
         drivePIDConfigs.kV = SwerveConstants.Swerve.driveKV;
         drivePIDConfigs.kA = SwerveConstants.Swerve.driveKA;
-
-        /* Drive - Set Inverted*/
-        swerveDriveFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).driveMotorInvert;
 
         /* Swerve CANcoder Configuration */
         swerveCANcoderConfig = new CANcoderConfiguration();

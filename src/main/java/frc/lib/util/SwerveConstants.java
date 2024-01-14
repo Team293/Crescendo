@@ -61,9 +61,14 @@ public final class SwerveConstants {
         public static final double closedLoopRamp = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = 1.0;
-        public static final double angleKI = 0.0;
+        public static final double angleKP = 50.0;
+        public static final double angleKI = 0.01;
         public static final double angleKD = 0.0;
+
+
+        public static final double angleKS = 0.07; //TODO: This must be tuned to specific robot
+        public static final double angleKV = 0.13;
+        public static final double angleKA = 0.02;
 
         /* Drive Motor PID Values */
         public static final double driveKP = 0.005; //TODO: This must be tuned to specific robot
@@ -86,19 +91,13 @@ public final class SwerveConstants {
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
 
-        // Updated encoder offsets, need to convert to degrees and set as angleOffset
-        // Front left: -6368 = 320.625
-        //back left: 19290 = 150.8203125 
-        //front right: -6886 = 229.5703125
-        // back right: -6484 =  300.234375 
-
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
         public static final class Mod0 { //TODO: This must be tuned to specific robot
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(320.625);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(360 - 222.275390625);
 
             public static final SPIKESwerveModConstants constants = 
                 new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
@@ -109,7 +108,7 @@ public final class SwerveConstants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 4;
             public static final int canCoderID = 5;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(150.8203125);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(360 - 74.00390625);
 
             public static final SPIKESwerveModConstants constants = 
                 new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
@@ -120,7 +119,7 @@ public final class SwerveConstants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 8;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(229.5703125);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(360- 137.98828125 + 23.82);
 
             public static final SPIKESwerveModConstants constants = 
                 new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
@@ -131,7 +130,7 @@ public final class SwerveConstants {
             public static final int driveMotorID = 9;
             public static final int angleMotorID = 10;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(300.234375 );
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(360 - 136.494140625);
 
             public static final SPIKESwerveModConstants constants = 
                 new SPIKESwerveModConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
