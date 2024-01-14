@@ -52,13 +52,13 @@ public class SwerveModule {
         // Angle motor config
         m_angleMotor = new TalonFX(moduleConstants.angleMotorID);
         configAngleMotor();
-        
+
         // Drive motor config
         m_driveMotor = new TalonFX(moduleConstants.driveMotorID);
         configDriveMotor();
-        
+
         m_lastAngle = getState().angle;
-        
+
         // Enable safety for motors
         m_angleMotor.setSafetyEnabled(true);
         m_driveMotor.setSafetyEnabled(true);
@@ -138,7 +138,7 @@ public class SwerveModule {
                 m_angleEncoder.getAbsolutePosition().getValue(), 1.0
             )
             // Might have to swap the sign of the offset to negative (check this)
-            - m_angleOffset.getDegrees()
+            + m_angleOffset.getDegrees()
         );
     }
 
@@ -177,7 +177,7 @@ public class SwerveModule {
      */
     public void resetToAbsolute() {
         // Convert the CANcoder's degrees to motor rotations
-        double rotations = Conversions.degreesToFalconRotations(getCANcoder().getDegrees() + m_angleOffset.getDegrees(), SwerveConstants.Swerve.angleGearRatio);
+        double rotations = Conversions.degreesToFalconRotations(getCANcoder().getDegrees() - m_angleOffset.getDegrees(), SwerveConstants.Swerve.angleGearRatio);
         m_angleMotor.setPosition(rotations);
     }
 

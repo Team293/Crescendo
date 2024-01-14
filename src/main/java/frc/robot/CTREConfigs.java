@@ -37,8 +37,14 @@ public final class CTREConfigs {
         /* Angle - Set Inverted*/
         swerveAngleFXConfig.MotorOutput.Inverted = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).angleMotorInvert;
 
-        /* Angle - Set Continuous Wrap */
+        /* Angle - Set Continuous Wrap Configs */
         swerveAngleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
+        swerveAngleFXConfig.Feedback.SensorToMechanismRatio = COTSFalconSwerveConstants.SDSMK4(SwerveConstants.Swerve.driveGearRatio).angleGearRatio; // Set the gear ratio of the motor to the mechanism
+
+        /* Angle - Set Remote Sensor Configs */
+        // We should consider whether or not to use this. We would have to see which way
+        swerveAngleFXConfig.Feedback.FeedbackRemoteSensorID = moduleConstants.cancoderID;
+        swerveAngleFXConfig.Feedback.RotorToSensorRatio = 1.0 / SwerveConstants.Swerve.angleGearRatio; // Set the gear ratio of the motor to the sensor (1:12.8) (12.8 rotations of the motor = 1 rotation of the CANcoder)
 
         /* Swerve Drive Motor Configuration */
         swerveDriveFXConfig = new TalonFXConfiguration();
