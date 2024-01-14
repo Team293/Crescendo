@@ -14,11 +14,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.lib.util.Conversions;
 import frc.lib.util.SwerveConstants;
 import frc.robot.SwerveModule;
 import frc.robot.classes.Position2D;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -31,7 +32,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState; 
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class Drivetrain extends SubsystemBase {
     public SwerveDriveOdometry m_swerveOdometry;
@@ -54,12 +55,12 @@ public class Drivetrain extends SubsystemBase {
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
-        // Create a new swerve odometry object, similar to the Kinematics.java file before 
+        // Create a new swerve odometry object, similar to the Kinematics.java file before
         m_swerveOdometry = new SwerveDriveOdometry(SwerveConstants.Swerve.swerveKinematics, getYaw(), getModulePositions());
     }
 
     public void drive(Translation2d translation, double rotationSpeed, boolean fieldRelative, boolean isOpenLoop) {
-        SwerveModuleState[] swerveModuleStates = 
+        SwerveModuleState[] swerveModuleStates =
             SwerveConstants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                     translation.getX(),
@@ -79,7 +80,7 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public void setNeutralMode(NeutralMode nm) {
+    public void setNeutralMode(NeutralModeValue nm) {
         for (SwerveModule module : m_swerveModules) {
             module.setNeutralMode(nm);
         }
@@ -96,9 +97,10 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Robot Angle (SwerveOdometry)", robotTranslation.getRotation().getDegrees());
 
         for (SwerveModule module : m_swerveModules) {
-            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Angle", module.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Module (degrees)", module.getAngle().getDegrees() );
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " CANcoder (degrees)", module.getCANcoder().getDegrees() % 360);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Meters/Sec", module.getState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Target rotations", module.m_targetRotations);
         }
     }
 

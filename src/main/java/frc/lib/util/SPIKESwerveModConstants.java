@@ -2,7 +2,7 @@ package frc.lib.util;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
-public class SwerveModuleConstants {
+public class SPIKESwerveModConstants {
     public final int driveMotorID;
     public final int angleMotorID;
     public final int cancoderID;
@@ -15,7 +15,7 @@ public class SwerveModuleConstants {
      * @param canCoderID
      * @param angleOffset
      */
-    public SwerveModuleConstants(int driveMotorID, int angleMotorID, int canCoderID, Rotation2d angleOffset) {
+    public SPIKESwerveModConstants(int driveMotorID, int angleMotorID, int canCoderID, Rotation2d angleOffset) {
         this.driveMotorID = driveMotorID;
         this.angleMotorID = angleMotorID;
         this.cancoderID = canCoderID;

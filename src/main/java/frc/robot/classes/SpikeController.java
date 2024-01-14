@@ -32,11 +32,11 @@ public class SpikeController {
     }
 
     public Rotation2d getLeftDirection() {
-        return new Rotation2d(-m_controller.getLeftX(), m_controller.getLeftY());
+        return new Rotation2d(m_controller.getLeftX(), -m_controller.getLeftY());
     }
 
     public Rotation2d getRightDirection() {
-        return new Rotation2d(-m_controller.getRightX(), m_controller.getRightY());
+        return new Rotation2d(m_controller.getRightX(), -m_controller.getRightY());
     }
 
     public double getLeftMagnitude() {

@@ -12,14 +12,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.classes.SpikeController;
 import frc.robot.subsystems.Drivetrain;
 
 /**
  *
  */
-public class OrientedDrive extends CommandBase {
+public class OrientedDrive extends Command {
     private final Drivetrain m_drivetrain;
     private final SpikeController m_controller;
     private final boolean m_fieldOriented;
@@ -50,6 +50,6 @@ public class OrientedDrive extends CommandBase {
 
         // Implement rotation, currently broken
 
-        m_drivetrain.drive(robotTranslation, 0, m_fieldOriented, true);
+        m_drivetrain.drive(robotTranslation, 0, m_fieldOriented, false);
     }
 }
