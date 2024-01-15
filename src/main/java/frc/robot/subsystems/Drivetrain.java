@@ -42,6 +42,7 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain() {
         gyro = new AHRS(SerialPort.Port.kMXP);
         gyro.reset();
+        zeroGyro();
 
         // Create modules from the constant values in SwerveConstants
         m_swerveModules = new SwerveModule[] {
@@ -96,8 +97,14 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Robot Y (SwerveOdometry)", robotTranslation.getTranslation().getY());
         SmartDashboard.putNumber("Robot Angle (SwerveOdometry)", robotTranslation.getRotation().getDegrees());
 
+        SmartDashboard.putNumber("Robot Yaw (Z)",  ((gyro.getYaw() % 360.0)));
+        SmartDashboard.putNumber("Robot Pitch (X)",  ((gyro.getPitch() % 360.0)));
+        SmartDashboard.putNumber("Robot Roll (Y)",  ((gyro.getRoll() % 360.0)));
+
+        SmartDashboard.putNumber("Yaw", getYaw().getDegrees());
+
         for (SwerveModule module : m_swerveModules) {
-            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Module (degrees)", module.getAngle().getDegrees() );
+            SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Module (degrees)", module.getAngle().getDegrees() % 360);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " CANcoder (degrees)", module.getCANcoder().getDegrees() % 360);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Meters/Sec", module.getState().speedMetersPerSecond);
             SmartDashboard.putNumber("Mod " + module.m_moduleNumber + " Target rotations", module.m_targetRotations);
@@ -143,7 +150,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(gyro.getAngle());
+        return Rotation2d.fromDegrees(-gyro.getAngle() % 360.0);
     }
 
     public void resetModulesToAbsolute() {

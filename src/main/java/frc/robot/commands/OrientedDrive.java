@@ -25,7 +25,7 @@ public class OrientedDrive extends Command {
     private final boolean m_fieldOriented;
 
     private final double MAX_TRANSLATION_VELOCITY = 3.0d;
-    private final double MAX_ROTATION_VELOCITY_RAD = 0.15d;
+    private final double MAX_ROTATION_VELOCITY = 3.0d;
 
     public OrientedDrive(Drivetrain drivetrain, SpikeController controller, boolean fieldOriented) {
         m_drivetrain = drivetrain;
@@ -43,13 +43,10 @@ public class OrientedDrive extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double translationMagnitude = m_controller.getLeftMagnitude() * MAX_TRANSLATION_VELOCITY;
-        Rotation2d translationAngle = m_controller.getLeftDirection();
+        Translation2d robotTranslation = new Translation2d(m_controller.getRightY(), m_controller.getRightX());
+        
+        double rotationSpeed = m_controller.getLeftX() * MAX_ROTATION_VELOCITY;
 
-        Translation2d robotTranslation = new Translation2d(translationMagnitude, translationAngle);
-
-        // Implement rotation, currently broken
-
-        m_drivetrain.drive(robotTranslation, 0, m_fieldOriented, false);
+        m_drivetrain.drive(robotTranslation, rotationSpeed, m_fieldOriented, false);
     }
 }
