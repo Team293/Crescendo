@@ -91,14 +91,25 @@ public class SwerveModule {
      * @param isOpenLoop Whether or not to use open loop control (closed loop PID if false)
      */
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        // if (desiredState.speedMetersPerSecond < 0.2) {
-        //     stop();
-        //     return;
-        // }
-
-        // desiredState = CTREModuleState.optimize(desiredState, Rotation2d.fromRotations(getState().angle.getRotations() + );
+        desiredState = optimize(desiredState);
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
+    }
+
+    public SwerveModuleState optimize(SwerveModuleState desiredState) {
+        double newRotation = desiredState.angle.getRotations() % 1.0;
+        double currentRotation = getAngle().getRotations() % 1.0;
+
+        double angleDifference = (newRotation - currentRotation + 0.5) % 1.0 - 0.5;
+
+        if (Math.abs(angleDifference) > 0.25) {
+            newRotation += 0.5;
+            desiredState.speedMetersPerSecond *= -1;
+        }
+
+        desiredState.angle = Rotation2d.fromRotations(newRotation % 1.0);
+
+        return desiredState;
     }
 
     /**
