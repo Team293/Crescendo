@@ -58,10 +58,6 @@ public class Drivetrain extends SubsystemBase {
 
         // Create a new swerve odometry object, similar to the Kinematics.java file before
         m_swerveOdometry = new SwerveDriveOdometry(SwerveConstants.Swerve.swerveKinematics, getYaw(), getModulePositions());
-    
-        for (SwerveModule module : m_swerveModules) {
-            module.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), false);
-        }
     }
 
     public void drive(Translation2d translation, double rotationSpeed, boolean fieldRelative, boolean isOpenLoop) {
