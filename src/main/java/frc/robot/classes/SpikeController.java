@@ -32,11 +32,11 @@ public class SpikeController {
     }
 
     public Rotation2d getLeftDirection() {
-        return new Rotation2d(m_controller.getLeftX(), -m_controller.getLeftY());
+        return new Rotation2d(getLeftX(), getLeftY());
     }
 
     public Rotation2d getRightDirection() {
-        return new Rotation2d(m_controller.getRightX(), -m_controller.getRightY());
+        return new Rotation2d(getRightX(), getRightY());
     }
 
     public double getLeftMagnitude() {
@@ -52,13 +52,13 @@ public class SpikeController {
     public double getLeftX() {
         double axisValue = deadband(m_controller.getLeftX(), m_deadband);
         SmartDashboard.putNumber(m_name + "Left X", axisValue);
-        return axisValue;
+        return -axisValue;
     }
 
     public double getLeftY() {
         double axisValue = deadband(m_controller.getLeftY(), m_deadband);
         SmartDashboard.putNumber(m_name + " Left Y", axisValue);
-        return axisValue;
+        return -axisValue;
     }
 
     public boolean getLeftStickButton() {
@@ -68,13 +68,13 @@ public class SpikeController {
     public double getRightX() {
         double axisValue = deadband(m_controller.getRightX(), m_deadband);
         SmartDashboard.putNumber(m_name + " Right X", axisValue);
-        return axisValue;
+        return -axisValue;
     }
 
     public double getRightY() {
         double axisValue = deadband(m_controller.getRightY(), m_deadband);
         SmartDashboard.putNumber(m_name + " Right Y", axisValue);
-        return axisValue;
+        return -axisValue;
     }
 
     public boolean getRightStickButton() {

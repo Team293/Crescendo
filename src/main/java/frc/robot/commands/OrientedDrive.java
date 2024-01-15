@@ -12,7 +12,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.classes.SpikeController;
 import frc.robot.subsystems.Drivetrain;
@@ -44,12 +43,9 @@ public class OrientedDrive extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double translationMagnitude = m_controller.getRightMagnitude() * MAX_TRANSLATION_VELOCITY;
-        Rotation2d translationAngle = m_controller.getRightDirection();
-
+        Translation2d robotTranslation = new Translation2d(m_controller.getRightY(), m_controller.getRightX());
+        
         double rotationSpeed = m_controller.getLeftX() * MAX_ROTATION_VELOCITY;
-
-        Translation2d robotTranslation = new Translation2d(translationMagnitude, translationAngle);
 
         m_drivetrain.drive(robotTranslation, rotationSpeed, m_fieldOriented, false);
     }

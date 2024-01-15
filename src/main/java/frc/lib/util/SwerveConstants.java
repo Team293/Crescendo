@@ -18,7 +18,7 @@ public final class SwerveConstants {
         public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
         public static final COTSFalconSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
-            COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L2);
+            COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L1);
 
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
@@ -61,7 +61,7 @@ public final class SwerveConstants {
         public static final double closedLoopRamp = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = 50.0;
+        public static final double angleKP = 5.0;
         public static final double angleKI = 0.01;
         public static final double angleKD = 0.0;
 

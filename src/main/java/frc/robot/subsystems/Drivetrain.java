@@ -71,7 +71,7 @@ public class Drivetrain extends SubsystemBase {
                                     translation.getX(),
                                     translation.getY(),
                                     rotationSpeed,
-                                    Rotation2d.fromDegrees(getYaw().getDegrees() - 45)
+                                    getYaw()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(),
@@ -100,6 +100,10 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Robot X (SwerveOdometry)", robotTranslation.getTranslation().getX());
         SmartDashboard.putNumber("Robot Y (SwerveOdometry)", robotTranslation.getTranslation().getY());
         SmartDashboard.putNumber("Robot Angle (SwerveOdometry)", robotTranslation.getRotation().getDegrees());
+
+        SmartDashboard.putNumber("Robot Yaw (Z)",  ((gyro.getYaw() % 360.0)));
+        SmartDashboard.putNumber("Robot Pitch (X)",  ((gyro.getPitch() % 360.0)));
+        SmartDashboard.putNumber("Robot Roll (Y)",  ((gyro.getRoll() % 360.0)));
 
         SmartDashboard.putNumber("Yaw", getYaw().getDegrees());
 
@@ -150,7 +154,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(gyro.getAngle());
+        return Rotation2d.fromDegrees(-gyro.getAngle() % 360.0);
     }
 
     public void resetModulesToAbsolute() {
