@@ -48,5 +48,9 @@ public class OrientedDrive extends Command {
         double rotationSpeed = m_controller.getLeftX() * MAX_ROTATION_VELOCITY;
 
         m_drivetrain.drive(robotTranslation, rotationSpeed, m_fieldOriented, false);
+        
+        if (m_controller.getAButton()) {
+            m_drivetrain.zeroGyro();
+        }
     }
 }
