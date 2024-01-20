@@ -63,14 +63,14 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                new GyroIOPigeon2(false),
                 new ModuleIOSparkMax(0),
                 new ModuleIOSparkMax(1),
                 new ModuleIOSparkMax(2),
                 new ModuleIOSparkMax(3));
         flywheel = new Flywheel(new FlywheelIOSparkMax());
         // drive = new Drive(
-        // new GyroIOPigeon2(),
+        // new GyroIOPigeon2(true),
         // new ModuleIOTalonFX(0),
         // new ModuleIOTalonFX(1),
         // new ModuleIOTalonFX(2),
