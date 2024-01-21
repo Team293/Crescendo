@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import frc.lib.constants.SDSMK4L2Constants;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
@@ -48,14 +49,24 @@ public class Module {
     switch (Constants.currentMode) {
       case REAL:
       case REPLAY:
-        driveFeedforward = new SimpleMotorFeedforward(0.1, 0.13);
-        driveFeedback = new PIDController(0.05, 0.0, 0.0);
-        turnFeedback = new PIDController(7.0, 0.0, 0.0);
+        driveFeedforward =
+            new SimpleMotorFeedforward(SDSMK4L2Constants.motorKS, SDSMK4L2Constants.motorKV);
+        driveFeedback =
+            new PIDController(
+                SDSMK4L2Constants.driveKP, SDSMK4L2Constants.driveKI, SDSMK4L2Constants.driveKD);
+        turnFeedback =
+            new PIDController(
+                SDSMK4L2Constants.angleKP, SDSMK4L2Constants.angleKI, SDSMK4L2Constants.angleKD);
         break;
       case SIM:
-        driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
-        driveFeedback = new PIDController(0.1, 0.0, 0.0);
-        turnFeedback = new PIDController(10.0, 0.0, 0.0);
+        driveFeedforward =
+            new SimpleMotorFeedforward(SDSMK4L2Constants.motorKS, SDSMK4L2Constants.motorKV);
+        driveFeedback =
+            new PIDController(
+                SDSMK4L2Constants.driveKP, SDSMK4L2Constants.driveKI, SDSMK4L2Constants.driveKD);
+        turnFeedback =
+            new PIDController(
+                SDSMK4L2Constants.angleKP, SDSMK4L2Constants.angleKI, SDSMK4L2Constants.angleKD);
         break;
       default:
         driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
