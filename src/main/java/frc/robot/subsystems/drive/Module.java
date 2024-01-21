@@ -19,7 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.lib.constants.SDSMK4L2Constants;
+import frc.lib.constants.SDSMK4L1Constants;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
@@ -50,23 +50,23 @@ public class Module {
       case REAL:
       case REPLAY:
         driveFeedforward =
-            new SimpleMotorFeedforward(SDSMK4L2Constants.motorKS, SDSMK4L2Constants.motorKV);
+            new SimpleMotorFeedforward(SDSMK4L1Constants.motorKS, SDSMK4L1Constants.motorKV);
         driveFeedback =
             new PIDController(
-                SDSMK4L2Constants.driveKP, SDSMK4L2Constants.driveKI, SDSMK4L2Constants.driveKD);
+                SDSMK4L1Constants.driveKP, SDSMK4L1Constants.driveKI, SDSMK4L1Constants.driveKD);
         turnFeedback =
             new PIDController(
-                SDSMK4L2Constants.angleKP, SDSMK4L2Constants.angleKI, SDSMK4L2Constants.angleKD);
+                SDSMK4L1Constants.angleKP, SDSMK4L1Constants.angleKI, SDSMK4L1Constants.angleKD);
         break;
       case SIM:
         driveFeedforward =
-            new SimpleMotorFeedforward(SDSMK4L2Constants.motorKS, SDSMK4L2Constants.motorKV);
+            new SimpleMotorFeedforward(SDSMK4L1Constants.motorKS, SDSMK4L1Constants.motorKV);
         driveFeedback =
             new PIDController(
-                SDSMK4L2Constants.driveKP, SDSMK4L2Constants.driveKI, SDSMK4L2Constants.driveKD);
+                SDSMK4L1Constants.driveKP, SDSMK4L1Constants.driveKI, SDSMK4L1Constants.driveKD);
         turnFeedback =
             new PIDController(
-                SDSMK4L2Constants.angleKP, SDSMK4L2Constants.angleKI, SDSMK4L2Constants.angleKD);
+                SDSMK4L1Constants.angleKP, SDSMK4L1Constants.angleKI, SDSMK4L1Constants.angleKD);
         break;
       default:
         driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
@@ -137,7 +137,7 @@ public class Module {
   public SwerveModuleState runSetpoint(SwerveModuleState state) {
     // Optimize state based on current angle
     // Controllers run in "periodic" when the setpoint is not null
-    var optimizedState = SwerveModuleState.optimize(state, getAngle());
+    var optimizedState = state; // SwerveModuleState.optimize(state, getAngle());
 
     // Update setpoints, controllers run in "periodic"
     angleSetpoint = optimizedState.angle;

@@ -21,11 +21,10 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.lib.constants.SDSMK4L2Constants;
+import frc.lib.constants.SDSMK4L1Constants;
 import java.util.Queue;
 
 /**
@@ -59,10 +58,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<Double> turnCurrent;
 
   // Gear ratios for SDS MK4i L2, adjust as necessary
-  private final double DRIVE_GEAR_RATIO = SDSMK4L2Constants.driveGearRatio;
-  private final double TURN_GEAR_RATIO = SDSMK4L2Constants.angleGearRatio;
+  private final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
+  private final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
 
-  private final boolean isTurnMotorInverted = true;
   private final Rotation2d absoluteEncoderOffset;
 
   public ModuleIOTalonFX(int index) {
@@ -71,27 +69,25 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveTalon = new TalonFX(0);
         turnTalon = new TalonFX(1);
         cancoder = new CANcoder(2);
-        absoluteEncoderOffset =
-            new Rotation2d(Units.degreesToRadians(-143.61)); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(137.02)); // MUST BE CALIBRATED
         break;
       case 1:
         driveTalon = new TalonFX(3);
         turnTalon = new TalonFX(4);
         cancoder = new CANcoder(5);
-        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(93.52)); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(-76.46)); // MUST BE CALIBRATED
         break;
       case 2:
         driveTalon = new TalonFX(6);
         turnTalon = new TalonFX(7);
         cancoder = new CANcoder(8);
-        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(86.66)); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(-81.30)); // MUST BE CALIBRATED
         break;
       case 3:
         driveTalon = new TalonFX(9);
         turnTalon = new TalonFX(10);
         cancoder = new CANcoder(11);
-        absoluteEncoderOffset =
-            new Rotation2d(Units.degreesToRadians(142.73)); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(-137.02)); // MUST BE CALIBRATED
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -101,7 +97,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     var driveConfig = new TalonFXConfiguration();
     driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    driveConfig.MotorOutput.Inverted = SDSMK4L2Constants.driveMotorInvert;
+    driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
     driveTalon.clearStickyFaults();
     driveTalon.getConfigurator().apply(driveConfig);
     setDriveBrakeMode(true);
@@ -110,13 +106,13 @@ public class ModuleIOTalonFX implements ModuleIO {
     var turnConfig = new TalonFXConfiguration();
     turnConfig.CurrentLimits.StatorCurrentLimit = 30.0;
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    turnConfig.MotorOutput.Inverted = SDSMK4L2Constants.angleMotorInvert;
+    turnConfig.MotorOutput.Inverted = SDSMK4L1Constants.angleMotorInvert;
     turnTalon.getConfigurator().apply(turnConfig);
     setTurnBrakeMode(true);
 
     /* CANCoder config */
     var canCoderConfig = new CANcoderConfiguration();
-    canCoderConfig.MagnetSensor.SensorDirection = SDSMK4L2Constants.canCoderSensorDirection;
+    canCoderConfig.MagnetSensor.SensorDirection = SDSMK4L1Constants.canCoderSensorDirection;
     cancoder.getConfigurator().apply(canCoderConfig);
 
     drivePosition = driveTalon.getPosition();
@@ -207,7 +203,7 @@ public class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setDriveBrakeMode(boolean enable) {
     var config = new MotorOutputConfigs();
-    config.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.Inverted = SDSMK4L1Constants.driveMotorInvert;
     config.NeutralMode = enable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     driveTalon.getConfigurator().apply(config);
   }
@@ -215,10 +211,7 @@ public class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setTurnBrakeMode(boolean enable) {
     var config = new MotorOutputConfigs();
-    config.Inverted =
-        isTurnMotorInverted
-            ? InvertedValue.Clockwise_Positive
-            : InvertedValue.CounterClockwise_Positive;
+    config.Inverted = SDSMK4L1Constants.angleMotorInvert;
     config.NeutralMode = enable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     turnTalon.getConfigurator().apply(config);
   }
