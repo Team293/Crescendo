@@ -113,8 +113,7 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive,
             () -> -controller.getRightY(),
-            // () -> -controller.getRightX(),
-            () -> 0.0,
+            () -> -controller.getRightX(),
             () -> -controller.getLeftX()));
 
     /* Brake command */

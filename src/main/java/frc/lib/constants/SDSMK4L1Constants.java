@@ -40,5 +40,5 @@ public final class SDSMK4L1Constants {
 
   public static final InvertedValue angleMotorInvert = InvertedValue.CounterClockwise_Positive;
   public static final SensorDirectionValue canCoderSensorDirection =
-      SensorDirectionValue.Clockwise_Positive;
+      SensorDirectionValue.CounterClockwise_Positive;
 }
