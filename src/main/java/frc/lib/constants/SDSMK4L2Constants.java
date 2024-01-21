@@ -1,6 +1,7 @@
 package frc.lib.constants;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.util.Units;
 
 /* Contains values and required settings for common COTS swerve modules. */
@@ -35,8 +36,9 @@ public final class SDSMK4L2Constants {
   public static final double driveKD = 0.0d;
 
   /** Inversion settings */
-  public static final InvertedValue driveMotorInvert = InvertedValue.Clockwise_Positive;
+  public static final InvertedValue driveMotorInvert = InvertedValue.CounterClockwise_Positive;
 
   public static final InvertedValue angleMotorInvert = InvertedValue.CounterClockwise_Positive;
-  public static final InvertedValue canCoderInvert = InvertedValue.Clockwise_Positive;
+  public static final SensorDirectionValue canCoderSensorDirection =
+      SensorDirectionValue.Clockwise_Positive;
 }

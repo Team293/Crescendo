@@ -97,21 +97,27 @@ public class ModuleIOTalonFX implements ModuleIO {
         throw new RuntimeException("Invalid module index");
     }
 
+    /* Drive motor config */
     var driveConfig = new TalonFXConfiguration();
     driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    driveConfig.MotorOutput.Inverted = SDSMK4L2Constants.driveMotorInvert;
     driveTalon.clearStickyFaults();
     driveTalon.getConfigurator().apply(driveConfig);
     setDriveBrakeMode(true);
 
+    /* Turn motor config */
     var turnConfig = new TalonFXConfiguration();
     turnConfig.CurrentLimits.StatorCurrentLimit = 30.0;
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    turnConfig.MotorOutput.Inverted = SDSMK4L2Constants.angleMotorInvert;
     turnTalon.getConfigurator().apply(turnConfig);
     setTurnBrakeMode(true);
 
-    cancoder.getConfigurator().apply(new CANcoderConfiguration());
+    /* CANCoder config */
+    var canCoderConfig = new CANcoderConfiguration();
+    canCoderConfig.MagnetSensor.SensorDirection = SDSMK4L2Constants.canCoderSensorDirection;
+    cancoder.getConfigurator().apply(canCoderConfig);
 
     drivePosition = driveTalon.getPosition();
     drivePositionQueue =

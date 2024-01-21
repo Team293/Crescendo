@@ -116,6 +116,8 @@ public class RobotContainer {
             // () -> -controller.getRightX(),
             () -> 0.0,
             () -> -controller.getLeftX()));
+
+    /* Brake command */
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     /* Reset heading command */
