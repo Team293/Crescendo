@@ -26,12 +26,15 @@ public class GyroIONavX implements GyroIO {
     gyro.reset();
   }
 
+  public void ResetYaw() {
+    gyro.reset();
+  }
+
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = true;
     inputs.yawPosition = Rotation2d.fromDegrees(gyro.getYaw());
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(gyro.getRate());
-    inputs.odometryYawPositions[0] = Rotation2d.fromDegrees(gyro.getYaw());
     inputs.pose = gyro.getRotation3d();
   }
 }

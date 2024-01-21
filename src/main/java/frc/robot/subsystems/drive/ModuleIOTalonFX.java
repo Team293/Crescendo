@@ -72,28 +72,26 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnTalon = new TalonFX(1);
         cancoder = new CANcoder(2);
         absoluteEncoderOffset =
-            new Rotation2d(Units.degreesToRadians(360.0 - 222.28)); // MUST BE CALIBRATED
+            new Rotation2d(Units.degreesToRadians(-143.61)); // MUST BE CALIBRATED
         break;
       case 1:
         driveTalon = new TalonFX(3);
         turnTalon = new TalonFX(4);
         cancoder = new CANcoder(5);
-        absoluteEncoderOffset =
-            new Rotation2d(Units.degreesToRadians(360.0 - 74.00)); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(93.52)); // MUST BE CALIBRATED
         break;
       case 2:
         driveTalon = new TalonFX(6);
         turnTalon = new TalonFX(7);
         cancoder = new CANcoder(8);
-        absoluteEncoderOffset =
-            new Rotation2d(Units.degreesToRadians(360.0 - 137.99)); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(Units.degreesToRadians(86.66)); // MUST BE CALIBRATED
         break;
       case 3:
         driveTalon = new TalonFX(9);
         turnTalon = new TalonFX(10);
         cancoder = new CANcoder(11);
         absoluteEncoderOffset =
-            new Rotation2d(Units.degreesToRadians(360.0 - 136.49)); // MUST BE CALIBRATED
+            new Rotation2d(Units.degreesToRadians(142.73)); // MUST BE CALIBRATED
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -102,6 +100,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     var driveConfig = new TalonFXConfiguration();
     driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     driveTalon.clearStickyFaults();
     driveTalon.getConfigurator().apply(driveConfig);
     setDriveBrakeMode(true);
@@ -156,6 +155,9 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnVelocity,
         turnAppliedVolts,
         turnCurrent);
+
+    inputs.canCoderRotations = cancoder.getAbsolutePosition().getValue();
+    inputs.canCoderAngle = Units.rotationsToDegrees(inputs.canCoderRotations);
 
     inputs.drivePositionRad =
         Units.rotationsToRadians(drivePosition.getValueAsDouble()) / DRIVE_GEAR_RATIO;

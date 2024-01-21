@@ -16,6 +16,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,6 +50,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    /* Print the log directory */
+    String logDir = DataLogManager.getLogDir();
+    System.out.print(logDir);
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -108,7 +113,8 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive,
             () -> -controller.getRightY(),
-            () -> -controller.getRightX(),
+            // () -> -controller.getRightX(),
+            () -> 0.0,
             () -> -controller.getLeftX()));
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
