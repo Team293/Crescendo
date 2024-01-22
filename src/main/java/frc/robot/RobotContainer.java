@@ -116,6 +116,14 @@ public class RobotContainer {
             () -> -controller.getRightX(),
             () -> -controller.getLeftX()));
 
+    /* Drive like a car */
+    // drive.setDefaultCommand(
+    //     DriveCommands.kartDrive(drive,
+    //     controller::getRightTriggerAxis,
+    //     controller::getLeftTriggerAxis,
+    //     controller::getLeftX,
+    //     () -> controller.a().getAsBoolean()));
+
     /* Brake command */
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 

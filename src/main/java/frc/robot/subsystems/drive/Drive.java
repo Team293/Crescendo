@@ -165,6 +165,57 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
   }
 
+    /**
+     * Runs the drive as if it was a car with front wheel drive
+     *
+     * @param speedMetersPerSec in meters/sec
+     * @param steering Steering input from -1 to 1
+     * @param brake Whether to brake
+     * @param reverse Whether to reverse
+     * @param maxTurningAngle Maximum turning angle in degrees
+     */
+    public void runFrontWheelDrive(
+        double speedMetersPerSec,
+        double steering,
+        boolean brake,
+        double maxTurningAngle) {
+        // Calculate module setpoints
+        SwerveModuleState frontWheels = new SwerveModuleState(
+            speedMetersPerSec,
+            new Rotation2d(0)
+            .minus(Rotation2d.fromDegrees(steering * maxTurningAngle))
+        );
+        SwerveModuleState backWheels = new SwerveModuleState(
+            speedMetersPerSec,
+            new Rotation2d(0)
+        );
+        SwerveModuleState[] setpointStates = {
+            SwerveModuleState.optimize(frontWheels, new Rotation2d()),
+            SwerveModuleState.optimize(frontWheels, new Rotation2d()),
+            SwerveModuleState.optimize(backWheels, new Rotation2d()),
+            SwerveModuleState.optimize(backWheels, new Rotation2d())
+        };
+        SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, MAX_LINEAR_SPEED);
+
+        // Send setpoints to modules
+        SwerveModuleState[] optimizedSetpointStates = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++) {
+            // The module returns the optimized state, useful for logging
+            optimizedSetpointStates[i] = modules[i].runSetpoint(setpointStates[i]);
+
+            if (brake) {
+                modules[i].setDriveBrakeMode(true);
+                continue;
+            }
+
+            modules[i].setDriveBrakeMode(false);
+        }
+
+        // Log setpoint states
+        Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+        Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
+    }
+
   /** Stops the drive. */
   public void stop() {
     runVelocity(new ChassisSpeeds());
