@@ -22,7 +22,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -70,32 +69,28 @@ public class DriveCommands {
         drive);
   }
 
-    // Simulate a car with front wheel drive
-    // Gas is right trigger, brake is left trigger
-    // Steering is left joystick x axis or right joystick x axis
-    public static Command kartDrive(
-        Drive drive,
-        DoubleSupplier gasSupplier,
-        DoubleSupplier brakeSupplier,
-        DoubleSupplier steeringSupplier,
-        BooleanSupplier reverseGear) {
-        return Commands.run(
+  // Simulate a car with front wheel drive
+  // Gas is right trigger, brake is left trigger
+  // Steering is left joystick x axis or right joystick x axis
+  public static Command kartDrive(
+      Drive drive,
+      DoubleSupplier gasSupplier,
+      DoubleSupplier brakeSupplier,
+      DoubleSupplier steeringSupplier,
+      BooleanSupplier reverseGear) {
+    return Commands.run(
         () -> {
-            double gas = gasSupplier.getAsDouble();
-            double brake = brakeSupplier.getAsDouble();
-            double steering = steeringSupplier.getAsDouble();
-            double speed = gas - brake;
-            if (reverseGear.getAsBoolean()) {
-                speed *= -1;
-            }
-            boolean brakeMotors = brake >= 0.75 ? false : true;
-            drive.runFrontWheelDrive(
-                    speed * drive.getMaxLinearSpeedMetersPerSec(),
-                    steering,
-                    brakeMotors,
-                    45.0
-                );
+          double gas = gasSupplier.getAsDouble();
+          double brake = brakeSupplier.getAsDouble();
+          double steering = steeringSupplier.getAsDouble();
+          double speed = gas - brake;
+          if (reverseGear.getAsBoolean()) {
+            speed *= -1;
+          }
+          boolean brakeMotors = brake >= 0.75 ? false : true;
+          drive.runFrontWheelDrive(
+              speed * drive.getMaxLinearSpeedMetersPerSec(), steering, brakeMotors, 45.0);
         },
         drive);
-    }
+  }
 }

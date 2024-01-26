@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 /** IO implementation for NavX */
 public class GyroIONavX implements GyroIO {
   public final AHRS gyro = new AHRS(SerialPort.Port.kMXP);
+  public static final boolean INVERTED = true;
 
   public GyroIONavX() {
     gyro.reset();
@@ -33,7 +34,7 @@ public class GyroIONavX implements GyroIO {
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = true;
-    inputs.yawPosition = Rotation2d.fromDegrees(gyro.getYaw());
+    inputs.yawPosition = Rotation2d.fromDegrees(gyro.getYaw() * (INVERTED ? -1.0 : 1.0));
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(gyro.getRate());
     inputs.pose = gyro.getRotation3d();
   }
