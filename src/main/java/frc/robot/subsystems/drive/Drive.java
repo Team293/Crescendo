@@ -114,8 +114,8 @@ public class Drive extends SubsystemBase {
     }
 
     // Update odometry
-    int deltaCount =
-        gyroInputs.connected ? gyroInputs.odometryYawPositions.length : Integer.MAX_VALUE;
+    int deltaCount = Integer.MAX_VALUE;
+    // gyroInputs.connected ? gyroInputs.odometryYawPositions.length : Integer.MAX_VALUE;
     for (int i = 0; i < 4; i++) {
       deltaCount = Math.min(deltaCount, modules[i].getPositionDeltas().length);
     }
@@ -133,13 +133,15 @@ public class Drive extends SubsystemBase {
       if (gyroInputs.connected) {
         // If the gyro is connected, replace the theta component of the twist
         // with the change in angle since the last sample.
-        Rotation2d gyroRotation = gyroInputs.odometryYawPositions[deltaIndex];
-        twist = new Twist2d(twist.dx, twist.dy, gyroRotation.minus(lastGyroRotation).getRadians());
-        lastGyroRotation = gyroRotation;
+        Rotation2d gyroRotation = gyroInputs.yawPosition;
+        twist =
+            new Twist2d(
+                twist.dx, twist.dy, gyroRotation.minus(lastGyroRotation).getRadians() / deltaCount);
       }
       // Apply the twist (change since last sample) to the current pose
       pose = pose.exp(twist);
     }
+    lastGyroRotation = gyroInputs.yawPosition;
   }
 
   /**
