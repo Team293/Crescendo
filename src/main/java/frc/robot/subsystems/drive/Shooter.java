@@ -12,8 +12,9 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic(){
     SmartDashboard.putBoolean("Note detected", hasNote());
+    SmartDashboard.putNumber("Distance", m_colorSensor.getProximity());
   }
-
+  
   public boolean hasNote() {
     Color noteColor = m_colorSensor.getColor();
     return noteColor == Color.kOrange;
