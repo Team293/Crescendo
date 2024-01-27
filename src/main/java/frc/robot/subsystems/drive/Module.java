@@ -25,6 +25,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Module {
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
+  private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
   private final ModuleIO io;
@@ -115,16 +116,17 @@ public class Module {
         double velocityRadPerSec = adjustSpeedSetpoint / WHEEL_RADIUS;
         io.setDriveVoltage(
             driveFeedforward.calculate(velocityRadPerSec)
-                + driveFeedback.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec));
+                + driveFeedback.calculate(inputs.driveVelocityRotationsPerSec, velocityRadPerSec));
       }
     }
 
     // Calculate position deltas for odometry
     int deltaCount =
-        Math.min(inputs.odometryDrivePositionsRad.length, inputs.odometryTurnPositions.length);
+        Math.min(
+            inputs.odometryDrivePositionsRotations.length, inputs.odometryTurnPositions.length);
     positionDeltas = new SwerveModulePosition[deltaCount];
     for (int i = 0; i < deltaCount; i++) {
-      double positionMeters = inputs.odometryDrivePositionsRad[i] * WHEEL_RADIUS;
+      double positionMeters = inputs.odometryDrivePositionsRotations[i] * WHEEL_CIRCUMFERENCE;
       Rotation2d angle =
           inputs.odometryTurnPositions[i].plus(
               turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
@@ -188,12 +190,12 @@ public class Module {
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    return inputs.drivePositionRad * WHEEL_RADIUS;
+    return inputs.drivePositionRotations * WHEEL_CIRCUMFERENCE;
   }
 
   /** Returns the current drive velocity of the module in meters per second. */
   public double getVelocityMetersPerSec() {
-    return inputs.driveVelocityRadPerSec * WHEEL_RADIUS;
+    return inputs.driveVelocityRotationsPerSec * WHEEL_CIRCUMFERENCE;
   }
 
   /** Returns the module position (turn angle and drive position). */
@@ -213,6 +215,6 @@ public class Module {
 
   /** Returns the drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
-    return inputs.driveVelocityRadPerSec;
+    return inputs.driveVelocityRotationsPerSec;
   }
 }
