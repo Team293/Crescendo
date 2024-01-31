@@ -34,7 +34,8 @@ public class GyroIONavX implements GyroIO {
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = true;
-    inputs.yawPosition = Rotation2d.fromDegrees(gyro.getYaw() * (INVERTED ? -1.0 : 1.0));
+    inputs.realYawPosition = Rotation2d.fromDegrees(gyro.getYaw() * (INVERTED ? -1.0 : 1.0));
+    inputs.yawPosition = inputs.realYawPosition.minus(inputs.yawOffset);
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(gyro.getRate());
     inputs.pose = gyro.getRotation3d();
   }

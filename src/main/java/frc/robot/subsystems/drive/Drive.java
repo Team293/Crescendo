@@ -144,6 +144,12 @@ public class Drive extends SubsystemBase {
     lastGyroRotation = gyroInputs.yawPosition;
   }
 
+  public void resetRotation() {
+    gyroInputs.yawOffset = gyroInputs.realYawPosition;
+    var currentPose = getPose();
+    setPose(new Pose2d(currentPose.getTranslation(), new Rotation2d()));
+  }
+
   /**
    * Runs the drive at the desired velocity.
    *
