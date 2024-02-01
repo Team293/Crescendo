@@ -146,8 +146,8 @@ public class Drive extends SubsystemBase {
 
   public void resetRotation() {
     gyroInputs.yawOffset = gyroInputs.realYawPosition;
-    var currentPose = getPose();
-    setPose(new Pose2d(currentPose.getTranslation(), new Rotation2d()));
+    lastGyroRotation = new Rotation2d();
+    setPose(new Pose2d(pose.getTranslation(), new Rotation2d()));
   }
 
   /**
