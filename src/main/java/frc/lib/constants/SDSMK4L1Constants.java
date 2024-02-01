@@ -36,7 +36,7 @@ public final class SDSMK4L1Constants {
   public static final double driveKD = 0.0d;
 
   /** Inversion settings */
-  public static final InvertedValue driveMotorInvert = InvertedValue.Clockwise_Positive;
+  public static final InvertedValue driveMotorInvert = InvertedValue.CounterClockwise_Positive;
 
   public static final InvertedValue angleMotorInvert = InvertedValue.CounterClockwise_Positive;
   public static final SensorDirectionValue canCoderSensorDirection =
