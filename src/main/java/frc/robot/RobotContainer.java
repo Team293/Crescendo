@@ -141,7 +141,7 @@ public class RobotContainer {
     controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake command */
-    controller.a().whileTrue(Commands.runOnce(intakeCommand, null));
+    controller.a().whileTrue(Commands.runOnce(intakeCommand::execute));
   }
 
   /**
