@@ -24,12 +24,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,6 +48,8 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
+  private final IntakeCommand intakeCommand;
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final SendableChooser<Command> autoChooser2;
@@ -54,6 +59,8 @@ public class RobotContainer {
     /* Print the log directory */
     String logDir = DataLogManager.getLogDir();
     System.out.print(logDir);
+
+    intakeCommand = new IntakeCommand(new IntakeIOTalonFX(), new ModuleIOTalonFX(0));
 
     switch (Constants.currentMode) {
       case REAL:
@@ -132,6 +139,9 @@ public class RobotContainer {
 
     /* Reset heading command */
     controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+
+    /* Intake command */
+    controller.a().whileTrue(Commands.runOnce(intakeCommand, null));
   }
 
   /**

@@ -217,4 +217,9 @@ public class ModuleIOTalonFX implements ModuleIO {
     config.NeutralMode = enable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     turnTalon.getConfigurator().apply(config);
   }
+
+  public double getSelectedSensorVelocity() {
+    return driveTalon.getVelocity().getValueAsDouble();
+  }
+
 }
