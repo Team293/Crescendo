@@ -15,6 +15,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -26,58 +27,52 @@ import edu.wpi.first.math.util.Units;
  * X60.
  */
 public class IntakeIOTalonFX implements IntakeIO {
-  private final TalonFX launchMotor = new TalonFX(10); // TODO: change this to the correct ID
-  private final TalonFX feedMotor = new TalonFX(11); // TODO: change this to the correct ID
+  public final TalonFX motor;
+  private double robotSpeed; //Robot speed from the drivetrain
 
-  private final StatusSignal<Double> launchVelocity = launchMotor.getVelocity();
-  private final StatusSignal<Double> launchAppliedVolts = launchMotor.getMotorVoltage();
-  private final StatusSignal<Double> launchCurrent = launchMotor.getStatorCurrent();
+  private final StatusSignal<Double> motorVelocity;
+  private final StatusSignal<Double> motorAppliedVolts;
+  private final StatusSignal<Double> motorCurrent;
 
-  private final StatusSignal<Double> feedVelocity = feedMotor.getVelocity();
-  private final StatusSignal<Double> feedAppliedVolts = feedMotor.getMotorVoltage();
-  private final StatusSignal<Double> feedCurrent = feedMotor.getStatorCurrent();
-
-  public IntakeIOTalonFX() { 
+  public IntakeIOTalonFX(int canId) {
+    this.motor = new TalonFX(canId);
     var config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = 80.0;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    launchMotor.getConfigurator().apply(config);
-    feedMotor.getConfigurator().apply(config);
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0,
-        launchVelocity,
-        launchAppliedVolts,
-        launchCurrent,
-        feedVelocity,
-        feedAppliedVolts,
-        feedCurrent);
-    launchMotor.optimizeBusUtilization();
-    feedMotor.optimizeBusUtilization();
+    // Set motor PID
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kP = 0.021; // TODO: config
+    slot0Configs.kI = 0.0001; // TODO: config
+    slot0Configs.kD = 0.001; // TODO: config
+    slot0Configs.kV = (1.51 / 12);
+    slot0Configs.kA = (0.27 / 12);
+    motor.getConfigurator().apply(slot0Configs, 0.050);
+    motor.getConfigurator().apply(config);
+
+    motorVelocity = motor.getVelocity();
+    motorAppliedVolts = motor.getMotorVoltage();
+    motorCurrent = motor.getStatorCurrent();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, motorVelocity, motorAppliedVolts, motorCurrent);
+    motor.optimizeBusUtilization();
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        launchVelocity,
-        launchAppliedVolts,
-        launchCurrent,
-        feedVelocity,
-        feedAppliedVolts,
-        feedCurrent);
+  public void updateInputs(IntakeIOInputs inputs, double robotSpeed) {
+    this.robotSpeed = robotSpeed;
+    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent);
 
-    inputs.launchVelocityRadPerSec = Units.rotationsToRadians(launchVelocity.getValueAsDouble());
-    inputs.launchAppliedVolts = launchAppliedVolts.getValueAsDouble();
-    inputs.launchCurrentAmps = launchCurrent.getValueAsDouble();
-
-    inputs.feedVelocityRadPerSec = Units.rotationsToRadians(feedVelocity.getValueAsDouble());
-    inputs.feedAppliedVolts = feedAppliedVolts.getValueAsDouble();
-    inputs.feedCurrentAmps = feedCurrent.getValueAsDouble();
+    inputs.motorVelocityRadPerSec = Units.rotationsToRadians(motorVelocity.getValueAsDouble());
+    inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
+    inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.robotSpeed = this.robotSpeed;
   }
 
   @Override
   public void setSpeed(double speed) {
-    launchMotor.setControl(new VelocityVoltage(speed));
+    double inputSpeed = -(speed + this.robotSpeed);
+    motor.setControl(new VelocityVoltage(inputSpeed).withSlot(0));
   }
 }

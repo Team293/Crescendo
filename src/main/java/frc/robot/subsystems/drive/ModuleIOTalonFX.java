@@ -221,5 +221,4 @@ public class ModuleIOTalonFX implements ModuleIO {
   public double getSelectedSensorVelocity() {
     return driveTalon.getVelocity().getValueAsDouble();
   }
-
 }
