@@ -30,6 +30,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.RotateTo;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -52,6 +53,10 @@ public class Drive extends SubsystemBase {
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Pose2d pose = new Pose2d();
   private Rotation2d lastGyroRotation = new Rotation2d();
+
+  private double targetDegrees = 0.0d;
+  private double angleError = 0.0d;
+  private double autoAngleOutput = 0.0d;
 
   public Drive(
       GyroIO gyroIO,
@@ -148,6 +153,38 @@ public class Drive extends SubsystemBase {
     gyroInputs.yawOffset = gyroInputs.realYawPosition;
     lastGyroRotation = new Rotation2d();
     setPose(new Pose2d(pose.getTranslation(), new Rotation2d()));
+  }
+
+  public void setTargetAngle(double degrees) {
+    targetDegrees = degrees;
+  }
+
+  public double getTargetAngle() {
+    return targetDegrees;
+  }
+
+  public void runFieldOriented(double translationX, double translationY) {
+    angleError = RotateTo.getDistance(gyroInputs.yawPosition.getDegrees(), targetDegrees);
+    double changeInAngle = new Rotation2d(gyroInputs.yawVelocityRadPerSec).getDegrees();
+
+    double newOutput = angleError * 0.005 + changeInAngle * 0.00;
+
+    if (Math.abs(autoAngleOutput - newOutput)
+        < 1.0d) { // If the new output is more than 1 it means we're trying to go from 1.0 to -1.0
+      autoAngleOutput = newOutput;
+    }
+
+    Logger.recordOutput("AutoRotate/Target Degrees", targetDegrees);
+    Logger.recordOutput("AutoRotate/Angle Error", angleError);
+    Logger.recordOutput("AutoRotate/Attempted Output", newOutput);
+    Logger.recordOutput("AutoRotate/Output Rotation", autoAngleOutput);
+
+    runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            translationX * MAX_LINEAR_SPEED,
+            translationY * MAX_LINEAR_SPEED,
+            (autoAngleOutput) * MAX_ANGULAR_SPEED,
+            gyroInputs.yawPosition));
   }
 
   /**

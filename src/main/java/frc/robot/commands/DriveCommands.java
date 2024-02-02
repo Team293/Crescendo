@@ -24,9 +24,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
+  private static final double MAX_SPEED_DEGREES = 10.0d;
 
   private DriveCommands() {}
 
@@ -37,7 +40,10 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
+      BooleanSupplier autoAngle,
+      IntSupplier dPadAngle,
       DoubleSupplier omegaSupplier) {
+
     return Commands.run(
         () -> {
           // Apply deadband
@@ -57,6 +63,20 @@ public class DriveCommands {
               new Pose2d(new Translation2d(), linearDirection)
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
+
+          if (autoAngle.getAsBoolean()) {
+            if (dPadAngle.getAsInt() > -1) {
+              drive.setTargetAngle(dPadAngle.getAsInt());
+            } else {
+              double omegaDegrees = omega * MAX_SPEED_DEGREES;
+              drive.setTargetAngle(drive.getTargetAngle() + omegaDegrees);
+            }
+
+            drive.runFieldOriented(linearVelocity.getX(), linearVelocity.getY());
+            return;
+          }
+
+          drive.setTargetAngle(drive.getRotation().getDegrees());
 
           // Convert to field relative speeds & send command
           drive.runVelocity(

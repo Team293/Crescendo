@@ -26,7 +26,7 @@ public class RotateTo extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    angleError = getDistance(drive.getRotation(), targetRotation2d);
+    angleError = getDistance(drive.getRotation().getDegrees(), targetRotation2d.getDegrees());
     targetTurningVelocity = angleError / 360.0d;
 
     Logger.recordOutput("TurningError", angleError);
@@ -43,10 +43,27 @@ public class RotateTo extends Command {
   @Override
   public void end(boolean interrupted) {}
 
-  public static double getDistance(Rotation2d alpha, Rotation2d beta) {
-    double phi = beta.getDegrees() - alpha.getDegrees();
-    double difference = (phi + 180.0) % 360.0 - 180.0;
+  public static double getDistance(double alpha, double beta) {
+    double difference = normalizeAngle(beta) - normalizeAngle(alpha);
+
+    if (difference > 180.0d) {
+      difference -= 360.0d;
+    } else if (difference < -180.0d) {
+      difference += 360.0d;
+    }
+
     return difference;
+  }
+
+  public static double normalizeAngle(double angle) {
+    angle %= 360;
+    if (angle > 180.0d) {
+      angle -= 360.0d;
+    } else if (angle <= -180.0d) {
+      angle += 360.0d;
+    }
+
+    return angle;
   }
 
   // Returns true when the command should end.

@@ -119,6 +119,8 @@ public class RobotContainer {
             drive,
             () -> -controller.getRightY(),
             () -> -controller.getRightX(),
+            () -> controller.rightBumper().getAsBoolean(),
+            () -> controller.getHID().getPOV(0),
             () -> -controller.getLeftX()));
 
     /* Drive like a car */
