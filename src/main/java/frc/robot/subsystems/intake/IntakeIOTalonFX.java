@@ -28,7 +28,7 @@ import edu.wpi.first.math.util.Units;
  */
 public class IntakeIOTalonFX implements IntakeIO {
   public final TalonFX motor;
-  private double robotSpeed; //Robot speed from the drivetrain
+  private double robotSpeed; // Robot speed from the drivetrain
 
   private final StatusSignal<Double> motorVelocity;
   private final StatusSignal<Double> motorAppliedVolts;
