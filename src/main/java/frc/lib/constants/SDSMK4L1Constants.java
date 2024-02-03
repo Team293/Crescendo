@@ -24,16 +24,16 @@ public final class SDSMK4L1Constants {
   public static final double motorKA = (0.27 / 12);
 
   /** Angle motor PID */
-  public static final double angleKP = 5.0d;
+  public static final double angleKP = SpikePID.ANGLE_P;
 
-  public static final double angleKI = 0.01d;
-  public static final double angleKD = 0.0d;
+  public static final double angleKI = SpikePID.ANGLE_I;
+  public static final double angleKD = SpikePID.ANGLE_D;
 
   /** Drive motor PID */
-  public static final double driveKP = 0.005d;
+  public static final double driveKP = SpikePID.DRIVE_P;
 
-  public static final double driveKI = 0.0d;
-  public static final double driveKD = 0.0d;
+  public static final double driveKI = SpikePID.DRIVE_I;
+  public static final double driveKD = SpikePID.DRIVE_D;
 
   /** Inversion settings */
   public static final InvertedValue driveMotorInvert = InvertedValue.Clockwise_Positive;

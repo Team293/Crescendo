@@ -25,7 +25,6 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -64,9 +63,9 @@ public class DriveCommands {
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
 
-          if (autoAngle.getAsBoolean()) {
+          if (!autoAngle.getAsBoolean()) {
             if (dPadAngle.getAsInt() > -1) {
-              drive.setTargetAngle(dPadAngle.getAsInt());
+              drive.setTargetAngle(360d - dPadAngle.getAsInt());
             } else {
               double omegaDegrees = omega * MAX_SPEED_DEGREES;
               drive.setTargetAngle(drive.getTargetAngle() + omegaDegrees);

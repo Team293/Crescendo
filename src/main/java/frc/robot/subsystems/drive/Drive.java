@@ -30,7 +30,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.RotateTo;
+import frc.lib.SpikeUtils;
+import frc.lib.constants.SpikePID;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -149,25 +150,11 @@ public class Drive extends SubsystemBase {
     lastGyroRotation = gyroInputs.yawPosition;
   }
 
-  public void resetRotation() {
-    gyroInputs.yawOffset = gyroInputs.realYawPosition;
-    lastGyroRotation = new Rotation2d();
-    setPose(new Pose2d(pose.getTranslation(), new Rotation2d()));
-  }
-
-  public void setTargetAngle(double degrees) {
-    targetDegrees = degrees;
-  }
-
-  public double getTargetAngle() {
-    return targetDegrees;
-  }
-
   public void runFieldOriented(double translationX, double translationY) {
-    angleError = RotateTo.getDistance(gyroInputs.yawPosition.getDegrees(), targetDegrees);
+    angleError = SpikeUtils.getDifference(getRotation().getDegrees(), targetDegrees);
     double changeInAngle = new Rotation2d(gyroInputs.yawVelocityRadPerSec).getDegrees();
 
-    double newOutput = angleError * 0.005 + changeInAngle * 0.00;
+    double newOutput = SpikePID.getRotationOutput(angleError, 0d, changeInAngle);
 
     if (Math.abs(autoAngleOutput - newOutput)
         < 1.0d) { // If the new output is more than 1 it means we're trying to go from 1.0 to -1.0
@@ -279,6 +266,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public ChassisSpeeds getRobotVelocity() {
+    return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
   /** Returns the average drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
     double driveVelocityAverage = 0.0;
@@ -307,6 +298,38 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return gyroInputs.yawPosition;
+  }
+
+  public Rotation2d getAngleError(Rotation2d targetAngle) {
+    return SpikeUtils.getDifference(gyroInputs.yawPosition, targetAngle);
+  }
+
+  public Translation2d getTranslationDifference(Translation2d targetTranslation) {
+    double errorX = targetTranslation.getX() - pose.getX();
+    double errorY = targetTranslation.getX() - pose.getX();
+
+    return new Translation2d(errorX, errorY);
+  }
+
+  public Pose2d getPoseError(Pose2d targetPose) {
+    Translation2d translationError = getTranslationDifference(targetPose.getTranslation());
+    Rotation2d rotationError = getAngleError(targetPose.getRotation());
+
+    return new Pose2d(translationError, rotationError);
+  }
+
+  public void resetRotation() {
+    gyroInputs.yawOffset = gyroInputs.realYawPosition;
+    lastGyroRotation = new Rotation2d();
+    setPose(new Pose2d(pose.getTranslation(), new Rotation2d()));
+  }
+
+  public double getTargetAngle() {
+    return targetDegrees;
+  }
+
+  public void setTargetAngle(double degrees) {
+    targetDegrees = degrees;
   }
 
   /** Resets the current odometry pose. */
