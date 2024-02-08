@@ -1,6 +1,7 @@
-package frc.robot.subsystems.launcher;
+package frc.robot.subsystems.launcher.java;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLog;
 
 public class Launcher extends SubsystemBase {
   private final ColorSensorIO m_sensorIO;

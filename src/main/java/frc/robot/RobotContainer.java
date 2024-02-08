@@ -30,7 +30,7 @@ import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.launcher.Launcher;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -43,7 +43,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Shooter shooter;
+  private final Launcher launcher;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -92,7 +92,7 @@ public class RobotContainer {
         break;
     }
 
-    shooter = new Shooter();
+    launcher = new Launcher();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
