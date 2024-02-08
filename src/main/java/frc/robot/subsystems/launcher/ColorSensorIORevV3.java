@@ -43,12 +43,16 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
     inputs.Proximity = m_colorSensor.getProximity();
 
     // look at matchColor
+<<<<<<< HEAD
     ColorMatchResult result = new ColorMatchResult(new Color(0, 0, 0), 0);
     try {
       result = m_colorMatcher.matchColor(m_colorSensor.getColor());
     } catch (NullPointerException e) {
       e.printStackTrace();
     }
+=======
+    ColorMatchResult result = m_colorMatcher.matchClosestColor(m_colorSensor.getColor());
+>>>>>>> 84c753ffd9ef56ab9f09c6015bd7374b1ff9dfa8
     inputs.MatchResultColorRed = result.color.red;
     inputs.MatchResultColorBlue = result.color.blue;
     inputs.MatchResultColorGreen = result.color.green;
