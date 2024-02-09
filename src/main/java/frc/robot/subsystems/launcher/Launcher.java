@@ -1,6 +1,7 @@
 package frc.robot.subsystems.launcher;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
   private final ColorSensorIO m_sensorIO;
@@ -20,5 +21,6 @@ public class Launcher extends SubsystemBase {
   public void periodic() {
     // Update the color sensor inputs
     m_sensorIO.updateInputs(m_sensorInputs);
+    Logger.processInputs("Launcher/Sensor", m_sensorInputs);
   }
 }

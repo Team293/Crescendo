@@ -24,36 +24,37 @@ import edu.wpi.first.wpilibj.util.Color;
 public class ColorSensorIORevV3 implements ColorSensorIO {
   private final I2C.Port m_i2cPort;
   private final ColorSensorV3 m_colorSensor;
-  private final Color m_noteColor = Color.kOrange; // Is this correct?
+  private final Color m_noteColor = new Color(0.520, 0.378, 0.103); // Is this correct?
   private final ColorMatch m_colorMatcher = new ColorMatch();
 
   public ColorSensorIORevV3() {
     m_i2cPort = I2C.Port.kOnboard;
     m_colorSensor = new ColorSensorV3(m_i2cPort);
-    m_colorMatcher.addColorMatch(m_noteColor);
+
     m_colorMatcher.setConfidenceThreshold(0.95);
+    m_colorMatcher.addColorMatch(m_noteColor);
   }
 
   @Override
   public void updateInputs(ColorSensorIOInputs inputs) {
     inputs.IsConnected = true;
-    inputs.Red = m_colorSensor.getRed();
-    inputs.Green = m_colorSensor.getGreen();
-    inputs.Blue = m_colorSensor.getBlue();
+    Color detectedColor = m_colorSensor.getColor();
+    inputs.Red = detectedColor.red;
+    inputs.Green = detectedColor.green;
+    inputs.Blue = detectedColor.blue;
     inputs.Proximity = m_colorSensor.getProximity();
 
-    // look at matchColor
-    ColorMatchResult result = new ColorMatchResult(new Color(0, 0, 0), 0);
-    try {
-      result = m_colorMatcher.matchColor(m_colorSensor.getColor());
-    } catch (NullPointerException e) {
-      e.printStackTrace();
+    /** Run the color match algorithm on our detected color */
+    ColorMatchResult match = m_colorMatcher.matchColor(detectedColor);
+
+    if (match == null) {
+      inputs.IsNoteDetected = false;
+      inputs.MatchResultConfidence = 0;
+    } else {
+      if (inputs.Proximity >= 700) {
+        inputs.IsNoteDetected = true;
+      }
+      inputs.MatchResultConfidence = match.confidence;
     }
-    inputs.MatchResultColorRed = result.color.red;
-    inputs.MatchResultColorBlue = result.color.blue;
-    inputs.MatchResultColorGreen = result.color.green;
-    inputs.MatchResultConfidence = result.confidence;
-    inputs.MatchResultColorString = result.color.toString();
-    inputs.IsNoteDetected = (result.color == m_noteColor);
   }
 }

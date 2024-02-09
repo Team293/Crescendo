@@ -24,15 +24,11 @@ public interface ColorSensorIO {
   public static class ColorSensorIOInputs {
     // The variables that will be logged are declared here
     public boolean IsConnected;
-    public int Red;
-    public int Green;
-    public int Blue;
+    public double Red;
+    public double Green;
+    public double Blue;
     public int Proximity;
     public double MatchResultConfidence;
-    public double MatchResultColorRed;
-    public double MatchResultColorBlue;
-    public double MatchResultColorGreen;
-    public String MatchResultColorString;
     public boolean IsNoteDetected;
   }
 
