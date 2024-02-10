@@ -1,6 +1,5 @@
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
@@ -11,7 +10,6 @@ public interface VisionIO {
     public double aprilTagId = 0;
     public double tX = 0.0;
     public double tY = 0.0;
-    public Pose3d targetPoseRobotSpace;
   }
 
   public default void updateInputs(VisionIOInputs inputs) {}
