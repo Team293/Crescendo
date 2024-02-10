@@ -19,9 +19,9 @@ public class Vision extends SubsystemBase {
   private double m_angularVelOutput;
 
   public Vision() {
-    m_angularP = 2.0;
+    m_angularP = 0.005;
     m_angularI = 0.0;
-    m_angularD = 0.0;
+    m_angularD = 0.0001;
     // Initialize the ColorSensorIORevV3 object
     m_visionIO = new VisionIOLimelight("limelight");
   }
