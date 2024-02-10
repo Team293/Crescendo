@@ -53,6 +53,8 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
     } else {
       if (inputs.Proximity >= 700) {
         inputs.IsNoteDetected = true;
+      } else {
+        inputs.IsNoteDetected = false;
       }
       inputs.MatchResultConfidence = match.confidence;
     }
