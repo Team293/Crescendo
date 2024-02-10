@@ -44,6 +44,10 @@ public class Vision extends SubsystemBase {
     m_angularError = 0.0;
   }
 
+  public double getDesiredAngle() {
+    return m_angularVelOutput;
+  }
+
   @Override
   public void periodic() {
     m_visionIO.updateInputs(m_visionInputs);

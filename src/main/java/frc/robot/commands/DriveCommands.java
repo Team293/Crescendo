@@ -123,10 +123,11 @@ public class DriveCommands {
                   .getTranslation();
 
           // Convert to field relative speeds & send command
+
           if (omega != 0.0d) {
             vision.resetError();
           } else if ((omega == 0.0) && (vision.seesTarget())) {
-            omega = vision.getTX();
+            omega = vision.getDesiredAngle();
           }
 
           drive.runVelocity(
