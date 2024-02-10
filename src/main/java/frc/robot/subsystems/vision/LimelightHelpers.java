@@ -1,6 +1,6 @@
 // LimelightHelpers v1.2.1 (March 1, 2023)
 
-package frc.robot.subsystems.launcher;
+package frc.robot.subsystems.vision;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
