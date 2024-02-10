@@ -69,25 +69,25 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveTalon = new TalonFX(0);
         turnTalon = new TalonFX(1);
         cancoder = new CANcoder(2);
-        absoluteEncoderOffset = -0.380d; // CANCoder rotations
+        absoluteEncoderOffset = 0.121d; // CANCoder rotations
         break;
       case 1:
         driveTalon = new TalonFX(3);
         turnTalon = new TalonFX(4);
         cancoder = new CANcoder(5);
-        absoluteEncoderOffset = 0.212d; // CANcoder rotations
+        absoluteEncoderOffset = -0.29d; // CANcoder rotations
         break;
       case 2:
         driveTalon = new TalonFX(6);
         turnTalon = new TalonFX(7);
         cancoder = new CANcoder(8);
-        absoluteEncoderOffset = 0.223d; // CANcoder rotations
+        absoluteEncoderOffset = -0.345d; // CANcoder rotations
         break;
       case 3:
         driveTalon = new TalonFX(9);
         turnTalon = new TalonFX(10);
         cancoder = new CANcoder(11);
-        absoluteEncoderOffset = 0.382d; // CANcoder rotations
+        absoluteEncoderOffset = -0.119d; // CANcoder rotations
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -166,10 +166,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.canCoderRotations = cancoder.getAbsolutePosition().getValue();
     inputs.canCoderAngle = Units.rotationsToDegrees(inputs.canCoderRotations);
 
-    inputs.drivePositionRad =
-        Units.rotationsToRadians(drivePosition.getValueAsDouble()) / DRIVE_GEAR_RATIO;
-    inputs.driveVelocityRadPerSec =
-        Units.rotationsToRadians(driveVelocity.getValueAsDouble()) / DRIVE_GEAR_RATIO;
+    inputs.drivePositionRotations = drivePosition.getValueAsDouble() / DRIVE_GEAR_RATIO;
+    inputs.driveVelocityRotationsPerSec = driveVelocity.getValueAsDouble() / DRIVE_GEAR_RATIO;
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = new double[] {driveCurrent.getValueAsDouble()};
 
@@ -182,9 +180,9 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = new double[] {turnCurrent.getValueAsDouble()};
 
-    inputs.odometryDrivePositionsRad =
+    inputs.odometryDrivePositionsRotations =
         drivePositionQueue.stream()
-            .mapToDouble((Double value) -> Units.rotationsToRadians(value) / DRIVE_GEAR_RATIO)
+            .mapToDouble((Double value) -> value / DRIVE_GEAR_RATIO)
             .toArray();
     inputs.odometryTurnPositions =
         turnPositionQueue.stream()
