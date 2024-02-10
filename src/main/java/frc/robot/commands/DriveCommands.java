@@ -127,7 +127,7 @@ public class DriveCommands {
           if (omega != 0.0d) {
             vision.resetError();
           } else if ((omega == 0.0) && (vision.seesTarget())) {
-            omega = vision.getDesiredAngle();
+            omega = -vision.getDesiredAngle();
           }
 
           drive.runVelocity(
