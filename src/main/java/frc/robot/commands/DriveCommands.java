@@ -122,15 +122,15 @@ public class DriveCommands {
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
 
-          // Convert to field relative speeds & send command
 
-          if (omega != 0.0d) {
+          if (omega != 0.0d) { // Check if the driver isnt trying to turn 
             vision.resetError();
-          } else if ((omega == 0.0) && (vision.seesTarget())) {
+          } else if ((omega == 0.0) && (vision.seesTarget())) { // Check if the limelight sees the target and if the driver isnt turning
             omega = -vision.getDesiredAngle();
           }
 
           drive.runVelocity(
+              // Convert to field relative speeds & send command
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                   linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
