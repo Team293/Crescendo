@@ -56,7 +56,9 @@ public class Vision extends SubsystemBase {
     m_angularLastError = m_angularError;
 
     // Update the error
-    m_angularError = getTX();
+    //tX is in degrees from center
+    // Divide by horizontal FOV / 2 to get a value between -1.0 and 1.0
+    m_angularError = getTX() / (60.6 / 2.0);
 
     // Calculatge the angular change
     m_angularChange = m_angularError - m_angularLastError;
@@ -70,8 +72,8 @@ public class Vision extends SubsystemBase {
         (m_angularP * m_angularError)
             + (m_angularI * m_angularIntegralError)
             + (m_angularD * m_angularChange);
-    m_angularVelOutput = MathUtil.clamp(m_angularVelOutput, -1.0, 1.0);
-
+            
+    //Error of 10% demand
     if (Math.abs(m_angularError) < 0.1) {
       /* Found the target */
       m_angularVelOutput = 0.0d;

@@ -125,8 +125,9 @@ public class DriveCommands {
 
           if (omega != 0.0d) { // Check if the driver isnt trying to turn 
             vision.resetError();
-          } else if ((omega == 0.0) && (vision.seesTarget())) { // Check if the limelight sees the target and if the driver isnt turning
-            omega = -vision.getDesiredAngle();
+          } else if ((omega == 0.0) && (vision.seesTarget())) {
+            // Get tX from the vision subsystem. tX is "demand"
+            omega = -vision.getTX();
           }
 
           drive.runVelocity(
