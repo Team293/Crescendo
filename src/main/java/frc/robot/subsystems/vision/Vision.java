@@ -1,6 +1,5 @@
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -56,7 +55,7 @@ public class Vision extends SubsystemBase {
     m_angularLastError = m_angularError;
 
     // Update the error
-    //tX is in degrees from center
+    // tX is in degrees from center
     // Divide by horizontal FOV / 2 to get a value between -1.0 and 1.0
     m_angularError = getTX() / (60.6 / 2.0);
 
@@ -72,8 +71,8 @@ public class Vision extends SubsystemBase {
         (m_angularP * m_angularError)
             + (m_angularI * m_angularIntegralError)
             + (m_angularD * m_angularChange);
-            
-    //Error of 10% demand
+
+    // Error of 10% demand
     if (Math.abs(m_angularError) < 0.1) {
       /* Found the target */
       m_angularVelOutput = 0.0d;

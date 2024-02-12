@@ -122,12 +122,11 @@ public class DriveCommands {
                   .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                   .getTranslation();
 
-
-          if (omega != 0.0d) { // Check if the driver isnt trying to turn 
+          if (omega != 0.0d) { // Check if the driver isnt trying to turn
             vision.resetError();
           } else if ((omega == 0.0) && (vision.seesTarget())) {
             // Get tX from the vision subsystem. tX is "demand"
-            omega = -vision.getTX();
+            omega = -vision.getDesiredAngle();
           }
 
           drive.runVelocity(
