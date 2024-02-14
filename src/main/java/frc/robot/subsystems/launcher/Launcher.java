@@ -19,7 +19,7 @@ public class Launcher extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Update the color sensor inputs
+    // Update the color sensor and vision inputs
     m_sensorIO.updateInputs(m_sensorInputs);
     Logger.processInputs("Launcher/Sensor", m_sensorInputs);
   }
