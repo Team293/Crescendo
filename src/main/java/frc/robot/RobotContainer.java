@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.commands.RotateTo;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -129,6 +131,8 @@ public class RobotContainer {
             vision,
             () -> -controller.getRightY(),
             () -> -controller.getRightX(),
+            () -> controller.rightBumper().getAsBoolean(),
+            () -> controller.getHID().getPOV(0),
             () -> -controller.getLeftX()));
 
     /* Drive like a car */
@@ -141,6 +145,8 @@ public class RobotContainer {
 
     /* Brake command */
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    controller.a().onTrue(new RotateTo(drive, new Rotation2d()));
 
     /* Reset heading command */
     controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));

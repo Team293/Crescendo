@@ -30,6 +30,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.SpikeUtils;
+import frc.lib.constants.SpikePID;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -52,6 +54,10 @@ public class Drive extends SubsystemBase {
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Pose2d pose = new Pose2d();
   private Rotation2d lastGyroRotation = new Rotation2d();
+
+  private double targetDegrees = 0.0d;
+  private double angleError = 0.0d;
+  private double autoAngleOutput = 0.0d;
 
   public Drive(
       GyroIO gyroIO,
@@ -144,10 +150,28 @@ public class Drive extends SubsystemBase {
     lastGyroRotation = gyroInputs.yawPosition;
   }
 
-  public void resetRotation() {
-    gyroInputs.yawOffset = gyroInputs.realYawPosition;
-    var currentPose = getPose();
-    setPose(new Pose2d(currentPose.getTranslation(), new Rotation2d()));
+  public void runFieldOriented(double translationX, double translationY) {
+    angleError = SpikeUtils.getDifference(getRotation().getDegrees(), targetDegrees);
+    double changeInAngle = new Rotation2d(gyroInputs.yawVelocityRadPerSec).getDegrees();
+
+    double newOutput = SpikePID.getRotationOutput(angleError, 0d, changeInAngle);
+
+    if (Math.abs(autoAngleOutput - newOutput)
+        < 1.0d) { // If the new output is more than 1 it means we're trying to go from 1.0 to -1.0
+      autoAngleOutput = newOutput;
+    }
+
+    Logger.recordOutput("AutoRotate/Target Degrees", targetDegrees);
+    Logger.recordOutput("AutoRotate/Angle Error", angleError);
+    Logger.recordOutput("AutoRotate/Attempted Output", newOutput);
+    Logger.recordOutput("AutoRotate/Output Rotation", autoAngleOutput);
+
+    runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            translationX * MAX_LINEAR_SPEED,
+            translationY * MAX_LINEAR_SPEED,
+            (autoAngleOutput) * MAX_ANGULAR_SPEED,
+            gyroInputs.yawPosition));
   }
 
   /**
@@ -244,6 +268,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public ChassisSpeeds getRobotVelocity() {
+    return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
   /** Returns the average drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
     double driveVelocityAverage = 0.0;
@@ -274,6 +302,38 @@ public class Drive extends SubsystemBase {
     return gyroInputs.yawPosition;
   }
 
+  public Rotation2d getAngleError(Rotation2d targetAngle) {
+    return SpikeUtils.getDifference(gyroInputs.yawPosition, targetAngle);
+  }
+
+  public Translation2d getTranslationDifference(Translation2d targetTranslation) {
+    double errorX = targetTranslation.getX() - pose.getX();
+    double errorY = targetTranslation.getX() - pose.getX();
+
+    return new Translation2d(errorX, errorY);
+  }
+
+  public Pose2d getPoseError(Pose2d targetPose) {
+    Translation2d translationError = getTranslationDifference(targetPose.getTranslation());
+    Rotation2d rotationError = getAngleError(targetPose.getRotation());
+
+    return new Pose2d(translationError, rotationError);
+  }
+
+  public void resetRotation() {
+    gyroInputs.yawOffset = gyroInputs.realYawPosition;
+    lastGyroRotation = new Rotation2d();
+    setPose(new Pose2d(pose.getTranslation(), new Rotation2d()));
+  }
+
+  public double getTargetAngle() {
+    return targetDegrees;
+  }
+
+  public void setTargetAngle(double degrees) {
+    targetDegrees = degrees;
+  }
+
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     this.pose = pose;
@@ -287,6 +347,10 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return MAX_ANGULAR_SPEED;
+  }
+
+  public Rotation2d getLastGyRotation2d() {
+    return lastGyroRotation;
   }
 
   /** Returns an array of module translations. */
