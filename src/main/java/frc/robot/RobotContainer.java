@@ -32,8 +32,6 @@ import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.launcher.Launcher;
-import frc.robot.subsystems.vision.Vision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,8 +43,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Launcher launcher;
-  private final Vision vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -95,8 +91,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
-    vision = new Vision();
-    launcher = new Launcher();
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser2 = AutoBuilder.buildAutoChooser();
@@ -119,16 +114,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Drive command */
-    /*drive.setDefaultCommand(
-    DriveCommands.joystickDrive(
-        drive,
-        () -> -controller.getRightY(),
-        () -> -controller.getRightX(),
-        () -> -controller.getLeftX()));*/
     drive.setDefaultCommand(
-        DriveCommands.limelightDrive(
+        DriveCommands.joystickDrive(
             drive,
-            vision,
             () -> -controller.getRightY(),
             () -> -controller.getRightX(),
             () -> controller.rightBumper().getAsBoolean(),
