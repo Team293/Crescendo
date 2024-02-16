@@ -30,6 +30,8 @@ import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.intake.Intake;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -42,6 +44,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Launcher launcher;
+  private final Vision vision;
   private final Intake intake;
 
   // Controller
@@ -93,6 +97,8 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
+    vision = new Vision();
+    launcher = new Launcher();
 
     // Initalize intake
     intake = new Intake(drive);
@@ -119,9 +125,16 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Drive command */
+    /*drive.setDefaultCommand(
+    DriveCommands.joystickDrive(
+        drive,
+        () -> -controller.getRightY(),
+        () -> -controller.getRightX(),
+        () -> -controller.getLeftX()));*/
     drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
+        DriveCommands.limelightDrive(
             drive,
+            vision,
             () -> -controller.getRightY(),
             () -> -controller.getRightX(),
             () -> -controller.getLeftX()));
