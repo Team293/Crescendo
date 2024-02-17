@@ -30,9 +30,9 @@ import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.intake.Intake;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -154,8 +154,11 @@ public class RobotContainer {
     controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake command */
-    controller.a().whileTrue(Commands.runOnce(intake::enableIntake, intake));
-    controller.a().whileFalse(Commands.runOnce(intake::disableIntake, intake));
+    controller.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
+    controller.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
+
+    controller.rightBumper().whileTrue(Commands.runOnce(launcher::enableLauncher, launcher));
+    controller.leftBumper().whileFalse(Commands.runOnce(launcher::disableLauncher, launcher));
   }
 
   /**

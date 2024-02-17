@@ -21,6 +21,16 @@ public class IntakeCommand extends Command {
     intake.setSpeed(speedSet);
   }
 
+  public void startIntake(int seconds) {
+    execute();
+    try {
+      wait(seconds * 100);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    end(true);
+  }
+
   @Override
   public void end(boolean interrupted) {
     intake.setSpeed(0);

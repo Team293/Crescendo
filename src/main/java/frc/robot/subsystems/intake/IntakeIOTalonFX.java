@@ -15,7 +15,6 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -42,13 +41,11 @@ public class IntakeIOTalonFX implements IntakeIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Set motor PID
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kP = 0.021; // TODO: config
-    slot0Configs.kI = 0.0001; // TODO: config
-    slot0Configs.kD = 0.001; // TODO: config
-    slot0Configs.kV = (1.51 / 12);
-    slot0Configs.kA = (0.27 / 12);
-    motor.getConfigurator().apply(slot0Configs, 0.050);
+    config.Slot0.kP = 1.0; // TODO: config
+    config.Slot0.kI = 0.0; // TODO: config
+    config.Slot0.kD = 0.0; // TODO: config
+    config.Slot0.kV = (5.0 / 12.0); // RPS per volt
+    config.Slot0.kA = (0.096 / 12.0);
     motor.getConfigurator().apply(config);
 
     motorVelocity = motor.getVelocity();
