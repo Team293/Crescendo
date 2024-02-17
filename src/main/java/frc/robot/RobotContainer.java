@@ -158,7 +158,7 @@ public class RobotContainer {
     controller.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
 
     controller.rightBumper().whileTrue(Commands.runOnce(launcher::enableLauncher, launcher));
-    controller.leftBumper().whileFalse(Commands.runOnce(launcher::disableLauncher, launcher));
+    controller.rightBumper().whileFalse(Commands.runOnce(launcher::disableLauncher, launcher));
   }
 
   /**
