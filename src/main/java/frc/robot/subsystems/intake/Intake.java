@@ -17,8 +17,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
-
-
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -39,7 +37,7 @@ public class Intake extends SubsystemBase {
 
     SmartDashboard.setDefaultNumber("Intake Speed Setpoint(RPS)", 0.0);
   }
-  
+
   public boolean noteDetected() {
     // Updated when m_sensorIO.updateInputs(m_sensorInputs) happens in periodic
     return (m_sensorInputs.IsNoteDetected);
