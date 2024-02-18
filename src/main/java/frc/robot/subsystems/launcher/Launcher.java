@@ -5,8 +5,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
-  private final ColorSensorIO m_sensorIO;
-  private final ColorSensorIOInputsAutoLogged m_sensorInputs = new ColorSensorIOInputsAutoLogged();
   private final LauncherIOTalonFX launchMotor;
   private final LauncherIOInputsAutoLogged launchMotorInputs = new LauncherIOInputsAutoLogged();
 
@@ -14,26 +12,17 @@ public class Launcher extends SubsystemBase {
 
   public Launcher() {
     // Initialize the ColorSensorIORevV3 object
-    m_sensorIO = new ColorSensorIORevV3();
-
     launchMotor = new LauncherIOTalonFX(13); // todo
     launcherSetSpeed = SmartDashboard.getNumber("launcher speed(RPS)", 0.0d); // rps
-  }
-
-  public boolean noteDetected() {
-    // Updated when m_sensorIO.updateInputs(m_sensorInputs) happens in periodic
-    return (m_sensorInputs.IsNoteDetected);
   }
 
   @Override
   public void periodic() {
     // Update the color sensor and vision inputs
-    m_sensorIO.updateInputs(m_sensorInputs);
     launchMotor.updateInputs(launchMotorInputs);
 
     launcherSetSpeed = SmartDashboard.getNumber("Launcher Speed Setpoint", launcherSetSpeed);
 
-    Logger.processInputs("Launcher/Sensor", m_sensorInputs);
     Logger.processInputs("Launcher/Motor", launchMotorInputs);
   }
 
