@@ -29,7 +29,7 @@ public class LauncherIOTalonFX implements LauncherIO {
     config.Slot0.kS = 0.32d;
     motor.getConfigurator().apply(config);
 
-    motorVelocity = motor.getVelociy();
+    motorVelocity = motor.getVelocity();
     motorAppliedVolts = motor.getMotorVoltage();
     motorCurrent = motor.getStatorCurrent();
 
