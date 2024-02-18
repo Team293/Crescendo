@@ -10,13 +10,14 @@ public class Launcher extends SubsystemBase {
   private final LauncherIOTalonFX launchMotor;
   private final LauncherIOInputsAutoLogged launchMotorInputs = new LauncherIOInputsAutoLogged();
 
-  private double feedSetSpeed = 0.0;
+  private double launcherSetSpeed = 0.0d;
 
   public Launcher() {
     // Initialize the ColorSensorIORevV3 object
     m_sensorIO = new ColorSensorIORevV3();
 
     launchMotor = new LauncherIOTalonFX(13); // todo
+    launcherSetSpeed = SmartDashboard.getNumber("launcher speed(RPS)", 0.0d); // rps
   }
 
   public boolean noteDetected() {
@@ -30,15 +31,14 @@ public class Launcher extends SubsystemBase {
     m_sensorIO.updateInputs(m_sensorInputs);
     launchMotor.updateInputs(launchMotorInputs);
 
-    feedSetSpeed = SmartDashboard.getNumber("Launcher Speed Setpoint", feedSetSpeed);
+    launcherSetSpeed = SmartDashboard.getNumber("Launcher Speed Setpoint", launcherSetSpeed);
 
     Logger.processInputs("Launcher/Sensor", m_sensorInputs);
     Logger.processInputs("Launcher/Motor", launchMotorInputs);
-    Logger.recordOutput("Launcher/FeedSetPoint", feedSetSpeed);
   }
 
   public void enableLauncher() {
-    launchMotor.setSpeed(feedSetSpeed);
+    launchMotor.setSpeed(launcherSetSpeed);
   }
 
   public void disableLauncher() {

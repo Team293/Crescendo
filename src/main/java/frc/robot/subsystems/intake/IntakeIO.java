@@ -18,10 +18,11 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
-    public double motorVelocityRadPerSec = 0.0;
-    public double motorAppliedVolts = 0.0;
-    public double motorCurrentAmps = 0.0;
-    public double robotSpeed = 0.0;
+    public double motorVelocityRadPerSec = 0.0d;
+    public double motorAppliedVolts = 0.0d;
+    public double motorCurrentAmps = 0.0d;
+    public double setPoint = 0.0d;
+    public double setPointError = 0.0d;
   }
 
   /** Updates the set of loggable inputs. */

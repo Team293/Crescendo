@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -154,11 +156,21 @@ public class RobotContainer {
     controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake command */
+    SequentialCommandGroup enableLauncher =
+        new SequentialCommandGroup(
+            Commands.runOnce(launcher::enableLauncher),
+            Commands.waitSeconds(0.100),
+            Commands.runOnce(intake::enableIntake));
+
+    ParallelCommandGroup disableLauncher =
+        new ParallelCommandGroup(
+            Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
+
     controller.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
     controller.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
 
-    controller.rightBumper().whileTrue(Commands.runOnce(launcher::enableLauncher, launcher));
-    controller.rightBumper().whileFalse(Commands.runOnce(launcher::disableLauncher, launcher));
+    controller.rightBumper().whileTrue(enableLauncher);
+    controller.rightBumper().whileFalse(disableLauncher);
   }
 
   /**

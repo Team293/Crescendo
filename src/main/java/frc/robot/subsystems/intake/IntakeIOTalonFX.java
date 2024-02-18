@@ -32,20 +32,25 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Double> motorVelocity;
   private final StatusSignal<Double> motorAppliedVolts;
   private final StatusSignal<Double> motorCurrent;
+  private double setpoint = 0.0d;
+  private double setpointError = 0.0;
+
+  private final double m_gearRatio = (4.0 / 1.0); // 4 motor rotations per 1 intake rotation
 
   public IntakeIOTalonFX(int canId) {
     this.motor = new TalonFX(canId);
     var config = new TalonFXConfiguration();
-    config.CurrentLimits.StatorCurrentLimit = 80.0;
+    config.CurrentLimits.StatorCurrentLimit = 40.0;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Set motor PID
-    config.Slot0.kP = 1.0; // TODO: config
-    config.Slot0.kI = 0.0; // TODO: config
-    config.Slot0.kD = 0.0; // TODO: config
-    config.Slot0.kV = (5.0 / 12.0); // RPS per volt
-    config.Slot0.kA = (0.096 / 12.0);
+    config.Slot0.kP = 0.1d; // TODO: config
+    config.Slot0.kI = 0.0d; // TODO: config
+    config.Slot0.kD = 0.0d; // TODO: config
+    config.Slot0.kV = (12.0d / 106.0d); // RPS per volt
+    config.Slot0.kS = (0.0d); // RPS per volt
+    config.Slot0.kA = (0.0d);
     motor.getConfigurator().apply(config);
 
     motorVelocity = motor.getVelocity();
@@ -64,12 +69,15 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.motorVelocityRadPerSec = Units.rotationsToRadians(motorVelocity.getValueAsDouble());
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
-    inputs.robotSpeed = this.robotSpeed;
+    // inputs.robotSpeed = this.robotSpeed;
+    inputs.setPoint = setpoint;
+    inputs.setPointError = motor.getClosedLoopError().getValueAsDouble();
   }
 
+  // Takes in speed as pulley rotations per second
   @Override
   public void setSpeed(double speed) {
-    double inputSpeed = -(speed + this.robotSpeed);
-    motor.setControl(new VelocityVoltage(inputSpeed).withSlot(0));
+    setpoint = speed * m_gearRatio; // Convert to motor rotations per second
+    motor.setControl(new VelocityVoltage(setpoint).withSlot(0));
   }
 }

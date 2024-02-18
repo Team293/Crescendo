@@ -23,7 +23,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIOTalonFX feedMotor;
   private final Drive drive;
   private final IntakeIOInputsAutoLogged feedMotorInputs = new IntakeIOInputsAutoLogged();
-  private double feedSetSpeed = 0.0;
+  private double feedSetSpeed = 5.0; /* pulley rotations per second */
 
   public Intake(Drive drive) {
     this.drive = drive;
@@ -39,12 +39,14 @@ public class Intake extends SubsystemBase {
     double speed = robotSpeed.vxMetersPerSecond;
 
     feedMotor.updateInputs(feedMotorInputs, speed);
+
+    // Log the inputs
     Logger.processInputs("Intake/Motor", feedMotorInputs);
   }
 
   public void enableIntake() {
-    double appliedSpeed = -(feedSetSpeed + feedMotorInputs.robotSpeed);
-    feedMotor.setSpeed(appliedSpeed);
+    // double appliedSpeed = -(feedSetSpeed + feedMotorInputs.robotSpeed);
+    feedMotor.setSpeed(feedSetSpeed);
   }
 
   public void disableIntake() {

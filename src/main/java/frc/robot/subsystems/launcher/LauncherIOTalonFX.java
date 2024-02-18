@@ -6,7 +6,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LauncherIOTalonFX implements LauncherIO {
   public final TalonFX motor;
@@ -15,21 +14,20 @@ public class LauncherIOTalonFX implements LauncherIO {
   private final StatusSignal<Double> motorAppliedVolts;
   private final StatusSignal<Double> motorCurrent;
 
-  private double targetSpeed;
-  private final double gearRation = (11 / 10);
+  private double setPoint = 0.0d;
+  private double setPointError = 0.0d;
+  private final double gearRatio = (11.0d / 10.0d);
 
   public LauncherIOTalonFX(int canId) {
     this.motor = new TalonFX(canId);
     var config = new TalonFXConfiguration();
 
-    config.Slot0.kP = 1.0; // TODO: config
-    config.Slot0.kI = 0.0;
-    config.Slot0.kD = 0.0;
-    config.Slot0.kV = (50.0 / 12.0); // Max RPMs per volt
-    config.Slot0.kA = (0.096 / 12.0);
+    config.Slot0.kP = 0.2d; // TODO: config
+    config.Slot0.kI = 0.0d;
+    config.Slot0.kD = 0.0d;
+    config.Slot0.kV = (12.0d / 50.0d); // vols per RPS
+    config.Slot0.kA = 0.0d;
     motor.getConfigurator().apply(config);
-
-    targetSpeed = SmartDashboard.getNumber("launcher speed(RPS)", 0); // rps
 
     motorVelocity = motor.getVelocity();
     motorAppliedVolts = motor.getMotorVoltage();
@@ -43,17 +41,16 @@ public class LauncherIOTalonFX implements LauncherIO {
   public void updateInputs(LauncherIOInputs inputs) {
     BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent);
 
-    targetSpeed = SmartDashboard.getNumber("launcher speed(RPS)", 0); // rps
-
     inputs.motorVelocityRadPerSec = Units.rotationsToRadians(motorVelocity.getValueAsDouble());
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
-    inputs.motorTargetRPS = targetSpeed;
+    inputs.setPoint = setPoint;
+    inputs.setPointError = motor.getClosedLoopError().getValueAsDouble();
   }
 
   @Override
   public void setSpeed(double speed) {
-    targetSpeed = speed;
-    motor.setControl(new VelocityVoltage(targetSpeed * gearRation).withSlot(0));
+    setPoint = speed * gearRatio;
+    motor.setControl(new VelocityVoltage(setPoint).withSlot(0));
   }
 }
