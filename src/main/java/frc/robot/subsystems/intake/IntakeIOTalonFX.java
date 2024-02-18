@@ -48,9 +48,6 @@ public class IntakeIOTalonFX implements IntakeIO {
     config.Slot0.kP = 0.1d; // TODO: config
     config.Slot0.kI = 0.0d; // TODO: config
     config.Slot0.kD = 0.0d; // TODO: config
-    config.Slot0.kV = (12.0d / 106.0d); // RPS per volt
-    config.Slot0.kS = (0.0d); // RPS per volt
-    config.Slot0.kA = (0.0d);
     motor.getConfigurator().apply(config);
 
     motorVelocity = motor.getVelocity();
