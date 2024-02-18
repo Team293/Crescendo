@@ -22,14 +22,14 @@ public class LauncherIOTalonFX implements LauncherIO {
     this.motor = new TalonFX(canId);
     var config = new TalonFXConfiguration();
 
-    config.Slot0.kP = 0.2d; // TODO: config
+    config.Slot0.kP = 0.1d; // TODO: config
     config.Slot0.kI = 0.0d;
     config.Slot0.kD = 0.0d;
-    config.Slot0.kV = (12.0d / 50.0d); // vols per RPS
-    config.Slot0.kA = 0.0d;
+    config.Slot0.kV = 0.242d; // vols per RPS
+    config.Slot0.kS = 0.32d;
     motor.getConfigurator().apply(config);
 
-    motorVelocity = motor.getVelocity();
+    motorVelocity = motor.getVelociy();
     motorAppliedVolts = motor.getMotorVoltage();
     motorCurrent = motor.getStatorCurrent();
 
