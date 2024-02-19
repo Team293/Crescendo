@@ -17,6 +17,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.launcher.ColorSensorIO;
+import frc.robot.subsystems.launcher.ColorSensorIORevV3;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -27,21 +30,14 @@ public class Intake extends SubsystemBase {
 
   private double feedSetSpeed = 5.0; /* pulley rotations per second */
 
-  private final ColorSensorIO m_sensorIO;
-  private final ColorSensorIOInputsAutoLogged m_sensorInputs = new ColorSensorIOInputsAutoLogged();
 
   public Intake(Drive drive) {
     this.drive = drive;
     feedMotor = new IntakeIOTalonFX(10);
-    m_sensorIO = new ColorSensorIORevV3();
 
     SmartDashboard.setDefaultNumber("Intake Speed Setpoint(RPS)", 0.0);
   }
 
-  public boolean noteDetected() {
-    // Updated when m_sensorIO.updateInputs(m_sensorInputs) happens in periodic
-    return (m_sensorInputs.IsNoteDetected);
-  }
 
   public void periodic() {
     feedSetSpeed = SmartDashboard.getNumber("Intake Speed Setpoint(RPS)", feedSetSpeed);
@@ -49,11 +45,9 @@ public class Intake extends SubsystemBase {
     ChassisSpeeds robotSpeed = drive.getChassisSpeed();
     double speed = robotSpeed.vxMetersPerSecond;
 
-    m_sensorIO.updateInputs(m_sensorInputs);
     feedMotor.updateInputs(feedMotorInputs, speed);
 
     // Log the inputs
-    Logger.processInputs("Launcher/Sensor", m_sensorInputs);
     Logger.processInputs("Intake/Motor", feedMotorInputs);
   }
 

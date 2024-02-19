@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.launcher;
 
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
