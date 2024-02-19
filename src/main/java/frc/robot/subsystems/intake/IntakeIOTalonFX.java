@@ -33,8 +33,6 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Double> motorAppliedVolts;
   private final StatusSignal<Double> motorCurrent;
   private double setpoint = 0.0d;
-  private double setpointError = 0.0;
-
   private final double m_gearRatio = (4.0 / 1.0); // 4 motor rotations per 1 intake rotation
 
   public IntakeIOTalonFX(int canId) {

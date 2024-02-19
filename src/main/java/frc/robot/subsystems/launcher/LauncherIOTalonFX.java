@@ -4,7 +4,10 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 
 public class LauncherIOTalonFX implements LauncherIO {
@@ -22,11 +25,15 @@ public class LauncherIOTalonFX implements LauncherIO {
     this.motor = new TalonFX(canId);
     var config = new TalonFXConfiguration();
 
-    config.Slot0.kP = 0.1d; // TODO: config
-    config.Slot0.kI = 0.0d;
-    config.Slot0.kD = 0.0d;
-    config.Slot0.kV = 0.242d; // vols per RPS
-    config.Slot0.kS = 0.32d;
+    config.Slot0.kP = 0.85; // TODO: config
+    config.Slot0.kI = 0.0;
+    config.Slot0.kD = 0.0;
+    config.Slot0.kV = 0.18;
+    config.Slot0.kS = 0.1d;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.CurrentLimits.StatorCurrentLimit = 100.0;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     motor.getConfigurator().apply(config);
 
     motorVelocity = motor.getVelocity();
@@ -51,6 +58,11 @@ public class LauncherIOTalonFX implements LauncherIO {
   @Override
   public void setSpeed(double speed) {
     setPoint = speed * gearRatio;
-    motor.setControl(new VelocityVoltage(setPoint).withSlot(0));
+
+    if (setPoint == 0) {
+      motor.setControl(new VoltageOut(0));
+    } else {
+      motor.setControl(new VelocityVoltage(setPoint).withSlot(0));
+    }
   }
 }

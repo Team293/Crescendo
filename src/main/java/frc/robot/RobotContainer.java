@@ -51,7 +51,8 @@ public class RobotContainer {
   private final Intake intake;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -137,9 +138,9 @@ public class RobotContainer {
         DriveCommands.limelightDrive(
             drive,
             vision,
-            () -> -controller.getRightY(),
-            () -> -controller.getRightX(),
-            () -> -controller.getLeftX()));
+            () -> -driverController.getRightY(),
+            () -> -driverController.getRightX(),
+            () -> -driverController.getLeftX()));
 
     /* Drive like a car */
     // drive.setDefaultCommand(
@@ -150,27 +151,37 @@ public class RobotContainer {
     //     () -> controller.a().getAsBoolean()));
 
     /* Brake command */
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     /* Reset heading command */
-    controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+    driverController
+        .b()
+        .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake command */
-    SequentialCommandGroup enableLauncher =
+    SequentialCommandGroup enableIntake =
         new SequentialCommandGroup(
-            Commands.runOnce(launcher::enableLauncher),
-            Commands.waitSeconds(0.100),
-            Commands.runOnce(intake::enableIntake));
+            Commands.waitSeconds(1.000), Commands.runOnce(intake::enableIntake));
+
+    ParallelCommandGroup enableLauncher =
+        new ParallelCommandGroup(Commands.runOnce(launcher::enableLauncher), enableIntake);
 
     ParallelCommandGroup disableLauncher =
         new ParallelCommandGroup(
             Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
 
-    controller.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
-    controller.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
+    // launcher.setDefaultCommand(
+    //   Commands.run(
+    //       () -> {
+    //         intake.enableIntake(operatorController.getLeftY());
+    //       },
+    //       intake));
 
-    controller.rightBumper().whileTrue(enableLauncher);
-    controller.rightBumper().whileFalse(disableLauncher);
+    operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
+    operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
+
+    operatorController.rightBumper().whileTrue(enableLauncher);
+    operatorController.rightBumper().whileFalse(disableLauncher);
   }
 
   /**
