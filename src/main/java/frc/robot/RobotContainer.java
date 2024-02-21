@@ -21,15 +21,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.vision.Vision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -45,9 +49,11 @@ public class RobotContainer {
   private final Drive drive;
   private final Launcher launcher;
   private final Vision vision;
+  private final Intake intake;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -58,6 +64,8 @@ public class RobotContainer {
     /* Print the log directory */
     String logDir = DataLogManager.getLogDir();
     System.out.print(logDir);
+
+    // Initialize the intake subsystem
 
     switch (Constants.currentMode) {
       case REAL:
@@ -95,6 +103,10 @@ public class RobotContainer {
     }
     vision = new Vision();
     launcher = new Launcher();
+
+    // Initalize intake
+    intake = new Intake(drive);
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser2 = AutoBuilder.buildAutoChooser();
@@ -127,9 +139,9 @@ public class RobotContainer {
         DriveCommands.limelightDrive(
             drive,
             vision,
-            () -> -controller.getRightY(),
-            () -> -controller.getRightX(),
-            () -> -controller.getLeftX()));
+            () -> -driverController.getRightY(),
+            () -> -driverController.getRightX(),
+            () -> -driverController.getLeftX()));
 
     /* Drive like a car */
     // drive.setDefaultCommand(
@@ -140,10 +152,32 @@ public class RobotContainer {
     //     () -> controller.a().getAsBoolean()));
 
     /* Brake command */
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     /* Reset heading command */
-    controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+    driverController
+        .b()
+        .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+
+    /* Intake command */
+    SequentialCommandGroup enableIntake =
+        new SequentialCommandGroup(
+            Commands.waitSeconds(1.000), Commands.runOnce(intake::enableIntake));
+
+    ParallelCommandGroup enableLauncher =
+        new ParallelCommandGroup(Commands.runOnce(launcher::enableLauncher), enableIntake);
+
+    ParallelCommandGroup disableLauncher =
+        new ParallelCommandGroup(
+            Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
+
+    intake.setDefaultCommand(IntakeCommands.intakeOperate(intake, operatorController::getLeftY));
+
+    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
+    // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
+
+    operatorController.rightBumper().whileTrue(enableLauncher);
+    operatorController.rightBumper().whileFalse(disableLauncher);
   }
 
   /**
