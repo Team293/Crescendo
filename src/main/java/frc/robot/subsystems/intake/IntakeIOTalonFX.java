@@ -18,6 +18,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 
@@ -42,10 +43,15 @@ public class IntakeIOTalonFX implements IntakeIO {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    // Set motor PID
-    config.Slot0.kP = 0.1d; // TODO: config
-    config.Slot0.kI = 0.0d; // TODO: config
-    config.Slot0.kD = 0.0d; // TODO: config
+
+
+
+    // Set motor PID yasssssssss
+    config.Slot0.kP = 0.11; // TODO: config
+    config.Slot0.kI = 0.0;
+    config.Slot0.kD = 0.0;
+    config.Slot0.kV = 0.18;
+    config.Slot0.kS = 0.05;
     motor.getConfigurator().apply(config);
 
     motorVelocity = motor.getVelocity();

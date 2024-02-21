@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
     feedMotor.setSpeed(feedSetSpeed);
   }
 
-  public void enableIntake(double range) {
+  public void setVelocity(double range) {
     // double appliedSpeed = -(feedSetSpeed + feedMotorInputs.robotSpeed);
     feedMotor.setSpeed(MathUtil.clamp(range, -1.0, 1.0) * feedSetSpeed);
   }

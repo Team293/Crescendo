@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -170,15 +171,10 @@ public class RobotContainer {
         new ParallelCommandGroup(
             Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
 
-    // launcher.setDefaultCommand(
-    //   Commands.run(
-    //       () -> {
-    //         intake.enableIntake(operatorController.getLeftY());
-    //       },
-    //       intake));
+    intake.setDefaultCommand(IntakeCommands.intakeOperate(intake, operatorController::getLeftY));
 
-    operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
-    operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
+    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
+    // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
 
     operatorController.rightBumper().whileTrue(enableLauncher);
     operatorController.rightBumper().whileFalse(disableLauncher);
