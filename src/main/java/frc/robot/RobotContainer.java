@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.subsystems.ampscorer.AmpScorer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -45,9 +46,11 @@ public class RobotContainer {
   private final Drive drive;
   private final Launcher launcher;
   private final Vision vision;
+  private final AmpScorer ampscorer;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -95,6 +98,7 @@ public class RobotContainer {
     }
     vision = new Vision();
     launcher = new Launcher();
+    ampscorer = new AmpScorer();
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser2 = AutoBuilder.buildAutoChooser();
@@ -127,9 +131,9 @@ public class RobotContainer {
         DriveCommands.limelightDrive(
             drive,
             vision,
-            () -> -controller.getRightY(),
-            () -> -controller.getRightX(),
-            () -> -controller.getLeftX()));
+            () -> -driverController.getRightY(),
+            () -> -driverController.getRightX(),
+            () -> -driverController.getLeftX()));
 
     /* Drive like a car */
     // drive.setDefaultCommand(
@@ -140,10 +144,17 @@ public class RobotContainer {
     //     () -> controller.a().getAsBoolean()));
 
     /* Brake command */
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     /* Reset heading command */
-    controller.b().onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+    driverController
+        .b()
+        .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+
+    operatorController.x().whileTrue(Commands.runOnce(ampscorer::intakeNote));
+    operatorController.x().whileFalse(Commands.runOnce(ampscorer::stop));
+    operatorController.a().whileTrue(Commands.runOnce(ampscorer::dischargeNote));
+    operatorController.x().whileFalse(Commands.runOnce(ampscorer::stop));
   }
 
   /**
