@@ -13,7 +13,6 @@
 
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,9 +51,9 @@ public class Intake extends SubsystemBase {
     feedMotor.setSpeed(feedSetSpeed);
   }
 
-  public void setVelocity(double range) {
+  public void setVelocity(double speedRPS) {
     // double appliedSpeed = -(feedSetSpeed + feedMotorInputs.robotSpeed);
-    feedMotor.setSpeed(MathUtil.clamp(range, -1.0, 1.0) * feedSetSpeed);
+    feedMotor.setSpeed(speedRPS);
   }
 
   public void disableIntake() {
