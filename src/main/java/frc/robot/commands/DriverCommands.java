@@ -26,10 +26,10 @@ import frc.robot.subsystems.vision.Vision;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class DriveCommands {
+public class DriverCommands {
   private static final double DEADBAND = 0.1;
 
-  private DriveCommands() {}
+  private DriverCommands() {}
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).

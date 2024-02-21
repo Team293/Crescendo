@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriverCommands;
 import frc.robot.commands.FeedForwardCharacterization;
-import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.OperatorCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -136,7 +136,7 @@ public class RobotContainer {
         () -> -controller.getRightX(),
         () -> -controller.getLeftX()));*/
     drive.setDefaultCommand(
-        DriveCommands.limelightDrive(
+        DriverCommands.limelightDrive(
             drive,
             vision,
             () -> -driverController.getRightY(),
@@ -171,7 +171,7 @@ public class RobotContainer {
         new ParallelCommandGroup(
             Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
 
-    intake.setDefaultCommand(IntakeCommands.intakeOperate(intake, operatorController::getLeftY));
+    intake.setDefaultCommand(OperatorCommands.defaultOperator(intake, colorSe, operatorController::getLeftY));
 
     // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
     // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
