@@ -171,7 +171,8 @@ public class RobotContainer {
         new ParallelCommandGroup(
             Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
 
-    intake.setDefaultCommand(OperatorCommands.defaultOperator(intake, colorSe, operatorController::getLeftY));
+    intake.setDefaultCommand(
+        OperatorCommands.defaultOperator(intake, operatorController::getLeftY));
 
     // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
     // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));

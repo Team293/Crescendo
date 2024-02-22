@@ -17,10 +17,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.launcher.ColorSensorIORevV3;
-import frc.robot.subsystems.launcher.Launcher;
-
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class OperatorCommands {
@@ -32,27 +28,11 @@ public class OperatorCommands {
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */
-  public static Command defaultOperator(
-    Intake intake,
-    Launcher launcher,
-    ColorSensorIORevV3 colorSensor,
-    DoubleSupplier intakeSpeed,
-    BooleanSupplier launchButton) {
+  public static Command defaultOperator(Intake intake, DoubleSupplier intakeSpeed) {
     return Commands.run(
         () -> {
           double deadbandedSpeed = MathUtil.applyDeadband(intakeSpeed.getAsDouble(), DEADBAND);
           deadbandedSpeed = MathUtil.clamp(deadbandedSpeed, -1.0, 1.0);
-
-          if (launchButton.getAsBoolean()) {
-            // set the velocity of the launcher
-            // reverse intake speed until the note isnt visible
-            // wait for the launcher to spin up to speed
-            // run the intake forward
-            // wait for a certain amount of time
-            // turn off both
-            return;
-          }
-
           intake.setVelocity(deadbandedSpeed * MAX_INTAKE_SPEED_RPS);
         },
         intake);
