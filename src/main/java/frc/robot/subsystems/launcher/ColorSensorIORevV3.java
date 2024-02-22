@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class ColorSensorIORevV3 implements ColorSensorIO {
   private final I2C.Port m_i2cPort;
   private final ColorSensorV3 m_colorSensor;
-  private final Color m_noteColor = new Color(0.520, 0.378, 0.103); // Is this correct?
+  private final Color m_noteColor = new Color(0.520, 0.378, 0.103); // todo Is this correct?
   private final ColorMatch m_colorMatcher = new ColorMatch();
 
   public ColorSensorIORevV3() {

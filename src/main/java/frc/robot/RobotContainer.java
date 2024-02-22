@@ -21,12 +21,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.DriverCommands;
 import frc.robot.commands.FeedForwardCharacterization;
-import frc.robot.commands.OperatorCommands;
+import frc.robot.commands.SubsystemControl;
+import frc.robot.commands.launcher.LaunchNote;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -136,7 +134,7 @@ public class RobotContainer {
         () -> -controller.getRightX(),
         () -> -controller.getLeftX()));*/
     drive.setDefaultCommand(
-        DriverCommands.limelightDrive(
+        SubsystemControl.limelightDrive(
             drive,
             vision,
             () -> -driverController.getRightY(),
@@ -159,26 +157,17 @@ public class RobotContainer {
         .b()
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
-    /* Intake command */
-    SequentialCommandGroup enableIntake =
-        new SequentialCommandGroup(
-            Commands.waitSeconds(1.000), Commands.runOnce(intake::enableIntake));
+    /* Intake control */
+    intake.setDefaultCommand(SubsystemControl.defaultIntake(intake, operatorController::getLeftY));
 
-    ParallelCommandGroup enableLauncher =
-        new ParallelCommandGroup(Commands.runOnce(launcher::enableLauncher), enableIntake);
+    /* Launcher control */
+    launcher.setDefaultCommand(
+        SubsystemControl.defaultLauncher(
+            launcher,
+            // control whether the launcher is enabled
+            () -> operatorController.rightBumper().getAsBoolean()));
 
-    ParallelCommandGroup disableLauncher =
-        new ParallelCommandGroup(
-            Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
-
-    intake.setDefaultCommand(
-        OperatorCommands.defaultOperator(intake, operatorController::getLeftY));
-
-    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
-    // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
-
-    operatorController.rightBumper().whileTrue(enableLauncher);
-    operatorController.rightBumper().whileFalse(disableLauncher);
+    operatorController.a().onTrue(new LaunchNote(intake, launcher));
   }
 
   /**
