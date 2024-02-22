@@ -19,8 +19,8 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 
 public class PrepareNote extends Command {
-  private static final double INTAKE_SPEED_RPS = -10.0;
-  private static final double TIME_TO_WAIT_SEC = 0.5;
+  private static final double INTAKE_SPEED_RPS = -5.0;
+  private static final double TIME_TO_WAIT_SEC = 0.1;
 
   private final Intake intake;
   private final Launcher launcher;
@@ -43,9 +43,9 @@ public class PrepareNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (launcher.noteDetected()) {
-      intake.setVelocity(INTAKE_SPEED_RPS);
-    }
+    // if (launcher.noteDetected()) {
+    intake.setVelocity(INTAKE_SPEED_RPS);
+    // }
   }
 
   // Called once the command ends or is interrupted.
@@ -57,6 +57,7 @@ public class PrepareNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !launcher.noteDetected() || timer.hasElapsed(TIME_TO_WAIT_SEC);
+    // return !launcher.noteDetected() || timer.hasElapsed(TIME_TO_WAIT_SEC);
+    return timer.hasElapsed(TIME_TO_WAIT_SEC);
   }
 }

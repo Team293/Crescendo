@@ -6,7 +6,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 
 public class FeedNoteToLauncher extends Command {
-  private static final double INTAKE_FEED_SPEED_RPS = 5.0;
+  private static final double INTAKE_FEED_SPEED_RPS = 10.0;
   private static final double EXTRA_WAIT_TIME = 0.2;
 
   // state variables
@@ -33,15 +33,14 @@ public class FeedNoteToLauncher extends Command {
   @Override
   public void execute() {
     // if not feeding and the launcher is ready, start the intake
-    if (!feeding && launcher.isLauncherReady()) {
-      intake.setVelocity(INTAKE_FEED_SPEED_RPS);
+    intake.setVelocity(INTAKE_FEED_SPEED_RPS);
+    if (launcher.isLauncherReady()) {
       feeding = true;
     }
 
     // if we are feeding and the launcher is not ready this means the
     // launcher has received resistance from the note and slowed down
     if (feeding && !launcher.isLauncherReady()) {
-      intake.setVelocity(0);
       feedComplete = true;
     }
 
@@ -56,6 +55,7 @@ public class FeedNoteToLauncher extends Command {
   @Override
   public void end(boolean interrupted) {
     // Stop the launcher
+    intake.setVelocity(0);
     launcher.disableLauncher();
   }
 

@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.vision.Vision;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -156,15 +155,15 @@ public class SubsystemControl {
         intake);
   }
 
-  public static Command defaultLauncher(Launcher launcher, BooleanSupplier enabled) {
-    return Commands.run(
-        () -> {
-          if (enabled.getAsBoolean()) {
-            launcher.enableLauncher();
-          } else {
-            launcher.disableLauncher();
-          }
-        },
-        launcher);
-  }
+  // public static Command defaultLauncher(Launcher launcher, BooleanSupplier enabled) {
+  //   return Commands.run(
+  //       () -> {
+  //         if (enabled.getAsBoolean()) {
+  //           launcher.enableLauncher();
+  //         } else {
+  //           launcher.disableLauncher();
+  //         }
+  //       },
+  //       launcher);
+  // }
 }

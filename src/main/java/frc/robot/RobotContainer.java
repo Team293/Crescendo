@@ -158,14 +158,18 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake control */
-    intake.setDefaultCommand(SubsystemControl.defaultIntake(intake, operatorController::getLeftY));
+    intake.setDefaultCommand(
+        SubsystemControl.defaultIntake(intake, () -> -operatorController.getLeftY()));
 
     /* Launcher control */
-    launcher.setDefaultCommand(
-        SubsystemControl.defaultLauncher(
-            launcher,
-            // control whether the launcher is enabled
-            () -> operatorController.rightBumper().getAsBoolean()));
+    // launcher.setDefaultCommand(
+    //     SubsystemControl.defaultLauncher(
+    //         launcher,
+    //         // control whether the launcher is enabled
+    //         () -> operatorController.rightBumper().getAsBoolean()));
+
+    operatorController.rightBumper().onTrue(Commands.runOnce(launcher::enableLauncher, launcher));
+    operatorController.rightBumper().onFalse(Commands.runOnce(launcher::disableLauncher, launcher));
 
     operatorController.a().onTrue(new LaunchNote(intake, launcher));
   }
