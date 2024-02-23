@@ -224,6 +224,12 @@ public class Drive extends SubsystemBase {
     runVelocity(new ChassisSpeeds());
   }
 
+  /** Gets drive speed. */
+  public ChassisSpeeds getChassisSpeed() {
+    return kinematics.toChassisSpeeds(
+        modules[0].getState(), modules[1].getState(), modules[2].getState(), modules[3].getState());
+  }
+
   /**
    * Stops the drive and turns the modules to an X arrangement to resist movement. The modules will
    * return to their normal orientations the next time a nonzero velocity is requested.
