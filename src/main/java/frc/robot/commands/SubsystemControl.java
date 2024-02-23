@@ -46,12 +46,10 @@ public class SubsystemControl {
     return Commands.run(
         () -> {
           // Apply deadband
-          double linearMagnitude =
-              MathUtil.applyDeadband(
-                  Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()), DEADBAND);
+          double linearMagnitude = Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble());
           Rotation2d linearDirection =
               new Rotation2d(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+          double omega = omegaSupplier.getAsDouble();
 
           // Square values
           linearMagnitude = linearMagnitude * linearMagnitude;
@@ -144,26 +142,14 @@ public class SubsystemControl {
         drive);
   }
 
-  public static Command defaultIntake(Intake intake, DoubleSupplier intakeSpeed) {
+  public static Command joystickIntake(Intake intake, DoubleSupplier intakeSpeed) {
     return Commands.run(
         () -> {
-          double deadbandedSpeed = MathUtil.applyDeadband(intakeSpeed.getAsDouble(), DEADBAND);
+          double deadbandedSpeed = intakeSpeed.getAsDouble();
           deadbandedSpeed = MathUtil.clamp(deadbandedSpeed, -1.0, 1.0);
 
           intake.setVelocity(deadbandedSpeed * MAX_INTAKE_SPEED_RPS);
         },
         intake);
   }
-
-  // public static Command defaultLauncher(Launcher launcher, BooleanSupplier enabled) {
-  //   return Commands.run(
-  //       () -> {
-  //         if (enabled.getAsBoolean()) {
-  //           launcher.enableLauncher();
-  //         } else {
-  //           launcher.disableLauncher();
-  //         }
-  //       },
-  //       launcher);
-  // }
 }

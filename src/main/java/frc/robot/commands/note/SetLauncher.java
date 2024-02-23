@@ -1,4 +1,4 @@
-package frc.robot.commands.launcher;
+package frc.robot.commands.note;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.launcher.Launcher;
@@ -10,6 +10,8 @@ public class SetLauncher extends Command {
   public SetLauncher(Launcher launcher, boolean enabled) {
     this.launcher = launcher;
     this.active = enabled;
+
+    addRequirements(launcher);
   }
 
   // Called when the command is initially scheduled.

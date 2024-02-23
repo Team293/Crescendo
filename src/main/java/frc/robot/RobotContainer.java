@@ -21,10 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
-import frc.robot.commands.launcher.LaunchNote;
+import frc.robot.commands.note.DropNote;
+import frc.robot.commands.note.LaunchNote;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -50,8 +51,9 @@ public class RobotContainer {
   private final Intake intake;
 
   // Controller
-  private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  private static final double DEADBAND = 0.05;
+  private final SpikeController driverController = new SpikeController(0, DEADBAND);
+  private final SpikeController operatorController = new SpikeController(1, DEADBAND);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -133,6 +135,7 @@ public class RobotContainer {
         () -> -controller.getRightY(),
         () -> -controller.getRightX(),
         () -> -controller.getLeftX()));*/
+
     drive.setDefaultCommand(
         SubsystemControl.limelightDrive(
             drive,
@@ -140,14 +143,6 @@ public class RobotContainer {
             () -> -driverController.getRightY(),
             () -> -driverController.getRightX(),
             () -> -driverController.getLeftX()));
-
-    /* Drive like a car */
-    // drive.setDefaultCommand(
-    //     DriveCommands.kartDrive(drive,
-    //     controller::getRightTriggerAxis,
-    //     controller::getLeftTriggerAxis,
-    //     controller::getLeftX,
-    //     () -> controller.a().getAsBoolean()));
 
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -157,21 +152,23 @@ public class RobotContainer {
         .b()
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
-    /* Intake control */
+    /* Intake control using joystick for speed */
     intake.setDefaultCommand(
-        SubsystemControl.defaultIntake(intake, () -> -operatorController.getLeftY()));
+        SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
 
     /* Launcher control */
-    // launcher.setDefaultCommand(
-    //     SubsystemControl.defaultLauncher(
-    //         launcher,
-    //         // control whether the launcher is enabled
-    //         () -> operatorController.rightBumper().getAsBoolean()));
-
     operatorController.rightBumper().onTrue(Commands.runOnce(launcher::enableLauncher, launcher));
     operatorController.rightBumper().onFalse(Commands.runOnce(launcher::disableLauncher, launcher));
 
-    operatorController.a().onTrue(new LaunchNote(intake, launcher));
+    operatorController
+        .a()
+        .onTrue(
+            new LaunchNote(
+                // cancels if the right bumper is pressed
+                intake, launcher, () -> operatorController.rightBumper().getAsBoolean()));
+
+    // cancels if the left stick is used
+    operatorController.b().onTrue(new DropNote(intake, () -> operatorController.getLeftY() != 0));
   }
 
   /**

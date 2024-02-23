@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.commands.launcher;
+package frc.robot.commands.note;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +31,8 @@ public class PrepareNote extends Command {
   public PrepareNote(Intake intake, Launcher launcher) {
     this.intake = intake;
     this.launcher = launcher;
+
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
@@ -43,6 +45,7 @@ public class PrepareNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // TODO tune the color sensor and add this back
     // if (launcher.noteDetected()) {
     intake.setVelocity(INTAKE_SPEED_RPS);
     // }
@@ -51,7 +54,7 @@ public class PrepareNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setVelocity(0);
+    intake.disableIntake();
   }
 
   // Returns true when the command should end.

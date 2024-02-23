@@ -1,4 +1,4 @@
-package frc.robot.commands.launcher;
+package frc.robot.commands.note;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +21,8 @@ public class FeedNoteToLauncher extends Command {
   public FeedNoteToLauncher(Intake intake, Launcher launcher) {
     this.intake = intake;
     this.launcher = launcher;
+
+    addRequirements(intake, launcher);
   }
 
   // Called when the command is initially scheduled.

@@ -11,13 +11,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.commands.launcher;
+package frc.robot.commands.note;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
+import java.util.function.BooleanSupplier;
 
 // A wrapper that abstracts all the commands needed to launch a note
 public class LaunchNote extends Command {
@@ -31,6 +32,17 @@ public class LaunchNote extends Command {
                 new SetLauncher(launcher, true),
                 new FeedNoteToLauncher(intake, launcher),
                 new SetLauncher(launcher, false)));
+  }
+
+  public LaunchNote(Intake intake, Launcher launcher, BooleanSupplier cancelCommand) {
+    launchNoteCommand =
+        new ParallelCommandGroup(
+            new PrepareNote(intake, launcher),
+            new SequentialCommandGroup(
+                new SetLauncher(launcher, true),
+                new FeedNoteToLauncher(intake, launcher),
+                new SetLauncher(launcher, false)));
+    launchNoteCommand.onlyWhile(() -> !cancelCommand.getAsBoolean());
   }
 
   // Called when the command is initially scheduled.
