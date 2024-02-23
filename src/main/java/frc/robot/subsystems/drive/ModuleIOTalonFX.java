@@ -59,8 +59,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<Double> turnCurrent;
 
   // Gear ratios for SDS MK4i L2, adjust as necessary
-  private final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
-  private final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
+  private static final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
+  private static final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
 
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
   private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
@@ -107,6 +107,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.Slot0.kI = SDSMK4L1Constants.driveKI;
     driveConfig.Slot0.kD = SDSMK4L1Constants.driveKD;
 
+    driveConfig.Feedback.SensorToMechanismRatio = DRIVE_GEAR_RATIO;
+
     driveTalon.clearStickyFaults();
     driveTalon.getConfigurator().apply(driveConfig);
     setDriveBrakeMode(true);
@@ -120,6 +122,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnConfig.Slot0.kP = SDSMK4L1Constants.angleKP;
     turnConfig.Slot0.kI = SDSMK4L1Constants.angleKI;
     turnConfig.Slot0.kD = SDSMK4L1Constants.angleKD;
+
+    turnConfig.Feedback.SensorToMechanismRatio = TURN_GEAR_RATIO;
 
     turnTalon.getConfigurator().apply(turnConfig);
     setTurnBrakeMode(true);
@@ -141,7 +145,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     // Turn motor
     turnAbsolutePosition = cancoder.getAbsolutePosition(); /* -0.5 <-> 0.5 in mechanism rotations */
     /* Mechanism rotations -> motor rotations */
-    turnTalon.setPosition(turnAbsolutePosition.getValueAsDouble() * TURN_GEAR_RATIO);
+    turnTalon.setPosition(turnAbsolutePosition.getValueAsDouble());
     turnPosition = turnTalon.getPosition(); // motor rotations
     turnPositionQueue =
         PhoenixOdometryThread.getInstance().registerSignal(turnTalon, turnTalon.getPosition());
@@ -180,28 +184,22 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.canCoderRotations = cancoder.getAbsolutePosition().getValue();
     inputs.canCoderAngle = Units.rotationsToDegrees(inputs.canCoderRotations);
 
-    inputs.drivePositionRotations = drivePosition.getValueAsDouble() / DRIVE_GEAR_RATIO;
-    inputs.driveVelocityRotationsPerSec = driveVelocity.getValueAsDouble() / DRIVE_GEAR_RATIO;
+    inputs.drivePositionRotations = drivePosition.getValueAsDouble();
+    inputs.driveVelocityRotationsPerSec = driveVelocity.getValueAsDouble();
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = new double[] {driveCurrent.getValueAsDouble()};
 
     inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
-    inputs.turnPosition =
-        Rotation2d.fromRotations(turnPosition.getValueAsDouble() / TURN_GEAR_RATIO);
+    inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
     inputs.turnPositionAngle = inputs.turnPosition.getDegrees();
-    inputs.turnVelocityRadPerSec =
-        Units.rotationsToRadians(turnVelocity.getValueAsDouble()) / TURN_GEAR_RATIO;
+    inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
     inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = new double[] {turnCurrent.getValueAsDouble()};
 
     inputs.odometryDrivePositionsRotations =
-        drivePositionQueue.stream()
-            .mapToDouble((Double value) -> value / DRIVE_GEAR_RATIO)
-            .toArray();
+        drivePositionQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryTurnPositions =
-        turnPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromRotations(value / TURN_GEAR_RATIO))
-            .toArray(Rotation2d[]::new);
+        turnPositionQueue.stream().map(Rotation2d::fromRotations).toArray(Rotation2d[]::new);
     drivePositionQueue.clear();
     turnPositionQueue.clear();
   }
