@@ -14,6 +14,8 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -34,9 +36,19 @@ public class ModuleIOSim implements ModuleIO {
   private DCMotorSim turnSim =
       new DCMotorSim(DCMotor.getNEO(1), SDSMK4L1Constants.angleGearRatio, 0.004);
 
+  private SimpleMotorFeedforward driveFeedforward =
+      new SimpleMotorFeedforward(SDSMK4L1Constants.motorKS, SDSMK4L1Constants.motorKV);
+  private PIDController driveFeedback =
+      new PIDController(
+          SDSMK4L1Constants.driveKP, SDSMK4L1Constants.driveKI, SDSMK4L1Constants.driveKD);
+  private PIDController turnFeedback =
+      new PIDController(
+          SDSMK4L1Constants.angleKP, SDSMK4L1Constants.angleKI, SDSMK4L1Constants.angleKD);
+
   private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
+  private double currentVelocity = 0.0;
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
@@ -57,6 +69,9 @@ public class ModuleIOSim implements ModuleIO {
 
     inputs.odometryDrivePositionsRotations = new double[] {inputs.drivePositionRotations};
     inputs.odometryTurnPositions = new Rotation2d[] {inputs.turnPosition};
+
+    // for simulated PID only
+    currentVelocity = inputs.driveVelocityRotationsPerSec;
   }
 
   @Override
@@ -69,5 +84,14 @@ public class ModuleIOSim implements ModuleIO {
   public void setTurnVoltage(double volts) {
     turnAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
     turnSim.setInputVoltage(turnAppliedVolts);
+  }
+
+  @Override
+  public void setDriveVelocity(double targetVelocity) {
+    // convert from rotations per second to radians per second
+    double radPerSec = targetVelocity * 2 * Math.PI;
+    setDriveVoltage(
+        driveFeedforward.calculate(radPerSec)
+            + driveFeedback.calculate(currentVelocity, radPerSec));
   }
 }

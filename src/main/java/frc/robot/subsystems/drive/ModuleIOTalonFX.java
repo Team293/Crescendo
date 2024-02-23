@@ -102,6 +102,11 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
+
+    driveConfig.Slot0.kP = SDSMK4L1Constants.driveKP;
+    driveConfig.Slot0.kI = SDSMK4L1Constants.driveKI;
+    driveConfig.Slot0.kD = SDSMK4L1Constants.driveKD;
+
     driveTalon.clearStickyFaults();
     driveTalon.getConfigurator().apply(driveConfig);
     setDriveBrakeMode(true);
@@ -111,6 +116,11 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnConfig.CurrentLimits.StatorCurrentLimit = 30.0;
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     turnConfig.MotorOutput.Inverted = SDSMK4L1Constants.angleMotorInvert;
+
+    turnConfig.Slot0.kP = SDSMK4L1Constants.angleKP;
+    turnConfig.Slot0.kI = SDSMK4L1Constants.angleKI;
+    turnConfig.Slot0.kD = SDSMK4L1Constants.angleKD;
+
     turnTalon.getConfigurator().apply(turnConfig);
     setTurnBrakeMode(true);
 
