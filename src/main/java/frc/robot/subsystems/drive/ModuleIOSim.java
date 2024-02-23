@@ -87,7 +87,7 @@ public class ModuleIOSim implements ModuleIO {
   }
 
   @Override
-  public void setDriveVelocity(double targetVelocity) {
+  public void setDriveVelocityRPS(double targetVelocity) {
     // convert from rotations per second to radians per second
     double radPerSec = targetVelocity * 2 * Math.PI;
     setDriveVoltage(

@@ -33,7 +33,8 @@ public class Module {
 
   private final PIDController turnFeedback;
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
-  private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
+  /* Velocity in meters per second */
+  private Double speedSetpoint = null;
   private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private double lastPositionMeters = 0.0; // Used for delta calculation
   private SwerveModulePosition[] positionDeltas = new SwerveModulePosition[] {};
@@ -101,7 +102,7 @@ public class Module {
         double velocityRadPerSec = adjustSpeedSetpoint / WHEEL_RADIUS;
         // convert to rotations per second
         double velocityRotationsPerSec = velocityRadPerSec / (2 * Math.PI);
-        io.setDriveVelocity(velocityRotationsPerSec);
+        io.setDriveVelocityRPS(velocityRotationsPerSec);
       }
     }
 

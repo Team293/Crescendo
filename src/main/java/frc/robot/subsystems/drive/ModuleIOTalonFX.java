@@ -212,11 +212,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   }
 
   @Override
-  public void setDriveVelocity(double velocityMPS) {
-    double rps = velocityMPS / WHEEL_CIRCUMFERENCE;
-
-    // no PID slot is set yet, PID are all zero
-    driveTalon.setControl(new VelocityVoltage(rps).withSlot(0));
+  public void setDriveVelocityRPS(double velocityRPS) {
+    driveTalon.setControl(new VelocityVoltage(velocityRPS).withSlot(0));
   }
 
   @Override
