@@ -163,9 +163,14 @@ public class RobotContainer {
     operatorController
         .a()
         .onTrue(
-            new LaunchNote(
-                // cancels if the right bumper is pressed
-                intake, launcher, () -> operatorController.rightBumper().getAsBoolean()));
+            Commands.runOnce(
+                () -> {
+                  new LaunchNote(
+                          // cancels if the right bumper is pressed
+                          intake, launcher, () -> operatorController.rightBumper().getAsBoolean())
+                      .schedule();
+                },
+                intake));
 
     // cancels if the left stick is used
     operatorController.b().onTrue(new DropNote(intake, () -> operatorController.getLeftY() != 0));

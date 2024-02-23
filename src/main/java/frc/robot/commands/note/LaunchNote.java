@@ -13,6 +13,7 @@
 
 package frc.robot.commands.note;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -24,31 +25,33 @@ import java.util.function.BooleanSupplier;
 public class LaunchNote extends Command {
   private Command launchNoteCommand;
 
+  private Timer maxLength = new Timer();
+
   public LaunchNote(Intake intake, Launcher launcher) {
     launchNoteCommand =
-        new ParallelCommandGroup(
-            new PrepareNote(intake, launcher),
-            new SequentialCommandGroup(
-                new SetLauncher(launcher, true),
-                new FeedNoteToLauncher(intake, launcher),
-                new SetLauncher(launcher, false)));
+        new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new PrepareNote(intake, launcher), new SetLauncher(launcher, true)),
+            new FeedNoteToLauncher(intake, launcher),
+            new SetLauncher(launcher, false));
   }
 
   public LaunchNote(Intake intake, Launcher launcher, BooleanSupplier cancelCommand) {
     launchNoteCommand =
-        new ParallelCommandGroup(
-            new PrepareNote(intake, launcher),
-            new SequentialCommandGroup(
-                new SetLauncher(launcher, true),
-                new FeedNoteToLauncher(intake, launcher),
-                new SetLauncher(launcher, false)));
-    launchNoteCommand.onlyWhile(() -> !cancelCommand.getAsBoolean());
+        new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new PrepareNote(intake, launcher), new SetLauncher(launcher, true)),
+            new FeedNoteToLauncher(intake, launcher),
+            new SetLauncher(launcher, false));
+    // launchNoteCommand.onlyWhile(() -> !cancelCommand.getAsBoolean());
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     launchNoteCommand.schedule();
+    maxLength.reset();
+    maxLength.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -66,6 +69,11 @@ public class LaunchNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (maxLength.hasElapsed(6.0)) {
+      launchNoteCommand.cancel();
+      return true;
+    }
+    ;
     return launchNoteCommand.isFinished();
   }
 }
