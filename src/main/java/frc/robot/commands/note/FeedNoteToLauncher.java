@@ -42,7 +42,7 @@ public class FeedNoteToLauncher extends Command {
 
     // if we are feeding and the launcher is not ready this means the
     // launcher has received resistance from the note and slowed down
-    if (feeding && !launcher.isLauncherReady()) {
+    if (feeding && launcher.isLauncherNotReady()) {
       feedComplete = true;
     }
 

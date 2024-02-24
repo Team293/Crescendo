@@ -15,7 +15,7 @@ public class DropNote extends Command {
 
   public DropNote(Intake intake, BooleanSupplier cancelCommand) {
     this.intake = intake;
-    onlyWhile(() -> !cancelCommand.getAsBoolean());
+    // onlyWhile(() -> !cancelCommand.getAsBoolean());
 
     addRequirements(intake);
   }

@@ -57,7 +57,8 @@ public class LauncherIOTalonFX implements LauncherIO {
 
   @Override
   public void setVelocityRPS(double velocityRPS) {
-    setPoint = velocityRPS * gearRatio;
+    // the actual velocity is 125% over target
+    setPoint = velocityRPS * gearRatio * 0.8;
 
     if (setPoint == 0) {
       motor.setControl(new VoltageOut(0));
