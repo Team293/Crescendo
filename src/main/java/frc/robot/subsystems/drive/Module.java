@@ -101,7 +101,7 @@ public class Module {
         // Run drive controller
         double velocityRadPerSec = adjustSpeedSetpoint / WHEEL_RADIUS;
         // convert to rotations per second
-        double velocityRotationsPerSec = velocityRadPerSec / (2 * Math.PI);
+        double velocityRotationsPerSec = velocityRadPerSec;
         io.setDriveVelocityRPS(velocityRotationsPerSec);
       }
     }

@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -24,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
-import frc.robot.commands.note.DropNote;
 import frc.robot.commands.note.Launch;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -101,11 +101,12 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
+    // Initalize subsystems
     vision = new Vision();
     launcher = new Launcher();
-
-    // Initalize intake
     intake = new Intake(drive);
+
+    NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -117,6 +118,7 @@ public class RobotContainer {
         "Drive FF Characterization",
         new FeedForwardCharacterization(
             drive, drive::runCharacterizationVolts, drive::getCharacterizationVelocity));
+            
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -159,8 +161,10 @@ public class RobotContainer {
         SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
 
     /* Launcher control */
-    operatorController.rightBumper().onTrue(new Launch(intake, launcher));
-    operatorController.leftBumper().onTrue(new DropNote(intake));
+    operatorController
+        .rightBumper()
+        .onTrue(Commands.run(() -> new Launch(intake, launcher).schedule(), intake, launcher));
+    // operatorController.leftBumper().onTrue(new DropNote(intake));
   }
 
   /**
