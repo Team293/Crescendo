@@ -154,7 +154,7 @@ public class RobotContainer {
     operatorController.x().whileTrue(Commands.runOnce(ampscorer::intakeNote));
     operatorController.x().whileFalse(Commands.runOnce(ampscorer::stop));
     operatorController.a().whileTrue(Commands.runOnce(ampscorer::dischargeNote));
-    operatorController.x().whileFalse(Commands.runOnce(ampscorer::stop));
+    operatorController.a().whileFalse(Commands.runOnce(ampscorer::stop));
   }
 
   /**

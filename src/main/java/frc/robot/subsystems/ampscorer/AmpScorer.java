@@ -17,7 +17,7 @@ public class AmpScorer extends SubsystemBase {
   }
 
   public void dischargeNote() {
-    m_motor.set(0.5);
+    m_motor.set(0.75);
   }
 
   public void stop() {
