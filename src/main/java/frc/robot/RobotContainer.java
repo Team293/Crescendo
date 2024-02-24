@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriverCommands;
 import frc.robot.commands.FeedForwardCharacterization;
-import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.OperatorCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -39,9 +39,12 @@ import frc.robot.subsystems.vision.Vision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -59,7 +62,9 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   private final SendableChooser<Command> autoChooser2;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     /* Print the log directory */
     String logDir = DataLogManager.getLogDir();
@@ -70,35 +75,38 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIONavX(),
-                new ModuleIOTalonFX(0),
-                new ModuleIOTalonFX(1),
-                new ModuleIOTalonFX(2),
-                new ModuleIOTalonFX(3));
+        drive = new Drive(
+            new GyroIONavX(),
+            new ModuleIOTalonFX(0),
+            new ModuleIOTalonFX(1),
+            new ModuleIOTalonFX(2),
+            new ModuleIOTalonFX(3));
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim());
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            });
         break;
     }
     vision = new Vision();
@@ -122,34 +130,29 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     /* Drive command */
-    /*drive.setDefaultCommand(
-    DriveCommands.joystickDrive(
-        drive,
-        () -> -controller.getRightY(),
-        () -> -controller.getRightX(),
-        () -> -controller.getLeftX()));*/
-    drive.setDefaultCommand(
-        DriveCommands.limelightDrive(
-            drive,
-            vision,
-            () -> -driverController.getRightY(),
-            () -> -driverController.getRightX(),
-            () -> -driverController.getLeftX()));
-
-    /* Drive like a car */
-    // drive.setDefaultCommand(
-    //     DriveCommands.kartDrive(drive,
-    //     controller::getRightTriggerAxis,
-    //     controller::getLeftTriggerAxis,
-    //     controller::getLeftX,
-    //     () -> controller.a().getAsBoolean()));
+      // drive.setDefaultCommand(
+      //     DriverCommands.joystickDrive(
+      //         drive,
+      //         () -> -driverController.getRightY(),
+      //         () -> -driverController.getRightX(),
+      //         () -> -driverController.getLeftX()));
+      
+      drive.setDefaultCommand(
+          DriverCommands.limelightDrive(
+              drive,
+              vision,
+              () -> -driverController.getRightY(),
+              () -> -driverController.getRightX(),
+              () -> -driverController.getLeftX()));
 
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -160,21 +163,23 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake command */
-    SequentialCommandGroup enableIntake =
-        new SequentialCommandGroup(
-            Commands.waitSeconds(1.000), Commands.runOnce(intake::enableIntake));
+    SequentialCommandGroup enableIntake = new SequentialCommandGroup(
+        Commands.waitSeconds(1.000), Commands.runOnce(intake::enableIntake));
 
-    ParallelCommandGroup enableLauncher =
-        new ParallelCommandGroup(Commands.runOnce(launcher::enableLauncher), enableIntake);
+    ParallelCommandGroup enableLauncher = new ParallelCommandGroup(Commands.runOnce(launcher::enableLauncher),
+        enableIntake);
 
-    ParallelCommandGroup disableLauncher =
-        new ParallelCommandGroup(
-            Commands.runOnce(launcher::disableLauncher), Commands.runOnce(intake::disableIntake));
+    ParallelCommandGroup disableLauncher = new ParallelCommandGroup(
+        Commands.runOnce(launcher::disableLauncher),
+        Commands.runOnce(intake::disableIntake));
 
-    intake.setDefaultCommand(IntakeCommands.intakeOperate(intake, operatorController::getLeftY));
+    intake.setDefaultCommand(
+        OperatorCommands.defaultOperator(intake, operatorController::getLeftY));
 
-    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake, intake));
-    // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake, intake));
+    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake,
+    // intake));
+    // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake,
+    // intake));
 
     operatorController.rightBumper().whileTrue(enableLauncher);
     operatorController.rightBumper().whileFalse(disableLauncher);

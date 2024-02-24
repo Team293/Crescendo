@@ -19,16 +19,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.Intake;
 import java.util.function.DoubleSupplier;
 
-public class IntakeCommands {
+public class OperatorCommands {
   private static final double DEADBAND = 0.1;
   private static final double MAX_INTAKE_SPEED_RPS = 20.0;
 
-  private IntakeCommands() {}
+  private OperatorCommands() {}
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */
-  public static Command intakeOperate(Intake intake, DoubleSupplier intakeSpeed) {
+  public static Command defaultOperator(Intake intake, DoubleSupplier intakeSpeed) {
     return Commands.run(
         () -> {
           double deadbandedSpeed = MathUtil.applyDeadband(intakeSpeed.getAsDouble(), DEADBAND);
