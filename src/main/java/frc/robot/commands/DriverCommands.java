@@ -26,10 +26,10 @@ import frc.robot.subsystems.vision.Vision;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class DriveCommands {
+public class DriverCommands {
   private static final double DEADBAND = 0.1;
 
-  private DriveCommands() {}
+  private DriverCommands() {}
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
@@ -88,7 +88,7 @@ public class DriveCommands {
           if (reverseGear.getAsBoolean()) {
             speed *= -1;
           }
-          boolean brakeMotors = brake >= 0.75 ? false : true;
+          boolean brakeMotors = (brake >= 0.75 ? false : true);
           drive.runFrontWheelDrive(
               speed * drive.getMaxLinearSpeedMetersPerSec(), steering, brakeMotors, 45.0);
         },

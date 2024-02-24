@@ -18,6 +18,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -60,6 +61,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   // Gear ratios for SDS MK4i L2, adjust as necessary
   private final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
   private final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
+
+  private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
+  private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
 
   private final double absoluteEncoderOffset;
 
@@ -195,6 +199,16 @@ public class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setDriveVoltage(double volts) {
     driveTalon.setControl(new VoltageOut(volts));
+
+    driveTalon.setControl(new VelocityVoltage(volts).withSlot(0));
+  }
+
+  @Override
+  public void setDriveVelocity(double velocityMPS) {
+    double rps = velocityMPS / WHEEL_CIRCUMFERENCE;
+
+    // no PID slot is set yet, PID are all zero
+    driveTalon.setControl(new VelocityVoltage(rps).withSlot(0));
   }
 
   @Override
