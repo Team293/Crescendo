@@ -90,7 +90,7 @@ public class SubsystemControl {
           if (reverseGear.getAsBoolean()) {
             speed *= -1;
           }
-          boolean brakeMotors = brake >= 0.75 ? false : true;
+          boolean brakeMotors = (brake >= 0.75 ? false : true);
           drive.runFrontWheelDrive(
               speed * drive.getMaxLinearSpeedMetersPerSec(), steering, brakeMotors, 45.0);
         },
