@@ -51,6 +51,11 @@ public class Intake extends SubsystemBase {
     feedMotor.setSpeed(feedSetSpeed);
   }
 
+  public void reverseIntake() {
+    // double appliedSpeed = -(feedSetSpeed + feedMotorInputs.robotSpeed);
+    feedMotor.setSpeed(-1.0 * feedSetSpeed);
+  }
+
   public void setVelocity(double speedRPS) {
     // double appliedSpeed = -(feedSetSpeed + feedMotorInputs.robotSpeed);
     feedMotor.setSpeed(speedRPS);

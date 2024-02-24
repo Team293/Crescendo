@@ -25,7 +25,7 @@ import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
 import frc.robot.commands.note.DropNote;
-import frc.robot.commands.note.LaunchNote;
+import frc.robot.commands.note.Launch;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -129,12 +129,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Drive command */
-    /*drive.setDefaultCommand(
-    DriveCommands.joystickDrive(
-        drive,
-        () -> -controller.getRightY(),
-        () -> -controller.getRightX(),
-        () -> -controller.getLeftX()));*/
+    /*
+     * drive.setDefaultCommand(
+     * DriveCommands.joystickDrive(
+     * drive,
+     * () -> -controller.getRightY(),
+     * () -> -controller.getRightX(),
+     * () -> -controller.getLeftX()));
+     */
 
     drive.setDefaultCommand(
         SubsystemControl.limelightDrive(
@@ -152,28 +154,13 @@ public class RobotContainer {
         .b()
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
-    /* Intake control using joystick for speed */
+    /* Intake command */
     intake.setDefaultCommand(
         SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
 
     /* Launcher control */
-    operatorController.rightBumper().onTrue(Commands.runOnce(launcher::enableLauncher, launcher));
-    operatorController.rightBumper().onFalse(Commands.runOnce(launcher::disableLauncher, launcher));
-
-    operatorController
-        .a()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  new LaunchNote(
-                          // cancels if the right bumper is pressed
-                          intake, launcher, () -> operatorController.rightBumper().getAsBoolean())
-                      .schedule();
-                },
-                intake));
-
-    // cancels if the left stick is used
-    operatorController.b().onTrue(new DropNote(intake, () -> operatorController.getLeftY() != 0));
+    operatorController.rightBumper().onTrue(new Launch(intake, launcher));
+    operatorController.leftBumper().onTrue(new DropNote(intake));
   }
 
   /**
