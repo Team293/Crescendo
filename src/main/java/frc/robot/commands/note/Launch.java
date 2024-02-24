@@ -32,7 +32,7 @@ public class Launch extends Command {
   @Override
   public void execute() {
     // Check if launcher is spun up
-    if ((launcher.isLauncherReady()) && (false == feeding)){
+    if ((launcher.isLauncherReady()) && (false == feeding)) {
       feeding = true;
       // Turn on the intake to fire
       intake.enableIntake();
