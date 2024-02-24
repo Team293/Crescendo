@@ -48,12 +48,12 @@ public class Launcher extends SubsystemBase {
   }
 
   public boolean isLauncherReady() {
-    return launchMotorInputs.mechanismVelocityRotationsPerSec
-        > LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD;
+    return (launchMotorInputs.mechanismVelocityRotationsPerSec
+        > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
   }
 
   public boolean isLauncherNotReady() {
-    return launchMotorInputs.mechanismVelocityRotationsPerSec
-        < LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD;
+    return (launchMotorInputs.mechanismVelocityRotationsPerSec
+        < (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
   }
 }

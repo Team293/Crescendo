@@ -27,6 +27,7 @@ import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
 import frc.robot.commands.note.DropNote;
+import frc.robot.commands.note.Launch;
 import frc.robot.commands.note.LaunchNote;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -167,42 +168,12 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake command */
-    SequentialCommandGroup enableIntake = new SequentialCommandGroup(
-        Commands.waitSeconds(1.000), Commands.runOnce(intake::enableIntake));
-
-    ParallelCommandGroup enableLauncher = new ParallelCommandGroup(Commands.runOnce(launcher::enableLauncher),
-        enableIntake);
-
-    ParallelCommandGroup disableLauncher = new ParallelCommandGroup(
-        Commands.runOnce(launcher::disableLauncher),
-        Commands.runOnce(intake::disableIntake));
-
     intake.setDefaultCommand(
         SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
 
-    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::enableIntake,
-    // intake));
-    // operatorController.leftBumper().whileFalse(Commands.runOnce(intake::disableIntake,
-    // intake));
-
     /* Launcher control */
-    operatorController.rightBumper().onTrue(Commands.runOnce(launcher::enableLauncher, launcher));
-    operatorController.rightBumper().onFalse(Commands.runOnce(launcher::disableLauncher, launcher));
-
-    operatorController
-        .a()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  new LaunchNote(
-                      // cancels if the right bumper is pressed
-                      intake, launcher, () -> operatorController.rightBumper().getAsBoolean())
-                      .schedule();
-                },
-                intake));
-
-    // cancels if the left stick is used
-    operatorController.b().onTrue(new DropNote(intake, () -> operatorController.getLeftY() != 0));
+    operatorController.rightBumper().onTrue(new Launch(intake, launcher));
+    operatorController.leftBumper().onTrue(new DropNote(intake));
   }
 
   /**
