@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
+import frc.robot.commands.note.DropNote;
 import frc.robot.commands.note.Launch;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -118,7 +119,7 @@ public class RobotContainer {
         "Drive FF Characterization",
         new FeedForwardCharacterization(
             drive, drive::runCharacterizationVolts, drive::getCharacterizationVelocity));
-            
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -161,9 +162,8 @@ public class RobotContainer {
         SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
 
     /* Launcher control */
-    operatorController
-        .rightBumper()
-        .onTrue(Commands.run(() -> new Launch(intake, launcher).schedule(), intake, launcher));
+    operatorController.rightBumper().onTrue(new Launch(intake, launcher));
+    operatorController.leftBumper().onTrue(new DropNote(intake));
     // operatorController.leftBumper().onTrue(new DropNote(intake));
   }
 
