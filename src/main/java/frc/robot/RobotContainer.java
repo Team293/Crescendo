@@ -26,6 +26,7 @@ import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
 import frc.robot.commands.note.DropNote;
+import frc.robot.commands.note.FeedNoteToLauncher;
 import frc.robot.commands.note.Launch;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -108,6 +109,7 @@ public class RobotContainer {
     intake = new Intake(drive);
 
     NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
+    NamedCommands.registerCommand("feedNote", new FeedNoteToLauncher(intake, launcher));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
