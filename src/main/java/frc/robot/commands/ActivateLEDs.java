@@ -19,14 +19,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class ActivateLEDs extends Command {
 
-  public ActivateLEDs(){
-    AddressableLED m_led = new AddressableLED(9); 
-    AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(10);
-  }
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    AddressableLED m_led = new AddressableLED(9); 
+    AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(10);
     m_led.setLength(m_ledBuffer.getLength());
     // Set the data
     m_led.setData(m_ledBuffer);
