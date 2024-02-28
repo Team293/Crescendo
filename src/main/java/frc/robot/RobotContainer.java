@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriverCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.OperatorCommands;
+import frc.robot.subsystems.climber.Climb;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -53,6 +54,7 @@ public class RobotContainer {
   private final Launcher launcher;
   private final Vision vision;
   private final Intake intake;
+  private final Climb climber;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -162,6 +164,17 @@ public class RobotContainer {
         .b()
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
+    /* climb */
+
+    operatorController.a().whileFalse(disableClimber);
+    operatorController.a().onTrue(getAutonomousCommand())True((climber.climberUp()));
+
+    if (operatorController.getYButtonPressed()) {
+      climber.climberUp();
+      exampleSingle.toggle();
+      exampleDouble.toggle();
+    }
+
     /* Intake command */
     SequentialCommandGroup enableIntake = new SequentialCommandGroup(
         Commands.waitSeconds(1.000), Commands.runOnce(intake::enableIntake));
@@ -183,6 +196,8 @@ public class RobotContainer {
 
     operatorController.rightBumper().whileTrue(enableLauncher);
     operatorController.rightBumper().whileFalse(disableLauncher);
+
+
   }
 
   /**
