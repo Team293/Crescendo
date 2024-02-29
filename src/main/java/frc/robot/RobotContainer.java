@@ -117,6 +117,9 @@ public class RobotContainer {
     // Initalize intake
     intake = new Intake(drive);
 
+    // Initalize climber
+    climber = new Climb();
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser2 = AutoBuilder.buildAutoChooser();
@@ -165,15 +168,10 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* climb */
-
-    operatorController.a().whileFalse(disableClimber);
-    operatorController.a().onTrue(getAutonomousCommand())True((climber.climberUp()));
-
-    if (operatorController.getYButtonPressed()) {
-      climber.climberUp();
-      exampleSingle.toggle();
-      exampleDouble.toggle();
-    }
+    operatorController.b().whileTrue(Commands.runOnce(climber::climberUp));
+    operatorController.y().whileTrue(Commands.runOnce(climber::climberDown));
+    operatorController.y().whileFalse(Commands.runOnce(climber::stop));
+    operatorController.b().whileFalse(Commands.runOnce(climber::stop));
 
     /* Intake command */
     SequentialCommandGroup enableIntake = new SequentialCommandGroup(
@@ -196,8 +194,6 @@ public class RobotContainer {
 
     operatorController.rightBumper().whileTrue(enableLauncher);
     operatorController.rightBumper().whileFalse(disableLauncher);
-
-
   }
 
   /**
