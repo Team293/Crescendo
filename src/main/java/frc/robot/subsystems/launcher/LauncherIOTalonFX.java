@@ -21,7 +21,7 @@ public class LauncherIOTalonFX implements LauncherIO {
   private final double gearRatio = (11.0d / 10.0d);
 
   public LauncherIOTalonFX(int canId) {
-    this.motor = new TalonFX(canId);
+    this.motor = new TalonFX(canId, "rio");
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     config.Slot0.kP = 0.85;

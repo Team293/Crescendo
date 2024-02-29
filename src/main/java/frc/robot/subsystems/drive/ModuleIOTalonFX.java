@@ -64,34 +64,35 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
   private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
+  private static final String CANBUS_ID = "Canivore_Drivetrain";
 
   private final double absoluteEncoderOffset;
 
   public ModuleIOTalonFX(int index) {
     switch (index) {
-      case 0:
-        driveTalon = new TalonFX(0);
-        turnTalon = new TalonFX(1);
-        cancoder = new CANcoder(2);
-        absoluteEncoderOffset = 0.117d; // CANCoder rotations
+      case 0: // Front Left
+        driveTalon = new TalonFX(0, CANBUS_ID);
+        turnTalon = new TalonFX(1, CANBUS_ID);
+        cancoder = new CANcoder(2, CANBUS_ID);
+        absoluteEncoderOffset = 0.681d; // CANCoder rotations
         break;
-      case 1:
-        driveTalon = new TalonFX(3);
-        turnTalon = new TalonFX(4);
-        cancoder = new CANcoder(5);
-        absoluteEncoderOffset = -0.284d; // CANcoder rotations
+      case 1: // Front Right
+        driveTalon = new TalonFX(3, CANBUS_ID);
+        turnTalon = new TalonFX(4, CANBUS_ID);
+        cancoder = new CANcoder(5, CANBUS_ID);
+        absoluteEncoderOffset = 0.635d; // CANcoder rotations
         break;
-      case 2:
-        driveTalon = new TalonFX(6);
-        turnTalon = new TalonFX(7);
-        cancoder = new CANcoder(8);
-        absoluteEncoderOffset = 0.135d; // CANcoder rotations
+      case 2: // Back Left
+        driveTalon = new TalonFX(6, CANBUS_ID);
+        turnTalon = new TalonFX(7, CANBUS_ID);
+        cancoder = new CANcoder(8, CANBUS_ID);
+        absoluteEncoderOffset = 0.232d; // CANcoder rotations
         break;
-      case 3:
-        driveTalon = new TalonFX(9);
-        turnTalon = new TalonFX(10);
-        cancoder = new CANcoder(11);
-        absoluteEncoderOffset = 0.181d; // CANcoder rotations
+      case 3: // Back Right
+        driveTalon = new TalonFX(9, CANBUS_ID);
+        turnTalon = new TalonFX(10, CANBUS_ID);
+        cancoder = new CANcoder(11, CANBUS_ID);
+        absoluteEncoderOffset = 0.617d; // CANcoder rotations
         break;
       default:
         throw new RuntimeException("Invalid module index");

@@ -30,6 +30,7 @@ public class Intake extends SubsystemBase {
   public Intake(Drive drive) {
     this.drive = drive;
     feedMotor = new IntakeIOTalonFX(12);
+    this.disableIntake();
 
     SmartDashboard.setDefaultNumber("Intake Speed Setpoint(RPS)", feedSetSpeed);
   }
