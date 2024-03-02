@@ -31,7 +31,7 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
     m_i2cPort = I2C.Port.kOnboard;
     m_colorSensor = new ColorSensorV3(m_i2cPort);
 
-    m_colorMatcher.setConfidenceThreshold(0.95);
+    m_colorMatcher.setConfidenceThreshold(0.6);
     m_colorMatcher.addColorMatch(m_noteColor);
   }
 

@@ -19,7 +19,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.util.Units;
 
 /**
  * This drive implementation is for Talon FXs driving brushless motors like the Falon 500 or Kraken
@@ -40,6 +39,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     var config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = 40.0;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.Feedback.SensorToMechanismRatio = m_gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Set motor PID
@@ -63,7 +63,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     this.robotSpeed = robotSpeed;
     BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent);
 
-    inputs.motorVelocityRadPerSec = Units.rotationsToRadians(motorVelocity.getValueAsDouble());
+    inputs.motorVelocityRotationsPerSecond = motorVelocity.getValueAsDouble();
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
     // inputs.robotSpeed = this.robotSpeed;
@@ -73,8 +73,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   // Takes in speed as pulley rotations per second
   @Override
-  public void setSpeed(double speed) {
-    setpoint = speed * m_gearRatio; // Convert to motor rotations per second
-    motor.setControl(new VelocityVoltage(setpoint).withSlot(0));
+  public void setSpeed(double speedRPS) {
+    motor.setControl(new VelocityVoltage(speedRPS * 1.25).withSlot(0));
   }
 }

@@ -19,7 +19,7 @@ public class Launcher extends SubsystemBase {
     launchMotor = new LauncherIOTalonFX(LAUNCHER_MOTOR_ID);
   }
 
-  public boolean noteDetected() {
+  public boolean isNoteDetected() {
     // Updated when m_sensorIO.updateInputs(m_sensorInputs) happens in periodic
     return (colorSensorInputs.IsNoteDetected);
   }

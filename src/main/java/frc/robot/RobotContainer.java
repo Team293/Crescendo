@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
-import frc.robot.commands.note.DropNote;
 import frc.robot.commands.note.FeedNoteToLauncher;
 import frc.robot.commands.note.Launch;
 import frc.robot.subsystems.drive.Drive;
@@ -134,15 +133,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Drive command */
-    /*
-     * drive.setDefaultCommand(
-     * DriveCommands.joystickDrive(
-     * drive,
-     * () -> -controller.getRightY(),
-     * () -> -controller.getRightX(),
-     * () -> -controller.getLeftX()));
-     */
-
     drive.setDefaultCommand(
         SubsystemControl.limelightDrive(
             drive,
@@ -159,17 +149,15 @@ public class RobotContainer {
         .b()
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
-    /* Intake command */
-    intake.setDefaultCommand(
-        SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
+    /* Intake auto-run command */
+    intake.setDefaultCommand(SubsystemControl.intakeWithColorSensor(intake, launcher));
 
     /* Launcher control */
     operatorController
         .rightBumper()
-        .onTrue(Commands.run(() -> new Launch(intake, launcher).schedule(), intake, launcher));
-
-    operatorController.leftBumper().onTrue(new DropNote(intake));
-    // operatorController.leftBumper().onTrue(new DropNote(intake));
+        .onTrue(
+            Commands.runOnce(
+                () -> new FeedNoteToLauncher(intake, launcher).schedule(), intake, launcher));
   }
 
   /**

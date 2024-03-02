@@ -25,7 +25,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIOTalonFX feedMotor;
   private final IntakeIOInputsAutoLogged feedMotorInputs = new IntakeIOInputsAutoLogged();
 
-  private double feedSetSpeed = 20.0; /* pulley rotations per second */
+  private double feedSetSpeed = 15.0; /* pulley rotations per second */
 
   public Intake(Drive drive) {
     this.drive = drive;
