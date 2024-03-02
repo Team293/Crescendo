@@ -4,20 +4,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class SpikeController extends CommandXboxController {
-  private double deadband = 0.0;
-  // Bypass the deadband in this controller if needed
-  // by calling controller.raw.getLeftX() etc.
-  public final CommandXboxController raw;
-
-  public SpikeController(int port) {
-    super(port);
-    raw = new CommandXboxController(port);
-  }
+  private double deadband;
 
   public SpikeController(int port, double deadband) {
     super(port);
     this.deadband = deadband;
-    raw = new CommandXboxController(port);
   }
 
   private double deadband(double input) {
