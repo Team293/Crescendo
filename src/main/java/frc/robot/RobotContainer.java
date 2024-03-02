@@ -156,6 +156,9 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .onTrue(Commands.runOnce(() -> new Launch(intake, launcher).schedule(), intake, launcher));
+
+    /* Reverse intake */
+    operatorController.leftBumper().onTrue(Commands.runOnce(intake::reverseIntake, intake));
   }
 
   /**
