@@ -36,13 +36,13 @@ public class FeedNoteToLauncher extends Command {
   public void execute() {
     // if not feeding and the launcher is ready, start the intake
     intake.setVelocity(INTAKE_FEED_SPEED_RPS);
-    if (launcher.isLauncherReady()) {
+    if (launcher.isReadyToShoot()) {
       feeding = true;
     }
 
     // if we are feeding and the launcher is not ready this means the
     // launcher has received resistance from the note and slowed down
-    if (feeding && launcher.isLauncherNotReady()) {
+    if (feeding && !launcher.isReadyToShoot()) {
       feedComplete = true;
     }
 

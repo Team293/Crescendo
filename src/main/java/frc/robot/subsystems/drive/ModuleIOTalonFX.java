@@ -98,20 +98,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         throw new RuntimeException("Invalid module index");
     }
 
-    /* Drive motor config */
-    var driveConfig = new TalonFXConfiguration();
-    driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
-    driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
-
-    driveConfig.Slot0.kP = SDSMK4L1Constants.driveKP;
-    driveConfig.Slot0.kI = SDSMK4L1Constants.driveKI;
-    driveConfig.Slot0.kD = SDSMK4L1Constants.driveKD;
-
-    driveConfig.Feedback.SensorToMechanismRatio = DRIVE_GEAR_RATIO;
-
+    driveTalon.getConfigurator().apply(getDriveConfig());
     driveTalon.clearStickyFaults();
-    driveTalon.getConfigurator().apply(driveConfig);
     setDriveBrakeMode(true);
 
     /* Turn motor config */
@@ -203,6 +191,22 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnPositionQueue.stream().map(Rotation2d::fromRotations).toArray(Rotation2d[]::new);
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+  }
+
+  private TalonFXConfiguration getDriveConfig() {
+    /* Drive motor config */
+    var driveConfig = new TalonFXConfiguration();
+    driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
+    driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
+
+    driveConfig.Slot0.kP = SDSMK4L1Constants.driveKP;
+    driveConfig.Slot0.kI = SDSMK4L1Constants.driveKI;
+    driveConfig.Slot0.kD = SDSMK4L1Constants.driveKD;
+
+    driveConfig.Feedback.SensorToMechanismRatio = DRIVE_GEAR_RATIO;
+
+    return driveConfig;
   }
 
   @Override

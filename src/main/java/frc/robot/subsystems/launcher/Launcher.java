@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
   private static final int LAUNCHER_MOTOR_ID = 13;
-  private static final double LAUNCHER_SET_SPEED = 41.0; // goes above this speed because of the PID
+  private static final double LAUNCHER_SET_SPEED = 41.0;
   private static final double LAUNCHER_READY_THRESHOLD = 2.0;
 
   private final LauncherIOTalonFX launchMotor;
@@ -32,7 +32,7 @@ public class Launcher extends SubsystemBase {
 
     Logger.processInputs("Launcher/Sensor", colorSensorInputs);
     Logger.processInputs("Launcher/Motor", launchMotorInputs);
-    Logger.recordOutput("Launcher/Ready", isLauncherReady());
+    Logger.recordOutput("Launcher/Ready", isReadyToShoot());
   }
 
   public void enableLauncher() {
@@ -47,13 +47,8 @@ public class Launcher extends SubsystemBase {
     return launchMotorInputs.mechanismVelocityRotationsPerSec;
   }
 
-  public boolean isLauncherReady() {
+  public boolean isReadyToShoot() {
     return (launchMotorInputs.mechanismVelocityRotationsPerSec
         > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
-  }
-
-  public boolean isLauncherNotReady() {
-    return (launchMotorInputs.mechanismVelocityRotationsPerSec
-        < (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
   }
 }

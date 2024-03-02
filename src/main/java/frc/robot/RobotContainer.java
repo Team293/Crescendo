@@ -164,7 +164,10 @@ public class RobotContainer {
         SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
 
     /* Launcher control */
-    operatorController.rightBumper().onTrue(new Launch(intake, launcher));
+    operatorController
+        .rightBumper()
+        .onTrue(Commands.run(() -> new Launch(intake, launcher).schedule(), intake, launcher));
+
     operatorController.leftBumper().onTrue(new DropNote(intake));
     // operatorController.leftBumper().onTrue(new DropNote(intake));
   }

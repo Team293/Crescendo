@@ -1,11 +1,10 @@
 package frc.robot.commands.note;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
+import java.util.function.BooleanSupplier;
 
 public class Launch extends Command {
   // state variables
@@ -50,7 +49,7 @@ public class Launch extends Command {
   @Override
   public void execute() {
     // Check if launcher is spun up
-    if (launcher.isLauncherReady() && !feeding) {
+    if (launcher.isReadyToShoot() && !feeding) {
       feeding = true;
       intake.setVelocity(20.0);
     }
@@ -63,7 +62,7 @@ public class Launch extends Command {
       }
     }
 
-    if (feeding && launcher.isLauncherNotReady()) {
+    if (feeding && !launcher.isReadyToShoot()) {
       complete = true;
     }
 
