@@ -35,7 +35,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
-import frc.robot.subsystems.vision.Vision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -48,7 +47,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Launcher launcher;
-  private final Vision vision;
+  // private final Vision vision;
   private final Intake intake;
 
   // Controller
@@ -103,7 +102,7 @@ public class RobotContainer {
         break;
     }
     // Initalize subsystems
-    vision = new Vision();
+    // vision = new Vision();
     launcher = new Launcher();
     intake = new Intake(drive);
 
@@ -134,9 +133,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /* Drive command */
     drive.setDefaultCommand(
-        SubsystemControl.limelightDrive(
+        SubsystemControl.joystickDrive(
             drive,
-            vision,
             () -> -driverController.getRightY(),
             () -> -driverController.getRightX(),
             () -> -driverController.getLeftX()));
@@ -150,7 +148,9 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake auto-run command */
-    intake.setDefaultCommand(SubsystemControl.intakeWithColorSensor(intake, launcher));
+    intake.setDefaultCommand(
+        SubsystemControl.intakeWithColorSensor(
+            intake, launcher, () -> operatorController.getLeftTriggerAxis()));
 
     /* Launcher control */
     operatorController
@@ -158,7 +158,7 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> new Launch(intake, launcher).schedule(), intake, launcher));
 
     /* Reverse intake */
-    operatorController.leftBumper().onTrue(Commands.runOnce(intake::reverseIntake, intake));
+    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::reverseIntake, intake));
   }
 
   /**

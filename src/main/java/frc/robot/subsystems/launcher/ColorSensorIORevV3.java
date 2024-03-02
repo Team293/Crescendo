@@ -57,7 +57,7 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
       noteDetectionTimer.start();
     } else {
       inputs.MatchResultConfidence = match.confidence;
-      if (inputs.Proximity >= 100) {
+      if (inputs.Proximity >= 700) {
         inputs.IsNoteDetected = true;
       } else {
         inputs.IsNoteDetected = false;

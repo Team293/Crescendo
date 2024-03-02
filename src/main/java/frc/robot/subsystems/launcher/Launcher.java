@@ -36,7 +36,15 @@ public class Launcher extends SubsystemBase {
   }
 
   public void enableLauncher() {
-    launchMotor.setVelocityRPS(LAUNCHER_SET_SPEED);
+    setVelocity(LAUNCHER_SET_SPEED);
+  }
+
+  public void reverseLauncher() {
+    setVelocity(-5.0);
+  }
+
+  public void setVelocity(double velocityRPS) {
+    launchMotor.setVelocityRPS(velocityRPS);
   }
 
   public void disableLauncher() {

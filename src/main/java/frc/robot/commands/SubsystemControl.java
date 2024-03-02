@@ -114,9 +114,16 @@ public class SubsystemControl {
         drive);
   }
 
-  public static Command intakeWithColorSensor(Intake intake, Launcher launcher) {
+  public static Command intakeWithColorSensor(
+      Intake intake, Launcher launcher, DoubleSupplier reverseIntake) {
     return Commands.run(
         () -> {
+          if (reverseIntake.getAsDouble() > 0.1) {
+            intake.setVelocity(-10.0 * reverseIntake.getAsDouble());
+            launcher.setVelocity(-5.0 * reverseIntake.getAsDouble());
+            return;
+          }
+
           // If the color sensor senses a note, disable the intake
           if (launcher.isNoteDetected()) {
             if (launcher.detectedNoteForSeconds() < 0.2) {
