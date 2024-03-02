@@ -36,7 +36,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final double m_gearRatio = (4.0 / 1.0); // 4 motor rotations per 1 intake rotation
 
   public IntakeIOTalonFX(int canId) {
-    this.motor = new TalonFX(canId);
+    this.motor = new TalonFX(canId, "rio");
     var config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = 40.0;
     config.CurrentLimits.StatorCurrentLimitEnable = true;

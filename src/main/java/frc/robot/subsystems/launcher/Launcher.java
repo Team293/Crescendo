@@ -1,45 +1,54 @@
 package frc.robot.subsystems.launcher;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
+  private static final int LAUNCHER_MOTOR_ID = 13;
+  private static final double LAUNCHER_SET_SPEED = 41.0;
+  private static final double LAUNCHER_READY_THRESHOLD = 2.0;
+
   private final LauncherIOTalonFX launchMotor;
   private final LauncherIOInputsAutoLogged launchMotorInputs = new LauncherIOInputsAutoLogged();
-  private final ColorSensorIO m_sensorIO;
-  private final ColorSensorIOInputsAutoLogged m_sensorInputs = new ColorSensorIOInputsAutoLogged();
-
-  private static double LAUNCHER_SET_SPEED = 37;
+  private final ColorSensorIO colorSensorIO;
+  private final ColorSensorIOInputsAutoLogged colorSensorInputs =
+      new ColorSensorIOInputsAutoLogged();
 
   public Launcher() {
-
-    m_sensorIO = new ColorSensorIORevV3();
-    // Initialize the ColorSensorIORevV3 object
-    launchMotor = new LauncherIOTalonFX(13); // todo
+    colorSensorIO = new ColorSensorIORevV3();
+    launchMotor = new LauncherIOTalonFX(LAUNCHER_MOTOR_ID);
   }
 
   public boolean noteDetected() {
     // Updated when m_sensorIO.updateInputs(m_sensorInputs) happens in periodic
-    return (m_sensorInputs.IsNoteDetected);
+    return (colorSensorInputs.IsNoteDetected);
   }
 
   @Override
   public void periodic() {
     // Update the color sensor and vision inputs
     launchMotor.updateInputs(launchMotorInputs);
-    m_sensorIO.updateInputs(m_sensorInputs);
-    LAUNCHER_SET_SPEED = SmartDashboard.getNumber("Launcher Speed Setpoint", LAUNCHER_SET_SPEED);
+    colorSensorIO.updateInputs(colorSensorInputs);
 
-    Logger.processInputs("Launcher/Sensor", m_sensorInputs);
+    Logger.processInputs("Launcher/Sensor", colorSensorInputs);
     Logger.processInputs("Launcher/Motor", launchMotorInputs);
+    Logger.recordOutput("Launcher/Ready", isReadyToShoot());
   }
 
   public void enableLauncher() {
-    launchMotor.setSpeed(LAUNCHER_SET_SPEED);
+    launchMotor.setVelocityRPS(LAUNCHER_SET_SPEED);
   }
 
   public void disableLauncher() {
-    launchMotor.setSpeed(0);
+    launchMotor.setVelocityRPS(0);
+  }
+
+  public double getVelocityRPS() {
+    return launchMotorInputs.mechanismVelocityRotationsPerSec;
+  }
+
+  public boolean isReadyToShoot() {
+    return (launchMotorInputs.mechanismVelocityRotationsPerSec
+        > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
   }
 }

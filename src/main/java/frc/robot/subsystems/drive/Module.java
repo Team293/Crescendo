@@ -14,7 +14,6 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -32,11 +31,10 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  private final SimpleMotorFeedforward driveFeedforward;
-  private final PIDController driveFeedback;
   private final PIDController turnFeedback;
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
-  private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
+  /* Velocity in meters per second */
+  private Double speedSetpoint = null;
   private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private double lastPositionMeters = 0.0; // Used for delta calculation
   private SwerveModulePosition[] positionDeltas = new SwerveModulePosition[] {};
@@ -50,28 +48,16 @@ public class Module {
     switch (Constants.currentMode) {
       case REAL:
       case REPLAY:
-        driveFeedforward =
-            new SimpleMotorFeedforward(SDSMK4L1Constants.motorKS, SDSMK4L1Constants.motorKV);
-        driveFeedback =
-            new PIDController(
-                SDSMK4L1Constants.driveKP, SDSMK4L1Constants.driveKI, SDSMK4L1Constants.driveKD);
         turnFeedback =
             new PIDController(
                 SDSMK4L1Constants.angleKP, SDSMK4L1Constants.angleKI, SDSMK4L1Constants.angleKD);
         break;
       case SIM:
-        driveFeedforward =
-            new SimpleMotorFeedforward(SDSMK4L1Constants.motorKS, SDSMK4L1Constants.motorKV);
-        driveFeedback =
-            new PIDController(
-                SDSMK4L1Constants.driveKP, SDSMK4L1Constants.driveKI, SDSMK4L1Constants.driveKD);
         turnFeedback =
             new PIDController(
                 SDSMK4L1Constants.angleKP, SDSMK4L1Constants.angleKI, SDSMK4L1Constants.angleKD);
         break;
       default:
-        driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
-        driveFeedback = new PIDController(0.0, 0.0, 0.0);
         turnFeedback = new PIDController(0.0, 0.0, 0.0);
         break;
     }
@@ -114,9 +100,9 @@ public class Module {
 
         // Run drive controller
         double velocityRadPerSec = adjustSpeedSetpoint / WHEEL_RADIUS;
-        io.setDriveVoltage(
-            driveFeedforward.calculate(velocityRadPerSec)
-                + driveFeedback.calculate(inputs.driveVelocityRotationsPerSec, velocityRadPerSec));
+        // convert to rotations per second
+        double velocityRotationsPerSec = velocityRadPerSec;
+        io.setDriveVelocityRPS(velocityRotationsPerSec);
       }
     }
 

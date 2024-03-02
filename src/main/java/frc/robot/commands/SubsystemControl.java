@@ -22,14 +22,18 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class DriverCommands {
+public class SubsystemControl {
   private static final double DEADBAND = 0.1;
 
-  private DriverCommands() {}
+  // intake constants
+  private static final double MAX_INTAKE_SPEED_RPS = 20.0;
+
+  private SubsystemControl() {}
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
@@ -42,12 +46,10 @@ public class DriverCommands {
     return Commands.run(
         () -> {
           // Apply deadband
-          double linearMagnitude =
-              MathUtil.applyDeadband(
-                  Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()), DEADBAND);
+          double linearMagnitude = Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble());
           Rotation2d linearDirection =
               new Rotation2d(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+          double omega = omegaSupplier.getAsDouble();
 
           // Square values
           linearMagnitude = linearMagnitude * linearMagnitude;
@@ -138,5 +140,16 @@ public class DriverCommands {
                   drive.getRotation()));
         },
         drive);
+  }
+
+  public static Command joystickIntake(Intake intake, DoubleSupplier intakeSpeed) {
+    return Commands.run(
+        () -> {
+          double deadbandedSpeed = intakeSpeed.getAsDouble();
+          deadbandedSpeed = MathUtil.clamp(deadbandedSpeed, -1.0, 1.0);
+
+          intake.setVelocity(deadbandedSpeed * MAX_INTAKE_SPEED_RPS);
+        },
+        intake);
   }
 }

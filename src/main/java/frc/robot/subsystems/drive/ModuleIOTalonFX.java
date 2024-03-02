@@ -59,51 +59,47 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<Double> turnCurrent;
 
   // Gear ratios for SDS MK4i L2, adjust as necessary
-  private final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
-  private final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
+  private static final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
+  private static final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
 
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
   private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
+  private static final String CANBUS_ID = "Canivore_Drivetrain";
 
   private final double absoluteEncoderOffset;
 
   public ModuleIOTalonFX(int index) {
     switch (index) {
-      case 0:
-        driveTalon = new TalonFX(0);
-        turnTalon = new TalonFX(1);
-        cancoder = new CANcoder(2);
-        absoluteEncoderOffset = 0.121d; // CANCoder rotations
+      case 0: // Front Left
+        driveTalon = new TalonFX(0, CANBUS_ID);
+        turnTalon = new TalonFX(1, CANBUS_ID);
+        cancoder = new CANcoder(2, CANBUS_ID);
+        absoluteEncoderOffset = 0.681d; // CANCoder rotations
         break;
-      case 1:
-        driveTalon = new TalonFX(3);
-        turnTalon = new TalonFX(4);
-        cancoder = new CANcoder(5);
-        absoluteEncoderOffset = -0.29d; // CANcoder rotations
+      case 1: // Front Right
+        driveTalon = new TalonFX(3, CANBUS_ID);
+        turnTalon = new TalonFX(4, CANBUS_ID);
+        cancoder = new CANcoder(5, CANBUS_ID);
+        absoluteEncoderOffset = 0.635d; // CANcoder rotations
         break;
-      case 2:
-        driveTalon = new TalonFX(6);
-        turnTalon = new TalonFX(7);
-        cancoder = new CANcoder(8);
-        absoluteEncoderOffset = 0.134d; // CANcoder rotations
+      case 2: // Back Left
+        driveTalon = new TalonFX(6, CANBUS_ID);
+        turnTalon = new TalonFX(7, CANBUS_ID);
+        cancoder = new CANcoder(8, CANBUS_ID);
+        absoluteEncoderOffset = 0.232d; // CANcoder rotations
         break;
-      case 3:
-        driveTalon = new TalonFX(9);
-        turnTalon = new TalonFX(10);
-        cancoder = new CANcoder(11);
-        absoluteEncoderOffset = 0.227d; // CANcoder rotations
+      case 3: // Back Right
+        driveTalon = new TalonFX(9, CANBUS_ID);
+        turnTalon = new TalonFX(10, CANBUS_ID);
+        cancoder = new CANcoder(11, CANBUS_ID);
+        absoluteEncoderOffset = 0.617d; // CANcoder rotations
         break;
       default:
         throw new RuntimeException("Invalid module index");
     }
 
-    /* Drive motor config */
-    var driveConfig = new TalonFXConfiguration();
-    driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
-    driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
+    driveTalon.getConfigurator().apply(getDriveConfig());
     driveTalon.clearStickyFaults();
-    driveTalon.getConfigurator().apply(driveConfig);
     setDriveBrakeMode(true);
 
     /* Turn motor config */
@@ -111,6 +107,13 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnConfig.CurrentLimits.StatorCurrentLimit = 30.0;
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     turnConfig.MotorOutput.Inverted = SDSMK4L1Constants.angleMotorInvert;
+
+    turnConfig.Slot0.kP = SDSMK4L1Constants.angleKP;
+    turnConfig.Slot0.kI = SDSMK4L1Constants.angleKI;
+    turnConfig.Slot0.kD = SDSMK4L1Constants.angleKD;
+
+    turnConfig.Feedback.SensorToMechanismRatio = TURN_GEAR_RATIO;
+
     turnTalon.getConfigurator().apply(turnConfig);
     setTurnBrakeMode(true);
 
@@ -131,7 +134,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     // Turn motor
     turnAbsolutePosition = cancoder.getAbsolutePosition(); /* -0.5 <-> 0.5 in mechanism rotations */
     /* Mechanism rotations -> motor rotations */
-    turnTalon.setPosition(turnAbsolutePosition.getValueAsDouble() * TURN_GEAR_RATIO);
+    turnTalon.setPosition(turnAbsolutePosition.getValueAsDouble());
     turnPosition = turnTalon.getPosition(); // motor rotations
     turnPositionQueue =
         PhoenixOdometryThread.getInstance().registerSignal(turnTalon, turnTalon.getPosition());
@@ -170,30 +173,40 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.canCoderRotations = cancoder.getAbsolutePosition().getValue();
     inputs.canCoderAngle = Units.rotationsToDegrees(inputs.canCoderRotations);
 
-    inputs.drivePositionRotations = drivePosition.getValueAsDouble() / DRIVE_GEAR_RATIO;
-    inputs.driveVelocityRotationsPerSec = driveVelocity.getValueAsDouble() / DRIVE_GEAR_RATIO;
+    inputs.drivePositionRotations = drivePosition.getValueAsDouble();
+    inputs.driveVelocityRotationsPerSec = driveVelocity.getValueAsDouble();
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = new double[] {driveCurrent.getValueAsDouble()};
 
     inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
-    inputs.turnPosition =
-        Rotation2d.fromRotations(turnPosition.getValueAsDouble() / TURN_GEAR_RATIO);
+    inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
     inputs.turnPositionAngle = inputs.turnPosition.getDegrees();
-    inputs.turnVelocityRadPerSec =
-        Units.rotationsToRadians(turnVelocity.getValueAsDouble()) / TURN_GEAR_RATIO;
+    inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
     inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = new double[] {turnCurrent.getValueAsDouble()};
 
     inputs.odometryDrivePositionsRotations =
-        drivePositionQueue.stream()
-            .mapToDouble((Double value) -> value / DRIVE_GEAR_RATIO)
-            .toArray();
+        drivePositionQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryTurnPositions =
-        turnPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromRotations(value / TURN_GEAR_RATIO))
-            .toArray(Rotation2d[]::new);
+        turnPositionQueue.stream().map(Rotation2d::fromRotations).toArray(Rotation2d[]::new);
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+  }
+
+  private TalonFXConfiguration getDriveConfig() {
+    /* Drive motor config */
+    var driveConfig = new TalonFXConfiguration();
+    driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
+    driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
+
+    driveConfig.Slot0.kP = SDSMK4L1Constants.driveKP;
+    driveConfig.Slot0.kI = SDSMK4L1Constants.driveKI;
+    driveConfig.Slot0.kD = SDSMK4L1Constants.driveKD;
+
+    driveConfig.Feedback.SensorToMechanismRatio = DRIVE_GEAR_RATIO;
+
+    return driveConfig;
   }
 
   @Override
@@ -204,11 +217,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   }
 
   @Override
-  public void setDriveVelocity(double velocityMPS) {
-    double rps = velocityMPS / WHEEL_CIRCUMFERENCE;
-
-    // no PID slot is set yet, PID are all zero
-    driveTalon.setControl(new VelocityVoltage(rps).withSlot(0));
+  public void setDriveVelocityRPS(double velocityRPS) {
+    driveTalon.setControl(new VelocityVoltage(velocityRPS).withSlot(0));
   }
 
   @Override

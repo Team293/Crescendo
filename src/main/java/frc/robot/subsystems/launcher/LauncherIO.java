@@ -5,7 +5,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface LauncherIO {
   @AutoLog
   public static class LauncherIOInputs {
-    public double motorVelocityRadPerSec = 0.0d;
+    public double motorVelocityRotationsPerSec = 0.0d;
+    public double mechanismVelocityRotationsPerSec = 0.0d;
     public double motorAppliedVolts = 0.0d;
     public double motorCurrentAmps = 0.0d;
     public double setPoint = 0.0d;
@@ -14,5 +15,5 @@ public interface LauncherIO {
 
   public default void updateInputs(LauncherIOInputs inputs) {}
 
-  public default void setSpeed(double speed) {}
+  public default void setVelocityRPS(double speed) {}
 }

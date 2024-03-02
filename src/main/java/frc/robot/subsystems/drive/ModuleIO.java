@@ -44,8 +44,8 @@ public interface ModuleIO {
   /** Run the drive motor at the specified voltage. */
   public default void setDriveVoltage(double volts) {}
 
-  /** Run the drive motor at the specified velocity. */
-  public default void setDriveVelocity(double velocity) {}
+  /** Run the drive motor at the specified velocity in rotations per second. */
+  public default void setDriveVelocityRPS(double velocity) {}
 
   /** Run the turn motor at the specified voltage. */
   public default void setTurnVoltage(double volts) {}

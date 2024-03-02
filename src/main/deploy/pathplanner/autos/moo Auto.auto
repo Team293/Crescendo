@@ -2,19 +2,113 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7824422299733363,
-      "y": 7.110045901003483
+      "x": 0.675194889579117,
+      "y": 6.727333169633171
     },
-    "rotation": 180.0
+    "rotation": -121.70142966893228
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "moo Path"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "launchNote"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "moo1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "feedNoteToLauncher"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "launchNote"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "moo2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "feedNoteToLauncher"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "launchNote"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "moo3"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "feedNoteToLauncher"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "launchNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": []
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": null
           }
         }
       ]
