@@ -17,18 +17,26 @@ public class LauncherIOTalonFX implements LauncherIO {
   private final StatusSignal<Double> motorCurrent;
 
   private double setPoint = 0.0d;
-  private double setPointError = 0.0d;
   private final double gearRatio = (11.0d / 10.0d);
 
   public LauncherIOTalonFX(int canId) {
     this.motor = new TalonFX(canId, "rio");
     TalonFXConfiguration config = new TalonFXConfiguration();
 
-    config.Slot0.kP = 0.85;
+    // Plastic gear config
+    // config.Slot0.kP = 0.85;
+    // config.Slot0.kI = 0.0;
+    // config.Slot0.kD = 0.0;
+    // config.Slot0.kV = 0.18;
+    // config.Slot0.kS = 0.1d;
+
+    // Metal gear config
+    config.Slot0.kP = 0.3;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
     config.Slot0.kV = 0.18;
-    config.Slot0.kS = 0.1d;
+    config.Slot0.kS = 0.3;
+
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.CurrentLimits.StatorCurrentLimit = 100.0;

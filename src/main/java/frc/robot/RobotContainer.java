@@ -155,9 +155,7 @@ public class RobotContainer {
     /* Launcher control */
     operatorController
         .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> new FeedNoteToLauncher(intake, launcher).schedule(), intake, launcher));
+        .onTrue(Commands.runOnce(() -> new Launch(intake, launcher).schedule(), intake, launcher));
   }
 
   /**

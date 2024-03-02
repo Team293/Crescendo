@@ -51,4 +51,8 @@ public class Launcher extends SubsystemBase {
     return (launchMotorInputs.mechanismVelocityRotationsPerSec
         > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
   }
+
+  public double detectedNoteForSeconds() {
+    return colorSensorInputs.detectedForSeconds;
+  }
 }

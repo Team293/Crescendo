@@ -17,6 +17,7 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 
 /** IO implementation for NavX */
@@ -26,13 +27,15 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
   private final ColorSensorV3 m_colorSensor;
   private final Color m_noteColor = new Color(0.520, 0.378, 0.103); // todo Is this correct?
   private final ColorMatch m_colorMatcher = new ColorMatch();
+  private final Timer noteDetectionTimer = new Timer();
 
   public ColorSensorIORevV3() {
     m_i2cPort = I2C.Port.kOnboard;
     m_colorSensor = new ColorSensorV3(m_i2cPort);
 
-    m_colorMatcher.setConfidenceThreshold(0.6);
+    m_colorMatcher.setConfidenceThreshold(0.95);
     m_colorMatcher.addColorMatch(m_noteColor);
+    noteDetectionTimer.start();
   }
 
   @Override
@@ -50,13 +53,19 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
     if (match == null) {
       inputs.IsNoteDetected = false;
       inputs.MatchResultConfidence = 0;
+      noteDetectionTimer.reset();
+      noteDetectionTimer.start();
     } else {
-      if (inputs.Proximity >= 700) {
+      inputs.MatchResultConfidence = match.confidence;
+      if (inputs.Proximity >= 100) {
         inputs.IsNoteDetected = true;
       } else {
         inputs.IsNoteDetected = false;
+        noteDetectionTimer.reset();
+        noteDetectionTimer.start();
       }
-      inputs.MatchResultConfidence = match.confidence;
     }
+
+    inputs.detectedForSeconds = noteDetectionTimer.get();
   }
 }

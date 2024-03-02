@@ -25,7 +25,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.vision.Vision;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class SubsystemControl {
@@ -120,8 +119,12 @@ public class SubsystemControl {
         () -> {
           // If the color sensor senses a note, disable the intake
           if (launcher.isNoteDetected()) {
-            intake.disableIntake();
-            launcher.enableLauncher();
+            if (launcher.detectedNoteForSeconds() < 0.2) {
+              intake.setVelocity(-2.0);
+            } else {
+              intake.disableIntake();
+              launcher.enableLauncher();
+            }
           } else {
             intake.enableIntake();
             launcher.disableLauncher();
