@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.lib.constants.SDSMK4L1Constants;
 import frc.robot.Constants;
-import org.littletonrobotics.junction.Logger;
 
 public class Module {
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
@@ -75,7 +74,7 @@ public class Module {
   }
 
   public void periodic() {
-    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+    // Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
 
     // On first cycle, reset relative turn encoder
     // Wait until absolute angle is nonzero in case it wasn't initialized yet
@@ -107,14 +106,11 @@ public class Module {
     }
 
     // Calculate position deltas for odometry
-    int deltaCount =
-        Math.min(
-            inputs.odometryDrivePositionsRotations.length, inputs.odometryTurnPositions.length);
-    positionDeltas = new SwerveModulePosition[deltaCount];
-    for (int i = 0; i < deltaCount; i++) {
-      double positionMeters = inputs.odometryDrivePositionsRotations[i] * WHEEL_CIRCUMFERENCE;
+    positionDeltas = new SwerveModulePosition[1];
+    for (int i = 0; i < 1; i++) {
+      double positionMeters = inputs.drivePositionRotations * WHEEL_CIRCUMFERENCE;
       Rotation2d angle =
-          inputs.odometryTurnPositions[i].plus(
+          inputs.turnPosition.plus(
               turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
       positionDeltas[i] = new SwerveModulePosition(positionMeters - lastPositionMeters, angle);
       lastPositionMeters = positionMeters;

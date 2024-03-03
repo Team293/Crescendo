@@ -49,17 +49,9 @@ public class Launch extends Command {
   @Override
   public void execute() {
     // Check if launcher is spun up
-    if (launcher.isReadyToShoot() && !feeding) {
-      feeding = true;
+    if (launcher.isReadyToShoot()) {
       intake.setVelocity(20.0);
-    }
-
-    if (!feeding) {
-      if (totalTime.hasElapsed(0.1)) {
-        intake.setVelocity(0);
-      } else {
-        intake.setVelocity(-3.0);
-      }
+      feeding = true;
     }
 
     if (feeding && !launcher.isReadyToShoot()) {
@@ -83,6 +75,6 @@ public class Launch extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return endBuffer.hasElapsed(0.2) || totalTime.hasElapsed(3.0);
+    return endBuffer.hasElapsed(0.2); // || totalTime.hasElapsed(2.0);
   }
 }

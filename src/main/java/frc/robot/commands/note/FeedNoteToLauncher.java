@@ -1,13 +1,11 @@
 package frc.robot.commands.note;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 
 public class FeedNoteToLauncher extends Command {
   private static final double INTAKE_FEED_SPEED_RPS = 10.0;
-  private static final double EXTRA_WAIT_TIME = 0.2;
 
   // state variables
   private boolean feeding = false;
@@ -16,7 +14,6 @@ public class FeedNoteToLauncher extends Command {
   // subsystems
   private final Intake intake;
   private final Launcher launcher;
-  private final Timer timer = new Timer();
 
   public FeedNoteToLauncher(Intake intake, Launcher launcher) {
     this.intake = intake;
@@ -45,19 +42,12 @@ public class FeedNoteToLauncher extends Command {
     if (feeding && !launcher.isReadyToShoot()) {
       feedComplete = true;
     }
-
-    // if the note has not been launched, reset the timer
-    if (!feedComplete) {
-      timer.reset();
-      timer.start();
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     // Stop the launcher
-    intake.setVelocity(0);
     launcher.disableLauncher();
   }
 
@@ -65,6 +55,6 @@ public class FeedNoteToLauncher extends Command {
   @Override
   public boolean isFinished() {
     // if the note has been launched, wait to make sure it has cleared the launcher
-    return timer.hasElapsed(EXTRA_WAIT_TIME);
+    return feedComplete;
   }
 }

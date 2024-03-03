@@ -90,13 +90,13 @@ public class Drive extends SubsystemBase {
   }
 
   public void periodic() {
-    odometryLock.lock(); // Prevents odometry updates while reading data
+    // odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     for (var module : modules) {
       module.updateInputs();
     }
-    odometryLock.unlock();
-    Logger.processInputs("Drive/Gyro", gyroInputs);
+    // odometryLock.unlock();
+    // Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
       module.periodic();
     }
@@ -109,8 +109,8 @@ public class Drive extends SubsystemBase {
     }
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+      // Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
+      // Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
 
     // Update odometry
@@ -161,7 +161,7 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, MAX_LINEAR_SPEED);
 
-    Logger.recordOutput("Drive/Speeds", speeds);
+    // Logger.recordOutput("Drive/Speeds", speeds);
 
     // Send setpoints to modules
     SwerveModuleState[] optimizedSetpointStates = new SwerveModuleState[4];
@@ -171,8 +171,8 @@ public class Drive extends SubsystemBase {
     }
 
     // Log setpoint states
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
+    // Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    // Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
   }
 
   /**
@@ -215,8 +215,8 @@ public class Drive extends SubsystemBase {
     }
 
     // Log setpoint states
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
+    // Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    // Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
   }
 
   /** Stops the drive. */

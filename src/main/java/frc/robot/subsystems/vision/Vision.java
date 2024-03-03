@@ -1,7 +1,6 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   private static final double ANGULAR_INTEGRAL_LIMIT = 5;
@@ -79,6 +78,6 @@ public class Vision extends SubsystemBase {
       m_angularIntegralError = 0.0d;
     }
 
-    Logger.processInputs("Vision", m_visionInputs);
+    // Logger.processInputs("Vision", m_visionInputs);
   }
 }

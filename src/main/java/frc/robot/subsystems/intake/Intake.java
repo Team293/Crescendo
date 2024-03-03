@@ -14,10 +14,8 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
-import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final Drive drive;
@@ -25,18 +23,18 @@ public class Intake extends SubsystemBase {
   private final IntakeIOTalonFX feedMotor;
   private final IntakeIOInputsAutoLogged feedMotorInputs = new IntakeIOInputsAutoLogged();
 
-  private double feedSetSpeed = 20.0; /* pulley rotations per second */
+  private double feedSetSpeed = 10.0; /* pulley rotations per second */
 
   public Intake(Drive drive) {
     this.drive = drive;
     feedMotor = new IntakeIOTalonFX(12);
     this.disableIntake();
 
-    SmartDashboard.setDefaultNumber("Intake Speed Setpoint(RPS)", feedSetSpeed);
+    // SmartDashboard.setDefaultNumber("Intake Speed Setpoint(RPS)", feedSetSpeed);
   }
 
   public void periodic() {
-    feedSetSpeed = SmartDashboard.getNumber("Intake Speed Setpoint(RPS)", feedSetSpeed);
+    // feedSetSpeed = SmartDashboard.getNumber("Intake Speed Setpoint(RPS)", feedSetSpeed);
 
     ChassisSpeeds robotSpeed = drive.getChassisSpeed();
     double speed = robotSpeed.vxMetersPerSecond;
@@ -44,7 +42,7 @@ public class Intake extends SubsystemBase {
     feedMotor.updateInputs(feedMotorInputs, speed);
 
     // Log the inputs
-    Logger.processInputs("Intake/Motor", feedMotorInputs);
+    // Logger.processInputs("Intake/Motor", feedMotorInputs);
   }
 
   public void enableIntake() {

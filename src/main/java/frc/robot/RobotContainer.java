@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
-import frc.robot.commands.note.DropNote;
 import frc.robot.commands.note.FeedNoteToLauncher;
 import frc.robot.commands.note.Launch;
 import frc.robot.subsystems.drive.Drive;
@@ -36,7 +35,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
-import frc.robot.subsystems.vision.Vision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -49,7 +47,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Launcher launcher;
-  private final Vision vision;
+  // private final Vision vision;
   private final Intake intake;
 
   // Controller
@@ -104,7 +102,7 @@ public class RobotContainer {
         break;
     }
     // Initalize subsystems
-    vision = new Vision();
+    // vision = new Vision();
     launcher = new Launcher();
     intake = new Intake(drive);
 
@@ -134,19 +132,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Drive command */
-    /*
-     * drive.setDefaultCommand(
-     * DriveCommands.joystickDrive(
-     * drive,
-     * () -> -controller.getRightY(),
-     * () -> -controller.getRightX(),
-     * () -> -controller.getLeftX()));
-     */
-
     drive.setDefaultCommand(
-        SubsystemControl.limelightDrive(
+        SubsystemControl.joystickDrive(
             drive,
-            vision,
             () -> -driverController.getRightY(),
             () -> -driverController.getRightX(),
             () -> -driverController.getLeftX()));
@@ -159,17 +147,18 @@ public class RobotContainer {
         .b()
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
-    /* Intake command */
+    /* Intake auto-run command */
     intake.setDefaultCommand(
-        SubsystemControl.joystickIntake(intake, () -> -operatorController.getLeftY()));
+        SubsystemControl.intakeWithColorSensor(
+            intake, launcher, () -> operatorController.getLeftTriggerAxis()));
 
     /* Launcher control */
     operatorController
         .rightBumper()
-        .onTrue(Commands.run(() -> new Launch(intake, launcher).schedule(), intake, launcher));
+        .onTrue(Commands.runOnce(() -> new Launch(intake, launcher).schedule(), intake, launcher));
 
-    operatorController.leftBumper().onTrue(new DropNote(intake));
-    // operatorController.leftBumper().onTrue(new DropNote(intake));
+    /* Reverse intake */
+    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::reverseIntake, intake));
   }
 
   /**

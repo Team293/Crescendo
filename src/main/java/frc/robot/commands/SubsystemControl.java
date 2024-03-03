@@ -23,15 +23,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.vision.Vision;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class SubsystemControl {
   private static final double DEADBAND = 0.1;
-
-  // intake constants
-  private static final double MAX_INTAKE_SPEED_RPS = 20.0;
 
   private SubsystemControl() {}
 
@@ -68,31 +65,6 @@ public class SubsystemControl {
                   linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                   omega * drive.getMaxAngularSpeedRadPerSec(),
                   drive.getRotation()));
-        },
-        drive);
-  }
-
-  // Simulate a car with front wheel drive
-  // Gas is right trigger, brake is left trigger
-  // Steering is left joystick x axis or right joystick x axis
-  public static Command kartDrive(
-      Drive drive,
-      DoubleSupplier gasSupplier,
-      DoubleSupplier brakeSupplier,
-      DoubleSupplier steeringSupplier,
-      BooleanSupplier reverseGear) {
-    return Commands.run(
-        () -> {
-          double gas = gasSupplier.getAsDouble();
-          double brake = brakeSupplier.getAsDouble();
-          double steering = steeringSupplier.getAsDouble();
-          double speed = gas - brake;
-          if (reverseGear.getAsBoolean()) {
-            speed *= -1;
-          }
-          boolean brakeMotors = (brake >= 0.75 ? false : true);
-          drive.runFrontWheelDrive(
-              speed * drive.getMaxLinearSpeedMetersPerSec(), steering, brakeMotors, 45.0);
         },
         drive);
   }
@@ -142,14 +114,30 @@ public class SubsystemControl {
         drive);
   }
 
-  public static Command joystickIntake(Intake intake, DoubleSupplier intakeSpeed) {
+  public static Command intakeWithColorSensor(
+      Intake intake, Launcher launcher, DoubleSupplier reverseIntake) {
     return Commands.run(
         () -> {
-          double deadbandedSpeed = intakeSpeed.getAsDouble();
-          deadbandedSpeed = MathUtil.clamp(deadbandedSpeed, -1.0, 1.0);
+          if (reverseIntake.getAsDouble() > 0.1) {
+            intake.setVelocity(-10.0 * reverseIntake.getAsDouble());
+            launcher.setVelocity(-5.0 * reverseIntake.getAsDouble());
+            return;
+          }
 
-          intake.setVelocity(deadbandedSpeed * MAX_INTAKE_SPEED_RPS);
+          // If the color sensor senses a note, disable the intake
+          if (launcher.isNoteDetected()) {
+            if (launcher.detectedNoteForSeconds() < 0.2) {
+              intake.setVelocity(-2.0);
+            } else {
+              intake.disableIntake();
+              launcher.enableLauncher();
+            }
+          } else {
+            intake.enableIntake();
+            launcher.disableLauncher();
+          }
         },
-        intake);
+        intake,
+        launcher);
   }
 }
