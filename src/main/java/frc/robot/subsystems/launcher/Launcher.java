@@ -55,8 +55,7 @@ public class Launcher extends SubsystemBase {
   }
 
   public boolean isReadyToShoot() {
-    return (launchMotorInputs.mechanismVelocityRotationsPerSec
-        > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
+    return (getVelocityRPS() > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
   }
 
   public double detectedNoteForSeconds() {

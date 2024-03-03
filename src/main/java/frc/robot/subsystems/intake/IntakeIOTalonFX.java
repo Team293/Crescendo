@@ -49,7 +49,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     config.Slot0.kP = 0.11;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
-    config.Slot0.kV = 0.12;
+    config.Slot0.kV = 0.462;
     config.Slot0.kS = 0.05;
     motor.getConfigurator().apply(config);
 
@@ -79,8 +79,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   // Takes in speed as pulley rotations per second
   @Override
   public void setSpeed(double speed) {
-    velocityVoltageCommand.withVelocity(
-        speed * m_gearRatio); // Convert to motor rotations per second
+    velocityVoltageCommand.withVelocity(speed).withSlot(0); // Convert to motor rotations per second
     motor.setControl(velocityVoltageCommand);
   }
 }

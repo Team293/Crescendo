@@ -213,7 +213,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   @Override
   public void setDriveVelocityRPS(double velocityRPS) {
-    velocityVoltageCommand.withVelocity(velocityRPS);
+    velocityVoltageCommand.withVelocity(velocityRPS).withSlot(0);
     driveTalon.setControl(velocityVoltageCommand);
   }
 
