@@ -14,7 +14,6 @@
 package frc.robot.subsystems.launcher;
 
 import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
@@ -48,22 +47,14 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
     inputs.Proximity = m_colorSensor.getProximity();
 
     /** Run the color match algorithm on our detected color */
-    ColorMatchResult match = m_colorMatcher.matchColor(detectedColor);
+    // ColorMatchResult match = m_colorMatcher.matchColor(detectedColor);
 
-    if (match == null) {
+    if (inputs.Proximity >= 120) {
+      inputs.IsNoteDetected = true;
+    } else {
       inputs.IsNoteDetected = false;
-      inputs.MatchResultConfidence = 0;
       noteDetectionTimer.reset();
       noteDetectionTimer.start();
-    } else {
-      inputs.MatchResultConfidence = match.confidence;
-      if (inputs.Proximity >= 700) {
-        inputs.IsNoteDetected = true;
-      } else {
-        inputs.IsNoteDetected = false;
-        noteDetectionTimer.reset();
-        noteDetectionTimer.start();
-      }
     }
 
     inputs.detectedForSeconds = noteDetectionTimer.get();
