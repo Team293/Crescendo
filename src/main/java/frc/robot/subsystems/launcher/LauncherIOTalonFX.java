@@ -19,6 +19,9 @@ public class LauncherIOTalonFX implements LauncherIO {
   private double setPoint = 0.0d;
   private final double gearRatio = (11.0d / 10.0d);
 
+  private static VoltageOut voltageOutCommand = new VoltageOut(0.0);
+  private static VelocityVoltage velocityVoltageCommand = new VelocityVoltage(0.0).withSlot(0);
+
   public LauncherIOTalonFX(int canId) {
     this.motor = new TalonFX(canId, "rio");
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -69,9 +72,11 @@ public class LauncherIOTalonFX implements LauncherIO {
     setPoint = velocityRPS * gearRatio * 0.8;
 
     if (setPoint == 0) {
-      motor.setControl(new VoltageOut(0));
+      voltageOutCommand.withOutput(0.0);
+      motor.setControl(voltageOutCommand);
     } else {
-      motor.setControl(new VelocityVoltage(setPoint).withSlot(0));
+      velocityVoltageCommand.withVelocity(velocityRPS);
+      motor.setControl(velocityVoltageCommand);
     }
   }
 }

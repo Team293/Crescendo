@@ -34,6 +34,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   private double setpoint = 0.0d;
   private final double m_gearRatio = (4.0 / 1.0); // 4 motor rotations per 1 intake rotation
 
+  private static VelocityVoltage velocityVoltageCommand = new VelocityVoltage(0.0).withSlot(0);
+
   public IntakeIOTalonFX(int canId) {
     this.motor = new TalonFX(canId, "rio");
     var config = new TalonFXConfiguration();
@@ -73,7 +75,9 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   // Takes in speed as pulley rotations per second
   @Override
-  public void setSpeed(double speedRPS) {
-    motor.setControl(new VelocityVoltage(speedRPS * 1.25).withSlot(0));
+  public void setSpeed(double speed) {
+    velocityVoltageCommand.withVelocity(
+        speed * m_gearRatio); // Convert to motor rotations per second
+    motor.setControl(velocityVoltageCommand);
   }
 }

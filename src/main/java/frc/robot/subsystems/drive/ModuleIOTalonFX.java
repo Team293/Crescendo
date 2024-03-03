@@ -68,6 +68,9 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   private final double absoluteEncoderOffset;
 
+  private static VoltageOut voltageOutCommand = new VoltageOut(0.0);
+  private static VelocityVoltage velocityVoltageCommand = new VelocityVoltage(0.0).withSlot(0);
+
   public ModuleIOTalonFX(int index) {
     switch (index) {
       case 0: // Front Left
@@ -184,13 +187,6 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
     inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = new double[] {turnCurrent.getValueAsDouble()};
-
-    inputs.odometryDrivePositionsRotations =
-        drivePositionQueue.stream().mapToDouble((Double value) -> value).toArray();
-    inputs.odometryTurnPositions =
-        turnPositionQueue.stream().map(Rotation2d::fromRotations).toArray(Rotation2d[]::new);
-    drivePositionQueue.clear();
-    turnPositionQueue.clear();
   }
 
   private TalonFXConfiguration getDriveConfig() {
@@ -211,19 +207,20 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   @Override
   public void setDriveVoltage(double volts) {
-    driveTalon.setControl(new VoltageOut(volts));
-
-    driveTalon.setControl(new VelocityVoltage(volts).withSlot(0));
+    voltageOutCommand.withOutput(volts);
+    driveTalon.setControl(voltageOutCommand);
   }
 
   @Override
   public void setDriveVelocityRPS(double velocityRPS) {
-    driveTalon.setControl(new VelocityVoltage(velocityRPS).withSlot(0));
+    velocityVoltageCommand.withVelocity(velocityRPS);
+    driveTalon.setControl(velocityVoltageCommand);
   }
 
   @Override
   public void setTurnVoltage(double volts) {
-    turnTalon.setControl(new VoltageOut(volts));
+    voltageOutCommand.withOutput(volts);
+    turnTalon.setControl(voltageOutCommand);
   }
 
   @Override

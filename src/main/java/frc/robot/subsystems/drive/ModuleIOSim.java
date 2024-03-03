@@ -67,9 +67,6 @@ public class ModuleIOSim implements ModuleIO {
     inputs.turnAppliedVolts = turnAppliedVolts;
     inputs.turnCurrentAmps = new double[] {Math.abs(turnSim.getCurrentDrawAmps())};
 
-    inputs.odometryDrivePositionsRotations = new double[] {inputs.drivePositionRotations};
-    inputs.odometryTurnPositions = new Rotation2d[] {inputs.turnPosition};
-
     // for simulated PID only
     currentVelocity = inputs.driveVelocityRotationsPerSec;
   }

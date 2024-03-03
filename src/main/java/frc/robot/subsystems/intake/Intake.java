@@ -17,7 +17,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
-import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final Drive drive;
@@ -44,7 +43,7 @@ public class Intake extends SubsystemBase {
     feedMotor.updateInputs(feedMotorInputs, speed);
 
     // Log the inputs
-    Logger.processInputs("Intake/Motor", feedMotorInputs);
+    // Logger.processInputs("Intake/Motor", feedMotorInputs);
   }
 
   public void enableIntake() {
