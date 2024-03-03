@@ -35,6 +35,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.subsystems.leds.Led;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -49,6 +50,7 @@ public class RobotContainer {
   private final Launcher launcher;
   // private final Vision vision;
   private final Intake intake;
+  private final Led led;
 
   // Controller
   private static final double DEADBAND = 0.05;
@@ -105,6 +107,7 @@ public class RobotContainer {
     // vision = new Vision();
     launcher = new Launcher();
     intake = new Intake(drive);
+    led = new Led(1);
 
     NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
     NamedCommands.registerCommand("feedNote", new FeedNoteToLauncher(intake, launcher));
