@@ -15,6 +15,7 @@ public class LauncherIOTalonFX implements LauncherIO {
   private final StatusSignal<Double> motorVelocity;
   private final StatusSignal<Double> motorAppliedVolts;
   private final StatusSignal<Double> motorCurrent;
+  private final StatusSignal<Double> setPointError;
 
   private double setPoint = 0.0d;
   private final double gearRatio = (11.0d / 10.0d);
@@ -49,21 +50,23 @@ public class LauncherIOTalonFX implements LauncherIO {
     motorVelocity = motor.getVelocity();
     motorAppliedVolts = motor.getMotorVoltage();
     motorCurrent = motor.getStatorCurrent();
+    setPointError = motor.getClosedLoopError();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVelocity, motorAppliedVolts, motorCurrent);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
     motor.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(LauncherIOInputs inputs) {
-    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent);
+    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
 
     inputs.motorVelocityRotationsPerSec = motorVelocity.getValueAsDouble();
     inputs.mechanismVelocityRotationsPerSec = inputs.motorVelocityRotationsPerSec * gearRatio;
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.setPointError = setPointError.getValueAsDouble();
     inputs.setPoint = setPoint;
-    inputs.setPointError = motor.getClosedLoopError().getValueAsDouble();
   }
 
   @Override

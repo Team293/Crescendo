@@ -31,6 +31,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Double> motorVelocity;
   private final StatusSignal<Double> motorAppliedVolts;
   private final StatusSignal<Double> motorCurrent;
+  private final StatusSignal<Double> setPointError;
   private double setpoint = 0.0d;
   private final double m_gearRatio = (4.0 / 1.0); // 4 motor rotations per 1 intake rotation
 
@@ -55,22 +56,24 @@ public class IntakeIOTalonFX implements IntakeIO {
     motorVelocity = motor.getVelocity();
     motorAppliedVolts = motor.getMotorVoltage();
     motorCurrent = motor.getStatorCurrent();
+    setPointError = motor.getClosedLoopError();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, motorVelocity, motorAppliedVolts, motorCurrent);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
     motor.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs, double robotSpeed) {
     this.robotSpeed = robotSpeed;
-    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent);
+    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
 
     inputs.motorVelocityRotationsPerSecond = motorVelocity.getValueAsDouble();
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.setPointError = setPointError.getValueAsDouble();
     // inputs.robotSpeed = this.robotSpeed;
     inputs.setPoint = setpoint;
-    inputs.setPointError = motor.getClosedLoopError().getValueAsDouble();
   }
 
   // Takes in speed as pulley rotations per second
