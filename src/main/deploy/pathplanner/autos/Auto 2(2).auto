@@ -30,12 +30,6 @@
                       "data": {
                         "pathName": "Path 2(2)"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "feedNoteToLauncher"
-                      }
                     }
                   ]
                 }

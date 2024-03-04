@@ -49,6 +49,7 @@ public class ModuleIOSim implements ModuleIO {
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
   private double currentVelocity = 0.0;
+  private Rotation2d currentTurnPosition = new Rotation2d();
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
@@ -69,6 +70,7 @@ public class ModuleIOSim implements ModuleIO {
 
     // for simulated PID only
     currentVelocity = inputs.driveVelocityRotationsPerSec;
+    currentTurnPosition = inputs.turnPosition;
   }
 
   @Override
@@ -81,6 +83,11 @@ public class ModuleIOSim implements ModuleIO {
   public void setTurnVoltage(double volts) {
     turnAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
     turnSim.setInputVoltage(turnAppliedVolts);
+  }
+
+  @Override
+  public void setTurnPosition(Rotation2d position) {
+    setTurnVoltage(turnFeedback.calculate(currentTurnPosition.getRadians(), position.getRadians()));
   }
 
   @Override

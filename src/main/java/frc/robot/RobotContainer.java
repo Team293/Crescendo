@@ -112,7 +112,7 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser2 = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser2", autoChooser2);
+    SmartDashboard.putData("Auto Chooser", autoChooser2);
 
     // Set up feedforward characterization
     autoChooser.addOption(
@@ -135,9 +135,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         SubsystemControl.joystickDrive(
             drive,
-            () -> -driverController.getRightY(),
-            () -> -driverController.getRightX(),
-            () -> -driverController.getLeftX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -148,17 +148,15 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake auto-run command */
+    /* Reverse intake control as well */
     intake.setDefaultCommand(
         SubsystemControl.intakeWithColorSensor(
-            intake, launcher, () -> operatorController.getLeftTriggerAxis()));
+            intake, launcher, operatorController::getLeftTriggerAxis));
 
     /* Launcher control */
     operatorController
         .rightBumper()
         .onTrue(Commands.runOnce(() -> new Launch(intake, launcher).schedule(), intake, launcher));
-
-    /* Reverse intake */
-    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::reverseIntake, intake));
   }
 
   /**

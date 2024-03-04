@@ -13,13 +13,10 @@
 
 package frc.robot.subsystems.drive;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.lib.constants.SDSMK4L1Constants;
-import frc.robot.Constants;
 
 public class Module {
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
@@ -30,7 +27,6 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  private final PIDController turnFeedback;
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
   /* Velocity in meters per second */
   private Double speedSetpoint = null;
@@ -42,26 +38,6 @@ public class Module {
     this.io = io;
     this.index = index;
 
-    // Switch constants based on mode (the physics simulator is treated as a
-    // separate robot with different tuning)
-    switch (Constants.currentMode) {
-      case REAL:
-      case REPLAY:
-        turnFeedback =
-            new PIDController(
-                SDSMK4L1Constants.angleKP, SDSMK4L1Constants.angleKI, SDSMK4L1Constants.angleKD);
-        break;
-      case SIM:
-        turnFeedback =
-            new PIDController(
-                SDSMK4L1Constants.angleKP, SDSMK4L1Constants.angleKI, SDSMK4L1Constants.angleKD);
-        break;
-      default:
-        turnFeedback = new PIDController(0.0, 0.0, 0.0);
-        break;
-    }
-
-    turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
     setBrakeMode(true);
   }
 
@@ -78,14 +54,13 @@ public class Module {
 
     // On first cycle, reset relative turn encoder
     // Wait until absolute angle is nonzero in case it wasn't initialized yet
-    if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
-      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
-    }
+    // if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
+    //   turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
+    // }
 
     // Run closed loop turn control
     if (angleSetpoint != null) {
-      io.setTurnVoltage(
-          turnFeedback.calculate(getAngle().getRadians(), angleSetpoint.getRadians()));
+      io.setTurnPosition(angleSetpoint);
 
       // Run closed loop drive control
       // Only allowed if closed loop turn control is running
@@ -95,12 +70,13 @@ public class Module {
         // When the error is 90°, the velocity setpoint should be 0. As the wheel turns
         // towards the setpoint, its velocity should increase. This is achieved by
         // taking the component of the velocity in the direction of the setpoint.
-        double adjustSpeedSetpoint = speedSetpoint * Math.cos(turnFeedback.getPositionError());
+        double angleError =
+            Math.abs(rotationalDifferenceBetween(inputs.turnPosition, angleSetpoint));
+        double adjustSpeedSetpoint = speedSetpoint * Math.cos(Units.degreesToRadians(angleError));
 
-        // Run drive controller
-        double velocityRadPerSec = adjustSpeedSetpoint / WHEEL_RADIUS;
-        // convert to rotations per second
-        double velocityRotationsPerSec = velocityRadPerSec;
+        // Run drive controller, convert meters per second to rotations per second
+        double velocityRotationsPerSec = adjustSpeedSetpoint / WHEEL_CIRCUMFERENCE;
+
         io.setDriveVelocityRPS(velocityRotationsPerSec);
       }
     }
@@ -109,9 +85,10 @@ public class Module {
     positionDeltas = new SwerveModulePosition[1];
     for (int i = 0; i < 1; i++) {
       double positionMeters = inputs.drivePositionRotations * WHEEL_CIRCUMFERENCE;
-      Rotation2d angle =
-          inputs.turnPosition.plus(
-              turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
+      // Rotation2d angle =
+      //     inputs.turnPosition.plus(
+      //         turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
+      Rotation2d angle = inputs.turnPosition;
       positionDeltas[i] = new SwerveModulePosition(positionMeters - lastPositionMeters, angle);
       lastPositionMeters = positionMeters;
     }
@@ -163,11 +140,11 @@ public class Module {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    if (turnRelativeOffset == null) {
-      return new Rotation2d();
-    } else {
-      return inputs.turnPosition.plus(turnRelativeOffset);
-    }
+    // if (turnRelativeOffset == null) {
+    //   return new Rotation2d();
+    // } else {
+    return inputs.turnPosition; // .plus(turnRelativeOffset);
+    // }
   }
 
   /** Returns the current drive position of the module in meters. */
@@ -198,5 +175,18 @@ public class Module {
   /** Returns the drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
     return inputs.driveVelocityRotationsPerSec;
+  }
+
+  /** Returns the difference between rotations in degrees. */
+  public double rotationalDifferenceBetween(Rotation2d a, Rotation2d b) {
+    double aDeg = a.getDegrees();
+    double bDeg = b.getDegrees();
+
+    double diff = Math.abs(aDeg - bDeg) % 360.0;
+    if (diff > 180.0) {
+      diff = 360.0 - diff;
+    }
+
+    return diff;
   }
 }
