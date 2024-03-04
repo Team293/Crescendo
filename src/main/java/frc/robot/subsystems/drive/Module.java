@@ -13,13 +13,10 @@
 
 package frc.robot.subsystems.drive;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.lib.constants.SDSMK4L1Constants;
-import frc.robot.Constants;
 
 public class Module {
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
@@ -45,8 +42,7 @@ public class Module {
   }
 
   /**
-   * Update inputs without running the rest of the periodic logic. This is useful
-   * since these
+   * Update inputs without running the rest of the periodic logic. This is useful since these
    * updates need to be properly thread-locked.
    */
   public void updateInputs() {
@@ -58,9 +54,9 @@ public class Module {
 
     // On first cycle, reset relative turn encoder
     // Wait until absolute angle is nonzero in case it wasn't initialized yet
-    if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
-      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
-    }
+    // if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
+    //   turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
+    // }
 
     // Run closed loop turn control
     if (angleSetpoint != null) {
@@ -74,7 +70,8 @@ public class Module {
         // When the error is 90°, the velocity setpoint should be 0. As the wheel turns
         // towards the setpoint, its velocity should increase. This is achieved by
         // taking the component of the velocity in the direction of the setpoint.
-        double angleError = Math.abs(rotationalDifferenceBetween(inputs.turnPosition, angleSetpoint));
+        double angleError =
+            Math.abs(rotationalDifferenceBetween(inputs.turnPosition, angleSetpoint));
         double adjustSpeedSetpoint = speedSetpoint * Math.cos(Units.degreesToRadians(angleError));
 
         // Run drive controller, convert meters per second to rotations per second
@@ -88,17 +85,16 @@ public class Module {
     positionDeltas = new SwerveModulePosition[1];
     for (int i = 0; i < 1; i++) {
       double positionMeters = inputs.drivePositionRotations * WHEEL_CIRCUMFERENCE;
-      Rotation2d angle = inputs.turnPosition.plus(
-          turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
+      // Rotation2d angle =
+      //     inputs.turnPosition.plus(
+      //         turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
+      Rotation2d angle = inputs.turnPosition;
       positionDeltas[i] = new SwerveModulePosition(positionMeters - lastPositionMeters, angle);
       lastPositionMeters = positionMeters;
     }
   }
 
-  /**
-   * Runs the module with the specified setpoint state. Returns the optimized
-   * state.
-   */
+  /** Runs the module with the specified setpoint state. Returns the optimized state. */
   public SwerveModuleState runSetpoint(SwerveModuleState state) {
     // Optimize state based on current angle
     // Controllers run in "periodic" when the setpoint is not null
@@ -111,9 +107,7 @@ public class Module {
     return optimizedState;
   }
 
-  /**
-   * Runs the module with the specified voltage while controlling to zero degrees.
-   */
+  /** Runs the module with the specified voltage while controlling to zero degrees. */
   public void runCharacterization(double volts) {
     // Closed loop turn control
     angleSetpoint = new Rotation2d();
@@ -146,11 +140,11 @@ public class Module {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    if (turnRelativeOffset == null) {
-      return new Rotation2d();
-    } else {
-      return inputs.turnPosition.plus(turnRelativeOffset);
-    }
+    // if (turnRelativeOffset == null) {
+    //   return new Rotation2d();
+    // } else {
+    return inputs.turnPosition; // .plus(turnRelativeOffset);
+    // }
   }
 
   /** Returns the current drive position of the module in meters. */
