@@ -38,9 +38,12 @@ import frc.robot.subsystems.launcher.Launcher;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -59,7 +62,9 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   private final SendableChooser<Command> autoChooser2;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     /* Print the log directory */
     String logDir = DataLogManager.getLogDir();
@@ -70,35 +75,38 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIONavX(),
-                new ModuleIOTalonFX(0),
-                new ModuleIOTalonFX(1),
-                new ModuleIOTalonFX(2),
-                new ModuleIOTalonFX(3));
+        drive = new Drive(
+            new GyroIONavX(),
+            new ModuleIOTalonFX(0),
+            new ModuleIOTalonFX(1),
+            new ModuleIOTalonFX(2),
+            new ModuleIOTalonFX(3));
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim());
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            });
         break;
     }
     // Initalize subsystems
@@ -112,7 +120,7 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser2 = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser2", autoChooser2);
+    SmartDashboard.putData("Auto Chooser", autoChooser2);
 
     // Set up feedforward characterization
     autoChooser.addOption(
@@ -125,9 +133,11 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
@@ -135,9 +145,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         SubsystemControl.joystickDrive(
             drive,
-            () -> -driverController.getRightY(),
-            () -> -driverController.getRightX(),
-            () -> -driverController.getLeftX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -148,17 +158,15 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
 
     /* Intake auto-run command */
+    /* Reverse intake control as well */
     intake.setDefaultCommand(
         SubsystemControl.intakeWithColorSensor(
-            intake, launcher, () -> operatorController.getLeftTriggerAxis()));
+            intake, launcher, operatorController::getLeftTriggerAxis));
 
     /* Launcher control */
     operatorController
         .rightBumper()
         .onTrue(Commands.runOnce(() -> new Launch(intake, launcher).schedule(), intake, launcher));
-
-    /* Reverse intake */
-    // operatorController.leftBumper().whileTrue(Commands.runOnce(intake::reverseIntake, intake));
   }
 
   /**
