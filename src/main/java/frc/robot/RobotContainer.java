@@ -107,7 +107,7 @@ public class RobotContainer {
     // vision = new Vision();
     launcher = new Launcher();
     intake = new Intake(drive);
-    led = new Led(1);
+    led = new Led(1, launcher);
 
     NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
     NamedCommands.registerCommand("feedNote", new FeedNoteToLauncher(intake, launcher));
