@@ -15,6 +15,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -38,9 +40,12 @@ import frc.robot.subsystems.launcher.Launcher;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -59,7 +64,9 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   private final SendableChooser<Command> autoChooser2;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     /* Print the log directory */
     String logDir = DataLogManager.getLogDir();
@@ -70,35 +77,38 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIONavX(),
-                new ModuleIOTalonFX(0),
-                new ModuleIOTalonFX(1),
-                new ModuleIOTalonFX(2),
-                new ModuleIOTalonFX(3));
+        drive = new Drive(
+            new GyroIONavX(),
+            new ModuleIOTalonFX(0),
+            new ModuleIOTalonFX(1),
+            new ModuleIOTalonFX(2),
+            new ModuleIOTalonFX(3));
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim());
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            });
         break;
     }
     // Initalize subsystems
@@ -125,19 +135,32 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     /* Drive command */
     drive.setDefaultCommand(
-        SubsystemControl.joystickDrive(
+        SubsystemControl.fieldOrientedRotation(
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> {
+              Rotation2d rot = new Rotation2d(driverController.getRightX(), driverController.getRightY());
+              double magnitude = Math.hypot(driverController.getRightX(), driverController.getRightY());
+
+              if (magnitude > 0.5) {
+                return rot.getDegrees();
+              } else {
+                return -1;
+              }
+            },
+            () -> driverController.getLeftTriggerAxis(),
+            () -> driverController.getRightTriggerAxis()));
 
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

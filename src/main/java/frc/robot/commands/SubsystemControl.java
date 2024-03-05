@@ -69,6 +69,41 @@ public class SubsystemControl {
         drive);
   }
 
+  /*
+   * Field oriented direction
+   */
+  public static Command fieldOrientedRotation(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      DoubleSupplier targetDirection,
+      DoubleSupplier rotationLeft,
+      DoubleSupplier rotationRight) {
+    return Commands.run(
+        () -> {
+          Translation2d translation =
+              new Translation2d(
+                  xSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec(),
+                  ySupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec());
+
+          double averageManualRotation =
+              (rotationLeft.getAsDouble() + rotationRight.getAsDouble()) / 2;
+
+          if (averageManualRotation > 0.1) {
+            drive.setTargetDirection(drive.getRotation().getDegrees() + averageManualRotation);
+            return;
+          }
+
+          if (targetDirection.getAsDouble() >= 0) {
+            drive.setTargetDirection(targetDirection.getAsDouble());
+          }
+
+          // Convert to field relative speeds & send command
+          drive.runFieldOrientedDirection(translation);
+        },
+        drive);
+  }
+
   public static Command limelightDrive(
       Drive drive,
       Vision vision,
