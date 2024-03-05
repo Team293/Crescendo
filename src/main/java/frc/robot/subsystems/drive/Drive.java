@@ -41,7 +41,8 @@ public class Drive extends SubsystemBase {
   private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
   private static final double TRACK_WIDTH_X = Units.inchesToMeters(21.73);
   private static final double TRACK_WIDTH_Y = Units.inchesToMeters(21.73);
-  private static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
+  private static final double DRIVE_BASE_RADIUS =
+      Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
   private static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
 
   public static final Lock odometryLock = new ReentrantLock();
@@ -78,8 +79,9 @@ public class Drive extends SubsystemBase {
         this::runVelocity,
         new HolonomicPathFollowerConfig(
             MAX_LINEAR_SPEED, DRIVE_BASE_RADIUS, new ReplanningConfig()),
-        () -> DriverStation.getAlliance().isPresent()
-            && DriverStation.getAlliance().get() == Alliance.Red,
+        () ->
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
@@ -142,8 +144,9 @@ public class Drive extends SubsystemBase {
         // If the gyro is connected, replace the theta component of the twist
         // with the change in angle since the last sample.
         Rotation2d gyroRotation = gyroInputs.yawPosition;
-        twist = new Twist2d(
-            twist.dx, twist.dy, gyroRotation.minus(lastGyroRotation).getRadians() / deltaCount);
+        twist =
+            new Twist2d(
+                twist.dx, twist.dy, gyroRotation.minus(lastGyroRotation).getRadians() / deltaCount);
       }
       // Apply the twist (change since last sample) to the current pose
       pose = pose.exp(twist);
@@ -154,6 +157,7 @@ public class Drive extends SubsystemBase {
   public void resetRotation() {
     gyroInputs.yawOffset = gyroInputs.realYawPosition;
     var currentPose = getPose();
+    setTargetDirection(0.0);
     setPose(new Pose2d(currentPose.getTranslation(), new Rotation2d()));
   }
 
@@ -196,23 +200,24 @@ public class Drive extends SubsystemBase {
    * Runs the drive as if it was a car with front wheel drive
    *
    * @param speedMetersPerSec in meters/sec
-   * @param steering          Steering input from -1 to 1
-   * @param brake             Whether to brake
-   * @param reverse           Whether to reverse
-   * @param maxTurningAngle   Maximum turning angle in degrees
+   * @param steering Steering input from -1 to 1
+   * @param brake Whether to brake
+   * @param reverse Whether to reverse
+   * @param maxTurningAngle Maximum turning angle in degrees
    */
   public void runFrontWheelDrive(
       double speedMetersPerSec, double steering, boolean brake, double maxTurningAngle) {
     // Calculate module setpoints
-    SwerveModuleState frontWheels = new SwerveModuleState(
-        speedMetersPerSec,
-        new Rotation2d(0).minus(Rotation2d.fromDegrees(steering * maxTurningAngle)));
+    SwerveModuleState frontWheels =
+        new SwerveModuleState(
+            speedMetersPerSec,
+            new Rotation2d(0).minus(Rotation2d.fromDegrees(steering * maxTurningAngle)));
     SwerveModuleState backWheels = new SwerveModuleState(speedMetersPerSec, new Rotation2d(0));
     SwerveModuleState[] setpointStates = {
-        SwerveModuleState.optimize(frontWheels, new Rotation2d()),
-        SwerveModuleState.optimize(frontWheels, new Rotation2d()),
-        SwerveModuleState.optimize(backWheels, new Rotation2d()),
-        SwerveModuleState.optimize(backWheels, new Rotation2d())
+      SwerveModuleState.optimize(frontWheels, new Rotation2d()),
+      SwerveModuleState.optimize(frontWheels, new Rotation2d()),
+      SwerveModuleState.optimize(backWheels, new Rotation2d()),
+      SwerveModuleState.optimize(backWheels, new Rotation2d())
     };
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, MAX_LINEAR_SPEED);
 
@@ -248,10 +253,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Stops the drive and turns the modules to an X arrangement to resist movement.
-   * The modules will
-   * return to their normal orientations the next time a nonzero velocity is
-   * requested.
+   * Stops the drive and turns the modules to an X arrangement to resist movement. The modules will
+   * return to their normal orientations the next time a nonzero velocity is requested.
    */
   public void stopWithX() {
     Rotation2d[] headings = new Rotation2d[4];
@@ -282,10 +285,7 @@ public class Drive extends SubsystemBase {
     return driveVelocityAverage / 4.0;
   }
 
-  /**
-   * Returns the module states (turn angles and drive velocities) for all of the
-   * modules.
-   */
+  /** Returns the module states (turn angles and drive velocities) for all of the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
@@ -324,10 +324,10 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-        new Translation2d(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
-        new Translation2d(TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0),
-        new Translation2d(-TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
-        new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0)
+      new Translation2d(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
+      new Translation2d(TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0),
+      new Translation2d(-TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
+      new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0)
     };
   }
 }

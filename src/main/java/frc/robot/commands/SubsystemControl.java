@@ -86,15 +86,13 @@ public class SubsystemControl {
                   xSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec(),
                   ySupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec());
 
-          double averageManualRotation =
-              (rotationLeft.getAsDouble() + rotationRight.getAsDouble()) / 2;
+          double averageManualRotation = rotationLeft.getAsDouble() + rotationRight.getAsDouble();
 
-          if (averageManualRotation > 0.1) {
+          if (averageManualRotation != 0.0) {
             drive.setTargetDirection(drive.getRotation().getDegrees() + averageManualRotation);
-            return;
           }
 
-          if (targetDirection.getAsDouble() >= 0) {
+          if (targetDirection.getAsDouble() != -1.0) {
             drive.setTargetDirection(targetDirection.getAsDouble());
           }
 
