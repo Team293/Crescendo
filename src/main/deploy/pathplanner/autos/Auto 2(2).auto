@@ -22,9 +22,15 @@
                 }
               },
               {
-                "type": "parallel",
+                "type": "race",
                 "data": {
                   "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "colorSensorIntake"
+                      }
+                    },
                     {
                       "type": "path",
                       "data": {
