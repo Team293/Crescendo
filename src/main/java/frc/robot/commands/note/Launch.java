@@ -75,6 +75,6 @@ public class Launch extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return endBuffer.hasElapsed(0.2) || totalTime.hasElapsed(2.0);
+    return endBuffer.hasElapsed(0.2) || totalTime.hasElapsed(1.0);
   }
 }
