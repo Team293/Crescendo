@@ -151,7 +151,10 @@ public class RobotContainer {
     /* Reverse intake control as well */
     intake.setDefaultCommand(
         SubsystemControl.intakeWithColorSensor(
-            intake, launcher, operatorController::getLeftTriggerAxis));
+            intake,
+            launcher,
+            operatorController::getLeftTriggerAxis,
+            operatorController::getLeftTriggerAxis));
 
     /* Launcher control */
     operatorController

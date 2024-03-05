@@ -115,12 +115,21 @@ public class SubsystemControl {
   }
 
   public static Command intakeWithColorSensor(
-      Intake intake, Launcher launcher, DoubleSupplier reverseIntake) {
+      Intake intake,
+      Launcher launcher,
+      DoubleSupplier reverseIntake,
+      DoubleSupplier forwardIntake) {
     return Commands.run(
         () -> {
           if (reverseIntake.getAsDouble() > 0.1) {
             intake.setVelocity(-10.0 * reverseIntake.getAsDouble());
             launcher.setVelocity(-5.0 * reverseIntake.getAsDouble());
+            return;
+          }
+
+          if (forwardIntake.getAsDouble() > 0.1) {
+            intake.setVelocity(10.0 * forwardIntake.getAsDouble());
+            launcher.setVelocity(5.0 * forwardIntake.getAsDouble());
             return;
           }
 
