@@ -145,8 +145,7 @@ public class RobotContainer {
                   Math.hypot(driverController.getRightX(), driverController.getRightY());
 
               if (magnitude > 0.5) {
-                return (-rot.getDegrees() - 90
-                ) % 360;
+                return (-rot.getDegrees() - 90) % 360;
               } else {
                 return -1;
               }
