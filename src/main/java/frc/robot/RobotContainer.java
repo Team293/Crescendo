@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -133,29 +134,29 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /* Drive command */
     drive.setDefaultCommand(
-        SubsystemControl.joystickDrive(
+        // SubsystemControl.joystickDrive(
+        //     drive,
+        //     () -> -driverController.getLeftY(),
+        //     () -> -driverController.getLeftX(),
+        //     () -> -driverController.getRightX()));
+        SubsystemControl.fieldOrientedRotation(
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
-    // SubsystemControl.fieldOrientedRotation(
-    //     drive,
-    //     () -> -driverController.getLeftY(),
-    //     () -> -driverController.getLeftX(),
-    //     () -> {
-    //       Rotation2d rot =
-    //           new Rotation2d(driverController.getRightX(), driverController.getRightY());
-    //       double magnitude =
-    //           Math.hypot(driverController.getRightX(), driverController.getRightY());
+            () -> {
+              Rotation2d rot =
+                  new Rotation2d(driverController.getRightX(), driverController.getRightY());
+              double magnitude =
+                  Math.hypot(driverController.getRightX(), driverController.getRightY());
 
-    //       if (magnitude > 0.5) {
-    //         return (-rot.getDegrees() - 90) % 360;
-    //       } else {
-    //         return -1;
-    //       }
-    //     },
-    //     () -> driverController.getLeftTriggerAxis(),
-    //     () -> driverController.getRightTriggerAxis()));
+              if (magnitude > 0.5) {
+                return (-rot.getDegrees() - 90) % 360;
+              } else {
+                return -1;
+              }
+            },
+            () -> driverController.getLeftTriggerAxis(),
+            () -> driverController.getRightTriggerAxis()));
 
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
