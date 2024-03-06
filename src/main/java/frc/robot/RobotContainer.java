@@ -27,6 +27,7 @@ import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
 import frc.robot.commands.note.ColorSensorIntake;
 import frc.robot.commands.note.Launch;
+import frc.robot.commands.note.SetLauncher;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -108,6 +109,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
     NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
+    NamedCommands.registerCommand("startLauncher", new SetLauncher(launcher, true));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser2 = AutoBuilder.buildAutoChooser();

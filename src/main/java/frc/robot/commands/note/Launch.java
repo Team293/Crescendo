@@ -49,11 +49,13 @@ public class Launch extends Command {
   @Override
   public void execute() {
     // Check if launcher is spun up
-    if (feeding && !launcher.isReadyToShoot()) {
-      complete = true;
+    if (feeding) {
+      if (!launcher.isReadyToShoot() || !launcher.isNoteDetected()) {
+        complete = true;
+      }
     }
 
-    if (launcher.isReadyToShoot()) {
+    if (launcher.isReadyToShoot() && !feeding) {
       intake.setVelocity(20.0);
       feeding = true;
     }

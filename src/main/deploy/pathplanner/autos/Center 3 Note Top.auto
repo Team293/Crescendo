@@ -39,6 +39,12 @@
         {
           "type": "named",
           "data": {
+            "name": "startLauncher"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "launchNote"
           }
         },
@@ -59,6 +65,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "launchNote"
           }
         },
         {
