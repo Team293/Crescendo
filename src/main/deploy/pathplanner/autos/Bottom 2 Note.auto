@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7357967707833566,
-      "y": 4.3671420062747535
+      "x": 0.7531929553170285,
+      "y": 4.455639505103239
     },
     "rotation": 122.94852400075605
   },
@@ -18,19 +18,19 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Path 2(3)"
+                  "name": "colorSensorIntake"
                 }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "feedNoteToLauncher"
+                  "pathName": "Bottom 2 Note"
                 }
               }
             ]
@@ -45,6 +45,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Bottom",
   "choreoAuto": false
 }

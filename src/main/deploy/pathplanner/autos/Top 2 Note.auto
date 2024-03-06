@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7753618446147484,
-      "y": 4.386389039922178
+      "x": 0.7333893837709553,
+      "y": 6.726658714819166
     },
-    "rotation": 0
+    "rotation": -121.99434407274026
   },
   "command": {
     "type": "sequential",
@@ -18,33 +18,33 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Path 1(3)"
+                  "name": "colorSensorIntake"
                 }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "feedNoteToLauncher"
+                  "pathName": "Path 2(1)"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "launchNote"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Top",
   "choreoAuto": false
 }

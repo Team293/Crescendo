@@ -34,7 +34,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Path 2(2)"
+                        "pathName": "Center Center"
                       }
                     }
                   ]
@@ -52,6 +52,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Center",
   "choreoAuto": false
 }
