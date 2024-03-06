@@ -49,7 +49,7 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
     /** Run the color match algorithm on our detected color */
     // ColorMatchResult match = m_colorMatcher.matchColor(detectedColor);
 
-    if (inputs.Proximity >= 130) {
+    if (inputs.Proximity >= 200) {
       inputs.IsNoteDetected = true;
     } else {
       inputs.IsNoteDetected = false;

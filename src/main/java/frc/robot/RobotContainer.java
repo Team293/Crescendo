@@ -141,7 +141,25 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+    /*SubsystemControl.fieldOrientedRotation(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> {
+                  Rotation2d rot =
+                      new Rotation2d(driverController.getRightX(), driverController.getRightY());
+                  double magnitude =
+                      Math.hypot(driverController.getRightX(), driverController.getRightY());
 
+                  if (magnitude > 0.5) {
+                    return (-rot.getDegrees() + 90) % 360;
+                  } else {
+                    return -1;
+                  }
+                },
+                () -> driverController.getLeftTriggerAxis(),
+                () -> driverController.getRightTriggerAxis()));
+    */
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
