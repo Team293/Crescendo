@@ -27,7 +27,6 @@ import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
 import frc.robot.commands.note.ColorSensorIntake;
 import frc.robot.commands.note.Launch;
-import frc.robot.commands.note.SetLauncher;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -109,7 +108,10 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
     NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
-    NamedCommands.registerCommand("startLauncher", new SetLauncher(launcher, true));
+    NamedCommands.registerCommand("launchNote2", new Launch(intake, launcher));
+    NamedCommands.registerCommand("colorSensorIntake2", new ColorSensorIntake(intake, launcher));
+    NamedCommands.registerCommand("launchNote3", new Launch(intake, launcher));
+    NamedCommands.registerCommand("colorSensorIntake3", new ColorSensorIntake(intake, launcher));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -140,7 +142,25 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+    /*SubsystemControl.fieldOrientedRotation(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> {
+                  Rotation2d rot =
+                      new Rotation2d(driverController.getRightX(), driverController.getRightY());
+                  double magnitude =
+                      Math.hypot(driverController.getRightX(), driverController.getRightY());
 
+                  if (magnitude > 0.5) {
+                    return (-rot.getDegrees() + 90) % 360;
+                  } else {
+                    return -1;
+                  }
+                },
+                () -> driverController.getLeftTriggerAxis(),
+                () -> driverController.getRightTriggerAxis()));
+    */
     /* Brake command */
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -156,7 +176,7 @@ public class RobotContainer {
             intake,
             launcher,
             operatorController::getLeftTriggerAxis,
-            operatorController::getLeftTriggerAxis));
+            operatorController::getRightTriggerAxis));
 
     /* Launcher control */
     operatorController

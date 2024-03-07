@@ -2,51 +2,44 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3285273332531526,
+      "x": 1.3101396499822704,
       "y": 5.537510149873118
     },
-    "rotation": 180.0
+    "rotation": -179.03112992683683
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "launchNote"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "launchNote"
-                }
-              },
-              {
-                "type": "race",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "colorSensorIntake"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Center Center"
-                      }
-                    }
-                  ]
+                  "pathName": "Center Center"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "launchNote"
+                  "name": "colorSensorIntake"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "launchNote2"
           }
         }
       ]

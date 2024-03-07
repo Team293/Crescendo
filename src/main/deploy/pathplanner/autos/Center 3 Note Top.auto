@@ -45,7 +45,7 @@
         {
           "type": "named",
           "data": {
-            "name": "launchNote"
+            "name": "launchNote2"
           }
         },
         {
@@ -53,15 +53,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "CENTER TOP"
+                  "name": "colorSensorIntake2"
                 }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "colorSensorIntake"
+                  "pathName": "Center Top"
                 }
               }
             ]
@@ -70,13 +70,7 @@
         {
           "type": "named",
           "data": {
-            "name": "launchNote"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "launchNote"
+            "name": "launchNote3"
           }
         }
       ]

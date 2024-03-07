@@ -37,7 +37,7 @@ public class Launch extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Disable the intake
+    // Disable the intake`
     intake.disableIntake();
     // Enable the launcher
     launcher.enableLauncher();
