@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.SpikeController;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
-import frc.robot.commands.note.FeedNoteToLauncher;
+import frc.robot.commands.note.ColorSensorIntake;
 import frc.robot.commands.note.Launch;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -110,7 +110,11 @@ public class RobotContainer {
     led = new Led(1, launcher);
 
     NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
-    NamedCommands.registerCommand("feedNote", new FeedNoteToLauncher(intake, launcher));
+    NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
+    NamedCommands.registerCommand("launchNote2", new Launch(intake, launcher));
+    NamedCommands.registerCommand("colorSensorIntake2", new ColorSensorIntake(intake, launcher));
+    NamedCommands.registerCommand("launchNote3", new Launch(intake, launcher));
+    NamedCommands.registerCommand("colorSensorIntake3", new ColorSensorIntake(intake, launcher));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -175,7 +179,7 @@ public class RobotContainer {
             intake,
             launcher,
             operatorController::getLeftTriggerAxis,
-            operatorController::getLeftTriggerAxis));
+            operatorController::getRightTriggerAxis));
 
     /* Launcher control */
     operatorController

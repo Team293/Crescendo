@@ -3,54 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7753618446147484,
-        "y": 4.386389039922178
+        "x": 1.3101396499822704,
+        "y": 5.537510149873118
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2256392516076415,
-        "y": 2.3151686406092735
+        "x": 2.3101396499822746,
+        "y": 5.537510149873118
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.003486645717504,
-        "y": 0.5603482074296326
+        "x": 2.490119294788632,
+        "y": 5.537510149873118
       },
       "prevControl": {
-        "x": 5.01044228620574,
-        "y": 0.5724541408088681
+        "x": 1.4901192947886324,
+        "y": 5.537510149873118
       },
       "nextControl": {
-        "x": 4.996531005229268,
-        "y": 0.5482422740503974
+        "x": 3.6005127567416837,
+        "y": 5.537510149873118
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.282999129004624,
-        "y": 0.7943774018335082
+        "x": 1.183598948394478,
+        "y": 5.537510149873118
       },
       "prevControl": {
-        "x": 9.43145820453243,
-        "y": 0.7917501070462213
+        "x": 2.5982640694701544,
+        "y": 5.565414105382196
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.1,
-      "rotationDegrees": 178.70194339322154,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -61,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 179.40393837206443,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Center",
   "previewStartingState": {
-    "rotation": 120.15442370779004,
+    "rotation": 180.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

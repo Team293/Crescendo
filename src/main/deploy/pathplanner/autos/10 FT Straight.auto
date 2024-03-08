@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.0,
-      "y": 4.0
+      "x": 1.3101396499822704,
+      "y": 5.537510149873118
     },
-    "rotation": 0.0
+    "rotation": 178.9959887094528
   },
   "command": {
     "type": "sequential",
@@ -14,12 +14,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "10 feet straight"
+            "pathName": "Center Center"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "!Testing",
   "choreoAuto": false
 }
