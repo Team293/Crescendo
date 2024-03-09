@@ -81,25 +81,25 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveTalon = new TalonFX(0, CANBUS_ID);
         turnTalon = new TalonFX(1, CANBUS_ID);
         cancoder = new CANcoder(2, CANBUS_ID);
-        absoluteEncoderOffset = -0.555; // CANCoder rotations
+        absoluteEncoderOffset = -0.506; // CANCoder rotations
         break;
       case 1: // Front Right
         driveTalon = new TalonFX(3, CANBUS_ID);
         turnTalon = new TalonFX(4, CANBUS_ID);
         cancoder = new CANcoder(5, CANBUS_ID);
-        absoluteEncoderOffset = -0.626d; // CANcoder rotations
+        absoluteEncoderOffset = -0.959d; // CANcoder rotations
         break;
       case 2: // Back Left
         driveTalon = new TalonFX(6, CANBUS_ID);
         turnTalon = new TalonFX(7, CANBUS_ID);
         cancoder = new CANcoder(8, CANBUS_ID);
-        absoluteEncoderOffset = -0.218d; // CANcoder rotations
+        absoluteEncoderOffset = -0.219d; // CANcoder rotations
         break;
       case 3: // Back Right
         driveTalon = new TalonFX(9, CANBUS_ID);
         turnTalon = new TalonFX(10, CANBUS_ID);
         cancoder = new CANcoder(11, CANBUS_ID);
-        absoluteEncoderOffset = -0.616d; // CANcoder rotations
+        absoluteEncoderOffset = -0.619d; // CANcoder rotations
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -227,10 +227,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
 
-    driveConfig.Slot0.kP = 0.1;
+    driveConfig.Slot0.kP = 3.0;
     driveConfig.Slot0.kI = 0.0;
-    driveConfig.Slot0.kD = 0.0;
-    driveConfig.Slot0.kS = 0.0;
+    driveConfig.Slot0.kD = 0.001;
+    driveConfig.Slot0.kS = 0.15;
     driveConfig.Slot0.kV = 0.93;
 
     driveConfig.Feedback.SensorToMechanismRatio = DRIVE_GEAR_RATIO;
