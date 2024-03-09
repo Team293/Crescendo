@@ -115,6 +115,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("colorSensorIntake2", new ColorSensorIntake(intake, launcher));
     NamedCommands.registerCommand("launchNote3", new Launch(intake, launcher));
     NamedCommands.registerCommand("colorSensorIntake3", new ColorSensorIntake(intake, launcher));
+    NamedCommands.registerCommand("launchNote4", new Launch(intake, launcher));
+    NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

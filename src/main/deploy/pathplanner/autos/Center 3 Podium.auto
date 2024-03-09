@@ -39,6 +39,12 @@
         {
           "type": "named",
           "data": {
+            "name": "startLauncher"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "launchNote2"
           }
         },
@@ -55,7 +61,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CENTER TOP"
+                  "pathName": "CENTER BOTTOM"
                 }
               }
             ]
