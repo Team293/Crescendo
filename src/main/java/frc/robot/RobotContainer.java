@@ -36,7 +36,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.leds.Led;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -58,8 +57,7 @@ public class RobotContainer {
   private final SpikeController operatorController = new SpikeController(1, DEADBAND);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
-  private final SendableChooser<Command> autoChooser2;
+  private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -119,9 +117,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autoChooser2 = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser2);
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Set up feedforward characterization
     autoChooser.addOption(
@@ -195,6 +192,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser2.getSelected();
+    return autoChooser.getSelected();
   }
 }
