@@ -168,8 +168,13 @@ public class RobotContainer {
 
     /* Reset heading command */
     driverController
-        .b()
-        .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+        .y()
+        .onTrue(Commands.runOnce(() -> drive.resetRotation(0.0), drive).ignoringDisable(true));
+
+    /* Reset heading command */
+    driverController
+        .a()
+        .onTrue(Commands.runOnce(() -> drive.resetRotation(180.0), drive).ignoringDisable(true));
 
     /* Intake auto-run command */
     /* Reverse intake control as well */
