@@ -8,9 +8,9 @@
     "Podium"
   ],
   "autoFolders": [
-    "Top",
-    "Center",
+    "Amp",
     "Podium",
+    "Center",
     "!Testing"
   ],
   "defaultMaxVel": 3.0,
