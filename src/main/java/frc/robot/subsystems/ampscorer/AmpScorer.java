@@ -9,15 +9,15 @@ public class AmpScorer extends SubsystemBase {
 
   public AmpScorer() {
     m_ampScorerIO = new AmpScorerIOSpark();
-    m_motor = new Spark(0);
+    m_motor = new Spark(2);
   }
 
   public void intakeNote() {
-    m_motor.set(-0.5);
+    m_motor.set(-0.9);
   }
 
   public void dischargeNote() {
-    m_motor.set(0.75);
+    m_motor.set(0.90);
   }
 
   public void stop() {
