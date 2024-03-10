@@ -30,7 +30,6 @@ public class Module {
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
   /* Velocity in meters per second */
   private Double speedSetpoint = null;
-  private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private double lastPositionMeters = 0.0; // Used for delta calculation
   private SwerveModulePosition[] positionDeltas = new SwerveModulePosition[] {};
 
