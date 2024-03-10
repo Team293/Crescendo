@@ -170,7 +170,7 @@ public class SubsystemControl {
 
           // If the color sensor senses a note, disable the intake
           if (launcher.isNoteDetected()) {
-            if (launcher.detectedNoteForSeconds() < 0.2) {
+            if (launcher.detectedNoteForSeconds() < 0.3) {
               intake.setVelocity(-0.5);
             } else {
               intake.disableIntake();
