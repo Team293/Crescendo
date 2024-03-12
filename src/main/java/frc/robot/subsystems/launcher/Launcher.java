@@ -10,27 +10,27 @@ public class Launcher extends SubsystemBase {
 
   private final LauncherIOTalonFX launchMotor;
   private final LauncherIOInputsAutoLogged launchMotorInputs = new LauncherIOInputsAutoLogged();
-  private final ColorSensorIO colorSensorIO;
-  private final ColorSensorIOInputsAutoLogged colorSensorInputs =
+  private final ColorSensorIOInputsAutoLogged riteSensorInputs =
       new ColorSensorIOInputsAutoLogged();
+  private final RiteSightSensor proximitySensorIO;
 
   public Launcher() {
-    colorSensorIO = new ColorSensorIORevV3();
+    proximitySensorIO = new RiteSightSensor(0);
     launchMotor = new LauncherIOTalonFX(LAUNCHER_MOTOR_ID);
   }
 
   public boolean isNoteDetected() {
     // Updated when m_sensorIO.updateInputs(m_sensorInputs) happens in periodic
-    return (colorSensorInputs.IsNoteDetected);
+    return (riteSensorInputs.IsNoteDetected);
   }
 
   @Override
   public void periodic() {
     // Update the color sensor and vision inputs
     launchMotor.updateInputs(launchMotorInputs);
-    colorSensorIO.updateInputs(colorSensorInputs);
+    proximitySensorIO.updateInputs(riteSensorInputs);
 
-    Logger.processInputs("Launcher/Sensor", colorSensorInputs);
+    Logger.processInputs("Launcher/Sensor", riteSensorInputs);
     // Logger.processInputs("Launcher/Motor", launchMotorInputs);
     // Logger.recordOutput("Launcher/Ready", isReadyToShoot());
   }
@@ -57,9 +57,5 @@ public class Launcher extends SubsystemBase {
 
   public boolean isReadyToShoot() {
     return (getVelocityRPS() > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
-  }
-
-  public double detectedNoteForSeconds() {
-    return colorSensorInputs.detectedForSeconds;
   }
 }
