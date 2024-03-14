@@ -2,7 +2,7 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3101396499822704,
+      "x": 1.3285273332531526,
       "y": 5.537510149873118
     },
     "rotation": 180.0
@@ -55,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CENTER TOP"
+                  "pathName": "CENTER BOTTOM"
                 }
               }
             ]
@@ -65,6 +65,31 @@
           "type": "named",
           "data": {
             "name": "launchNote3"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "colorSensorIntake3"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CENTER TOP"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "launchNote4"
           }
         }
       ]

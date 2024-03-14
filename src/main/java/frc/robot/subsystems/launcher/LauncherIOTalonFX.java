@@ -63,9 +63,9 @@ public class LauncherIOTalonFX implements LauncherIO {
 
     inputs.motorVelocityRotationsPerSec = motorVelocity.getValueAsDouble();
     inputs.mechanismVelocityRotationsPerSec = inputs.motorVelocityRotationsPerSec * gearRatio;
-    inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
-    inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
-    inputs.setPointError = setPointError.getValueAsDouble();
+    // inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
+    // inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
+    // inputs.setPointError = setPointError.getValueAsDouble();
     inputs.setPoint = setPoint;
   }
 
