@@ -37,7 +37,7 @@ public class RiteSightSensor implements ColorSensorIO {
     inputs.Proximity = 0;
     boolean signal = m_sensor.get();
 
-    if (signal) {
+    if (signal == false) {
       inputs.IsNoteDetected = true;
     } else {
       inputs.IsNoteDetected = false;
