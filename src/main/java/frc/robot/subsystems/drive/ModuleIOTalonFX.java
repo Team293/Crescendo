@@ -29,7 +29,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.constants.SDSMK4L1Constants;
-import java.util.Queue;
 
 /**
  * Module IO implementation for Talon FX drive motor controller, Talon FX turn motor controller, and
@@ -49,24 +48,24 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final CANcoder cancoder;
 
   private final StatusSignal<Double> drivePosition;
-  private final Queue<Double> drivePositionQueue;
+  // private final Queue<Double> drivePositionQueue;
   private final StatusSignal<Double> driveVelocity;
-  private final StatusSignal<Double> driveAppliedVolts;
+  // private final StatusSignal<Double> driveAppliedVolts;
   private final StatusSignal<Double> driveCurrent;
 
   private final StatusSignal<Double> turnAbsolutePosition;
   private final StatusSignal<Double> turnPosition;
-  private final Queue<Double> turnPositionQueue;
+  // private final Queue<Double> turnPositionQueue;
   private final StatusSignal<Double> turnVelocity;
   private final StatusSignal<Double> turnAppliedVolts;
   private final StatusSignal<Double> turnCurrent;
 
   // Gear ratios for SDS MK4i L2, adjust as necessary
   private static final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
-  private static final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
+  // private static final double TURN_GEAR_RATIO = SDSMK4L1Constants.angleGearRatio;
 
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
-  private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
+  // private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
   private static final String CANBUS_ID = "Canivore_Drivetrain";
 
   private final double absoluteEncoderOffset;
@@ -81,25 +80,25 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveTalon = new TalonFX(0, CANBUS_ID);
         turnTalon = new TalonFX(1, CANBUS_ID);
         cancoder = new CANcoder(2, CANBUS_ID);
-        absoluteEncoderOffset = -0.555; // CANCoder rotations
+        absoluteEncoderOffset = -0.843; // CANCoder rotations
         break;
       case 1: // Front Right
         driveTalon = new TalonFX(3, CANBUS_ID);
         turnTalon = new TalonFX(4, CANBUS_ID);
         cancoder = new CANcoder(5, CANBUS_ID);
-        absoluteEncoderOffset = -0.626d; // CANcoder rotations
+        absoluteEncoderOffset = -0.459d; // CANcoder rotations
         break;
       case 2: // Back Left
         driveTalon = new TalonFX(6, CANBUS_ID);
         turnTalon = new TalonFX(7, CANBUS_ID);
         cancoder = new CANcoder(8, CANBUS_ID);
-        absoluteEncoderOffset = -0.218d; // CANcoder rotations
+        absoluteEncoderOffset = -0.718d; // CANcoder rotations
         break;
       case 3: // Back Right
         driveTalon = new TalonFX(9, CANBUS_ID);
         turnTalon = new TalonFX(10, CANBUS_ID);
         cancoder = new CANcoder(11, CANBUS_ID);
-        absoluteEncoderOffset = -0.616d; // CANcoder rotations
+        absoluteEncoderOffset = -0.12d; // CANcoder rotations
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -108,7 +107,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     // CANcoder config
     var canCoderConfig = new CANcoderConfiguration();
     canCoderConfig.MagnetSensor.SensorDirection = SDSMK4L1Constants.canCoderSensorDirection;
-    canCoderConfig.MagnetSensor.MagnetOffset = absoluteEncoderOffset;
+    canCoderConfig.MagnetSensor.MagnetOffset = absoluteEncoderOffset + 0.5;
     canCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
     cancoder.getConfigurator().apply(canCoderConfig);
 
@@ -117,10 +116,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveTalon.clearStickyFaults();
     setDriveBrakeMode(true);
     drivePosition = driveTalon.getPosition();
-    drivePositionQueue =
-        PhoenixOdometryThread.getInstance().registerSignal(driveTalon, driveTalon.getPosition());
+    // drivePositionQueue =
+    //     PhoenixOdometryThread.getInstance().registerSignal(driveTalon, driveTalon.getPosition());
     driveVelocity = driveTalon.getVelocity();
-    driveAppliedVolts = driveTalon.getMotorVoltage();
+    // driveAppliedVolts = driveTalon.getMotorVoltage();
     driveCurrent = driveTalon.getStatorCurrent();
 
     // Turn motor
@@ -130,8 +129,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     // unnecessary because position is set by the cancoder
     turnTalon.setPosition(turnAbsolutePosition.getValueAsDouble());
     turnPosition = turnTalon.getPosition(); // motor rotations
-    turnPositionQueue =
-        PhoenixOdometryThread.getInstance().registerSignal(turnTalon, turnTalon.getPosition());
+    // turnPositionQueue =
+    //     PhoenixOdometryThread.getInstance().registerSignal(turnTalon, turnTalon.getPosition());
     turnVelocity = turnTalon.getVelocity();
     turnAppliedVolts = turnTalon.getMotorVoltage();
     turnCurrent = turnTalon.getStatorCurrent();
@@ -141,7 +140,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         drivePosition,
         turnPosition,
         driveVelocity,
-        driveAppliedVolts,
+        // driveAppliedVolts,
         driveCurrent,
         turnAbsolutePosition,
         turnVelocity,
@@ -156,7 +155,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     BaseStatusSignal.refreshAll(
         drivePosition,
         driveVelocity,
-        driveAppliedVolts,
+        // driveAppliedVolts,
         driveCurrent,
         turnAbsolutePosition,
         turnPosition,
@@ -169,7 +168,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     inputs.drivePositionRotations = drivePosition.getValueAsDouble();
     inputs.driveVelocityRotationsPerSec = driveVelocity.getValueAsDouble();
-    inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
+    // inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = new double[] {driveCurrent.getValueAsDouble()};
 
     inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
@@ -227,10 +226,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
 
-    driveConfig.Slot0.kP = 0.1;
+    driveConfig.Slot0.kP = 3.0;
     driveConfig.Slot0.kI = 0.0;
-    driveConfig.Slot0.kD = 0.0;
-    driveConfig.Slot0.kS = 0.0;
+    driveConfig.Slot0.kD = 0.001;
+    driveConfig.Slot0.kS = 0.15;
     driveConfig.Slot0.kV = 0.93;
 
     driveConfig.Feedback.SensorToMechanismRatio = DRIVE_GEAR_RATIO;
@@ -245,11 +244,11 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     turnConfig.MotorOutput.Inverted = SDSMK4L1Constants.angleMotorInvert;
 
-    turnConfig.Slot0.kP = 25.0;
+    turnConfig.Slot0.kP = 40.0;
     turnConfig.Slot0.kI = 0.0;
     turnConfig.Slot0.kD = 0.0;
-    turnConfig.Slot0.kS = 0.206; // TODO: Tune
-    turnConfig.Slot0.kV = 0.12; // TODO: Tune
+    turnConfig.Slot0.kS = 0.5;
+    turnConfig.Slot0.kV = 0.0;
 
     // turnConfig.Feedback.SensorToMechanismRatio = TURN_GEAR_RATIO;
     turnConfig.Feedback.FeedbackRemoteSensorID = cancoder.getDeviceID();

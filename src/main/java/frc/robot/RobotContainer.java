@@ -31,12 +31,10 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.leds.Led;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -58,8 +56,7 @@ public class RobotContainer {
   private final SpikeController operatorController = new SpikeController(1, DEADBAND);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
-  private final SendableChooser<Command> autoChooser2;
+  private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -79,17 +76,6 @@ public class RobotContainer {
                 new ModuleIOTalonFX(1),
                 new ModuleIOTalonFX(2),
                 new ModuleIOTalonFX(3));
-        break;
-
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
         break;
 
       default:
@@ -115,11 +101,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("colorSensorIntake2", new ColorSensorIntake(intake, launcher));
     NamedCommands.registerCommand("launchNote3", new Launch(intake, launcher));
     NamedCommands.registerCommand("colorSensorIntake3", new ColorSensorIntake(intake, launcher));
+    NamedCommands.registerCommand("launchNote4", new Launch(intake, launcher));
+    NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autoChooser2 = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser2);
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Set up feedforward characterization
     autoChooser.addOption(
@@ -169,8 +156,13 @@ public class RobotContainer {
 
     /* Reset heading command */
     driverController
-        .b()
-        .onTrue(Commands.runOnce(drive::resetRotation, drive).ignoringDisable(true));
+        .y()
+        .onTrue(Commands.runOnce(() -> drive.resetRotation(0.0), drive).ignoringDisable(true));
+
+    /* Reset heading command */
+    driverController
+        .a()
+        .onTrue(Commands.runOnce(() -> drive.resetRotation(180.0), drive).ignoringDisable(true));
 
     /* Intake auto-run command */
     /* Reverse intake control as well */
@@ -179,7 +171,8 @@ public class RobotContainer {
             intake,
             launcher,
             operatorController::getLeftTriggerAxis,
-            operatorController::getRightTriggerAxis));
+            operatorController::getRightTriggerAxis,
+            () -> operatorController.leftBumper().getAsBoolean()));
 
     /* Launcher control */
     operatorController
@@ -193,6 +186,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser2.getSelected();
+    return autoChooser.getSelected();
   }
 }

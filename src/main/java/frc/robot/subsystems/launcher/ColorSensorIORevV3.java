@@ -29,7 +29,7 @@ public class ColorSensorIORevV3 implements ColorSensorIO {
   private final Timer noteDetectionTimer = new Timer();
 
   public ColorSensorIORevV3() {
-    m_i2cPort = I2C.Port.kOnboard;
+    m_i2cPort = I2C.Port.kMXP;
     m_colorSensor = new ColorSensorV3(m_i2cPort);
 
     m_colorMatcher.setConfidenceThreshold(0.95);

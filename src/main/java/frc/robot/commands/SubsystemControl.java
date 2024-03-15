@@ -25,6 +25,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.vision.Vision;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class SubsystemControl {
@@ -151,7 +152,8 @@ public class SubsystemControl {
       Intake intake,
       Launcher launcher,
       DoubleSupplier reverseIntake,
-      DoubleSupplier forwardIntake) {
+      DoubleSupplier forwardIntake,
+      BooleanSupplier runLauncher) {
     return Commands.run(
         () -> {
           if (reverseIntake.getAsDouble() > 0.1) {
@@ -167,14 +169,21 @@ public class SubsystemControl {
           }
 
           // If the color sensor senses a note, disable the intake
-          // TODO
-          // if (launcher.isNoteDetected()) {
-          //   intake.disableIntake();
-          //   launcher.enableLauncher();
-          // } else {
-          //   intake.enableIntake();
-          //   launcher.disableLauncher();
-          // }
+          if (launcher.isNoteDetected()) {
+            if (launcher.detectedNoteForSeconds() < 0.3) {
+              intake.setVelocity(-0.5);
+            } else {
+              intake.disableIntake();
+              if (runLauncher.getAsBoolean()) {
+                launcher.enableLauncher();
+              } else {
+                launcher.disableLauncher();
+              }
+            }
+          } else {
+            intake.enableIntake();
+            launcher.disableLauncher();
+          }
         },
         intake,
         launcher);

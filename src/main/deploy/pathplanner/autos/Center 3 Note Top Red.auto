@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7531929553170285,
-      "y": 4.455639505103239
+      "x": 1.3101396499822704,
+      "y": 5.537510149873118
     },
-    "rotation": 122.94852400075605
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom 2 Note"
+                  "pathName": "Center Center"
                 }
               }
             ]
@@ -39,12 +39,37 @@
         {
           "type": "named",
           "data": {
-            "name": "launchNote"
+            "name": "launchNote2"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "colorSensorIntake2"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CENTER TOP RED"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "launchNote3"
           }
         }
       ]
     }
   },
-  "folder": "Podium",
+  "folder": "Center",
   "choreoAuto": false
 }

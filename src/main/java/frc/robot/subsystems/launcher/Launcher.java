@@ -1,7 +1,6 @@
 package frc.robot.subsystems.launcher;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
   private static final int LAUNCHER_MOTOR_ID = 13;
@@ -10,7 +9,7 @@ public class Launcher extends SubsystemBase {
 
   private final LauncherIOTalonFX launchMotor;
   private final LauncherIOInputsAutoLogged launchMotorInputs = new LauncherIOInputsAutoLogged();
-  private final ColorSensorIOInputsAutoLogged riteSensorInputs =
+  private final ColorSensorIOInputsAutoLogged rightSightSensorInputs =
       new ColorSensorIOInputsAutoLogged();
   private final RiteSightSensor proximitySensorIO;
 
@@ -21,16 +20,16 @@ public class Launcher extends SubsystemBase {
 
   public boolean isNoteDetected() {
     // Updated when m_sensorIO.updateInputs(m_sensorInputs) happens in periodic
-    return (riteSensorInputs.IsNoteDetected);
+    return (rightSightSensorInputs.IsNoteDetected);
   }
 
   @Override
   public void periodic() {
     // Update the color sensor and vision inputs
     launchMotor.updateInputs(launchMotorInputs);
-    proximitySensorIO.updateInputs(riteSensorInputs);
+    proximitySensorIO.updateInputs(rightSightSensorInputs);
 
-    Logger.processInputs("Launcher/Sensor", riteSensorInputs);
+    // Logger.processInputs("Launcher/Sensor", colorSensorInputs);
     // Logger.processInputs("Launcher/Motor", launchMotorInputs);
     // Logger.recordOutput("Launcher/Ready", isReadyToShoot());
   }
@@ -57,5 +56,9 @@ public class Launcher extends SubsystemBase {
 
   public boolean isReadyToShoot() {
     return (getVelocityRPS() > (LAUNCHER_SET_SPEED - LAUNCHER_READY_THRESHOLD));
+  }
+
+  public double detectedNoteForSeconds() {
+    return rightSightSensorInputs.detectedForSeconds;
   }
 }

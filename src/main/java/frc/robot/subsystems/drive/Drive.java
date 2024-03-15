@@ -152,11 +152,11 @@ public class Drive extends SubsystemBase {
     lastGyroRotation = gyroInputs.yawPosition;
   }
 
-  public void resetRotation() {
-    gyroInputs.yawOffset = gyroInputs.realYawPosition;
+  public void resetRotation(double resetDirection) {
+    gyroInputs.yawOffset = gyroInputs.realYawPosition.minus(Rotation2d.fromDegrees(resetDirection));
     var currentPose = getPose();
-    setTargetDirection(0.0);
-    setPose(new Pose2d(currentPose.getTranslation(), new Rotation2d()));
+    setTargetDirection(resetDirection);
+    setPose(new Pose2d(currentPose.getTranslation(), Rotation2d.fromDegrees(resetDirection)));
   }
 
   /**
@@ -294,7 +294,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the current odometry pose. */
-  @AutoLogOutput(key = "Odometry/Robot")
+  // @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return pose;
   }

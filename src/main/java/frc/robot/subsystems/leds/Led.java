@@ -20,9 +20,9 @@ public class Led extends SubsystemBase {
     /* https://www.revrobotics.com/content/docs/REV-11-1105-UM.pdf */
     /* Page 14 for LED table */
     if (m_launcher.isNoteDetected()) {
-      m_led.set(0.65); // orange
+      m_led.set(0.57); // pink
     } else {
-      m_led.set(0.93); // Sky blue
+      m_led.set(0.81); // aqua
     }
   }
 }
