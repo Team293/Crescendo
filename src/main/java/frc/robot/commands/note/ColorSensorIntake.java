@@ -30,12 +30,8 @@ public class ColorSensorIntake extends Command {
   public void execute() {
     // If the color sensor senses a note, disable the intake
     if (launcher.isNoteDetected()) {
-      if (launcher.detectedNoteForSeconds() < 0.2) {
-        intake.setVelocity(-0.5);
-      } else {
-        intake.disableIntake();
-        launcher.enableLauncher();
-      }
+      intake.disableIntake();
+      launcher.enableLauncher();
     } else {
       intake.enableIntake();
       launcher.disableLauncher();
