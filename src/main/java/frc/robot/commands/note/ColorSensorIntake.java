@@ -29,14 +29,13 @@ public class ColorSensorIntake extends Command {
   @Override
   public void execute() {
     // If the color sensor senses a note, disable the intake
-    // TODO
-    // if (launcher.isNoteDetected()) {
-    //   intake.disableIntake();
-    //   launcher.enableLauncher();
-    // } else {
-    //   intake.enableIntake();
-    //   launcher.disableLauncher();
-    // }
+    if (launcher.isNoteDetected()) {
+      intake.disableIntake();
+      launcher.enableLauncher();
+    } else {
+      intake.enableIntake();
+      launcher.disableLauncher();
+    }
   }
 
   // Returns true when the command should end.
