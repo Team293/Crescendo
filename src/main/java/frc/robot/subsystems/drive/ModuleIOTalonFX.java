@@ -80,25 +80,25 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveTalon = new TalonFX(0, CANBUS_ID);
         turnTalon = new TalonFX(1, CANBUS_ID);
         cancoder = new CANcoder(2, CANBUS_ID);
-        absoluteEncoderOffset = -0.839; // CANCoder rotations
+        absoluteEncoderOffset = -0.829; // CANCoder rotations
         break;
       case 1: // Front Right
         driveTalon = new TalonFX(3, CANBUS_ID);
         turnTalon = new TalonFX(4, CANBUS_ID);
         cancoder = new CANcoder(5, CANBUS_ID);
-        absoluteEncoderOffset = -0.459d; // CANcoder rotations
+        absoluteEncoderOffset = -0.451d; // CANcoder rotations
         break;
       case 2: // Back Left
         driveTalon = new TalonFX(6, CANBUS_ID);
         turnTalon = new TalonFX(7, CANBUS_ID);
         cancoder = new CANcoder(8, CANBUS_ID);
-        absoluteEncoderOffset = -0.718d; // CANcoder rotations
+        absoluteEncoderOffset = -0.719d; // CANcoder rotations
         break;
       case 3: // Back Right
         driveTalon = new TalonFX(9, CANBUS_ID);
         turnTalon = new TalonFX(10, CANBUS_ID);
         cancoder = new CANcoder(11, CANBUS_ID);
-        absoluteEncoderOffset = -0.956d; // CANcoder rotations
+        absoluteEncoderOffset = -0.95d; // CANcoder rotations
         break;
       default:
         throw new RuntimeException("Invalid module index");
