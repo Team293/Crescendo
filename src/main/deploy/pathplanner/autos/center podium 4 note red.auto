@@ -55,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CENTER TOP"
+                  "pathName": "CENTER BOTTOM"
                 }
               }
             ]
@@ -80,7 +80,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "4 CENTER BOTTOM"
+                  "pathName": "4 CENTER TOP"
                 }
               }
             ]

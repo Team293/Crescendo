@@ -80,25 +80,25 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveTalon = new TalonFX(0, CANBUS_ID);
         turnTalon = new TalonFX(1, CANBUS_ID);
         cancoder = new CANcoder(2, CANBUS_ID);
-        absoluteEncoderOffset = -0.839; // CANCoder rotations
+        absoluteEncoderOffset = -0.829; // CANCoder rotations
         break;
       case 1: // Front Right
         driveTalon = new TalonFX(3, CANBUS_ID);
         turnTalon = new TalonFX(4, CANBUS_ID);
         cancoder = new CANcoder(5, CANBUS_ID);
-        absoluteEncoderOffset = -0.459d; // CANcoder rotations
+        absoluteEncoderOffset = -0.451d; // CANcoder rotations
         break;
       case 2: // Back Left
         driveTalon = new TalonFX(6, CANBUS_ID);
         turnTalon = new TalonFX(7, CANBUS_ID);
         cancoder = new CANcoder(8, CANBUS_ID);
-        absoluteEncoderOffset = -0.718d; // CANcoder rotations
+        absoluteEncoderOffset = -0.719d; // CANcoder rotations
         break;
       case 3: // Back Right
         driveTalon = new TalonFX(9, CANBUS_ID);
         turnTalon = new TalonFX(10, CANBUS_ID);
         cancoder = new CANcoder(11, CANBUS_ID);
-        absoluteEncoderOffset = -0.956d; // CANcoder rotations
+        absoluteEncoderOffset = -0.95d; // CANcoder rotations
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -226,9 +226,9 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted = SDSMK4L1Constants.driveMotorInvert;
 
-    driveConfig.Slot0.kP = 3.0;
+    driveConfig.Slot0.kP = 0.15;
     driveConfig.Slot0.kI = 0.0;
-    driveConfig.Slot0.kD = 0.001;
+    driveConfig.Slot0.kD = 0.005;
     driveConfig.Slot0.kS = 0.15;
     driveConfig.Slot0.kV = 0.93;
 
@@ -241,14 +241,15 @@ public class ModuleIOTalonFX implements ModuleIO {
     /* Turn motor config */
     var turnConfig = new TalonFXConfiguration();
     turnConfig.CurrentLimits.StatorCurrentLimit = 30.0;
+
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     turnConfig.MotorOutput.Inverted = SDSMK4L1Constants.angleMotorInvert;
 
-    turnConfig.Slot0.kP = 40.0;
+    turnConfig.Slot0.kP = 18.0;
     turnConfig.Slot0.kI = 0.0;
     turnConfig.Slot0.kD = 0.0;
-    turnConfig.Slot0.kS = 0.5;
-    turnConfig.Slot0.kV = 0.0;
+    turnConfig.Slot0.kS = 0.28;
+    turnConfig.Slot0.kV = 1.54;
 
     // turnConfig.Feedback.SensorToMechanismRatio = TURN_GEAR_RATIO;
     turnConfig.Feedback.FeedbackRemoteSensorID = cancoder.getDeviceID();
