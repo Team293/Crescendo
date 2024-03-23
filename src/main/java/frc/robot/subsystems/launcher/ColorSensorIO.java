@@ -30,6 +30,7 @@ public interface ColorSensorIO {
     public int Proximity;
     public double MatchResultConfidence;
     public boolean IsNoteDetected;
+    public double detectedForSeconds;
   }
 
   // updateInputs should be called in periodic.

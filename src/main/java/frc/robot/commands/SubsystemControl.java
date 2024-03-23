@@ -22,14 +22,16 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.vision.Vision;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class DriverCommands {
+public class SubsystemControl {
   private static final double DEADBAND = 0.1;
 
-  private DriverCommands() {}
+  private SubsystemControl() {}
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
@@ -42,12 +44,10 @@ public class DriverCommands {
     return Commands.run(
         () -> {
           // Apply deadband
-          double linearMagnitude =
-              MathUtil.applyDeadband(
-                  Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()), DEADBAND);
+          double linearMagnitude = Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble());
           Rotation2d linearDirection =
               new Rotation2d(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+          double omega = omegaSupplier.getAsDouble();
 
           // Square values
           linearMagnitude = linearMagnitude * linearMagnitude;
@@ -70,27 +70,35 @@ public class DriverCommands {
         drive);
   }
 
-  // Simulate a car with front wheel drive
-  // Gas is right trigger, brake is left trigger
-  // Steering is left joystick x axis or right joystick x axis
-  public static Command kartDrive(
+  /*
+   * Field oriented direction
+   */
+  public static Command fieldOrientedRotation(
       Drive drive,
-      DoubleSupplier gasSupplier,
-      DoubleSupplier brakeSupplier,
-      DoubleSupplier steeringSupplier,
-      BooleanSupplier reverseGear) {
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      DoubleSupplier targetDirection,
+      DoubleSupplier rotationLeft,
+      DoubleSupplier rotationRight) {
     return Commands.run(
         () -> {
-          double gas = gasSupplier.getAsDouble();
-          double brake = brakeSupplier.getAsDouble();
-          double steering = steeringSupplier.getAsDouble();
-          double speed = gas - brake;
-          if (reverseGear.getAsBoolean()) {
-            speed *= -1;
+          Translation2d translation =
+              new Translation2d(
+                  xSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec(),
+                  ySupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec());
+
+          double averageManualRotation = rotationLeft.getAsDouble() + rotationRight.getAsDouble();
+
+          if (averageManualRotation != 0.0) {
+            drive.setTargetDirection(drive.getRotation().getDegrees() + averageManualRotation);
           }
-          boolean brakeMotors = (brake >= 0.75 ? false : true);
-          drive.runFrontWheelDrive(
-              speed * drive.getMaxLinearSpeedMetersPerSec(), steering, brakeMotors, 45.0);
+
+          if (targetDirection.getAsDouble() != -1.0) {
+            drive.setTargetDirection(targetDirection.getAsDouble());
+          }
+
+          // Convert to field relative speeds & send command
+          drive.runFieldOrientedDirection(translation);
         },
         drive);
   }
@@ -138,5 +146,46 @@ public class DriverCommands {
                   drive.getRotation()));
         },
         drive);
+  }
+
+  public static Command intakeWithColorSensor(
+      Intake intake,
+      Launcher launcher,
+      DoubleSupplier reverseIntake,
+      DoubleSupplier forwardIntake,
+      BooleanSupplier runLauncher) {
+    return Commands.run(
+        () -> {
+          if (reverseIntake.getAsDouble() > 0.1) {
+            intake.setVelocity(-10.0 * reverseIntake.getAsDouble());
+            launcher.setVelocity(-5.0 * reverseIntake.getAsDouble());
+            return;
+          }
+
+          if (forwardIntake.getAsDouble() > 0.1) {
+            intake.setVelocity(10.0 * forwardIntake.getAsDouble());
+            launcher.setVelocity(5.0 * forwardIntake.getAsDouble());
+            return;
+          }
+
+          // If the color sensor senses a note, disable the intake
+          if (launcher.isNoteDetected()) {
+            if (launcher.detectedNoteForSeconds() < 0.3) {
+              intake.setVelocity(-0.5);
+            } else {
+              intake.disableIntake();
+              if (runLauncher.getAsBoolean()) {
+                launcher.enableLauncher();
+              } else {
+                launcher.disableLauncher();
+              }
+            }
+          } else {
+            intake.enableIntake();
+            launcher.disableLauncher();
+          }
+        },
+        intake,
+        launcher);
   }
 }

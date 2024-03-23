@@ -113,8 +113,11 @@ public class Robot extends LoggedRobot {
 
     // ensure that there is enough space on the roboRIO to log data
     if (directory.getFreeSpace() < MIN_FREE_SPACE) {
+      System.out.println("ERROR: out of space!");
       var files = directory.listFiles();
-      if (files != null) {
+      if (files == null) {
+        System.out.println("ERROR: Cannot delete, Files are NULL!");
+      } else {
         // Sorting the files by name will ensure that the oldest files are deleted first
         files = Arrays.stream(files).sorted().toArray(File[]::new);
 

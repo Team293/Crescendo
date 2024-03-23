@@ -16,8 +16,8 @@ package frc.robot.subsystems.drive;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -33,8 +33,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
@@ -53,6 +51,9 @@ public class Drive extends SubsystemBase {
   private Pose2d pose = new Pose2d();
   private Rotation2d lastGyroRotation = new Rotation2d();
 
+  // Field oriented direction in degrees
+  private PIDController fieldOrientedDirectionController = new PIDController(0.05, 0.0, 0.0);
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -64,6 +65,8 @@ public class Drive extends SubsystemBase {
     modules[1] = new Module(frModuleIO, 1);
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
+
+    fieldOrientedDirectionController.enableContinuousInput(0, 360.0);
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configureHolonomic(
@@ -78,25 +81,25 @@ public class Drive extends SubsystemBase {
                 && DriverStation.getAlliance().get() == Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
-    PathPlannerLogging.setLogActivePathCallback(
-        (activePath) -> {
-          Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-        });
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (targetPose) -> {
-          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-        });
+    // PathPlannerLogging.setLogActivePathCallback(
+    //     (activePath) -> {
+    //       Logger.recordOutput(
+    //           "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+    //     });
+    // PathPlannerLogging.setLogTargetPoseCallback(
+    //     (targetPose) -> {
+    //       Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+    //     });
   }
 
   public void periodic() {
-    odometryLock.lock(); // Prevents odometry updates while reading data
+    // odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     for (var module : modules) {
       module.updateInputs();
     }
-    odometryLock.unlock();
-    Logger.processInputs("Drive/Gyro", gyroInputs);
+    // odometryLock.unlock();
+    // Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
       module.periodic();
     }
@@ -106,16 +109,20 @@ public class Drive extends SubsystemBase {
       for (var module : modules) {
         module.stop();
       }
+
+      setTargetDirection(getRotation().getDegrees());
     }
     // Log empty setpoint states when disabled
-    if (DriverStation.isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
-    }
+    // if (DriverStation.isDisabled()) {
+    // Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
+    // Logger.recordOutput("SwerveStates/SetpointsOptimized", new
+    // SwerveModuleState[] {});
+    // }
 
     // Update odometry
     int deltaCount = Integer.MAX_VALUE;
-    // gyroInputs.connected ? gyroInputs.odometryYawPositions.length : Integer.MAX_VALUE;
+    // gyroInputs.connected ? gyroInputs.odometryYawPositions.length :
+    // Integer.MAX_VALUE;
     for (int i = 0; i < 4; i++) {
       deltaCount = Math.min(deltaCount, modules[i].getPositionDeltas().length);
     }
@@ -144,10 +151,11 @@ public class Drive extends SubsystemBase {
     lastGyroRotation = gyroInputs.yawPosition;
   }
 
-  public void resetRotation() {
-    gyroInputs.yawOffset = gyroInputs.realYawPosition;
+  public void resetRotation(double resetDirection) {
+    gyroInputs.yawOffset = gyroInputs.realYawPosition.minus(Rotation2d.fromDegrees(resetDirection));
     var currentPose = getPose();
-    setPose(new Pose2d(currentPose.getTranslation(), new Rotation2d()));
+    setTargetDirection(resetDirection);
+    setPose(new Pose2d(currentPose.getTranslation(), Rotation2d.fromDegrees(resetDirection)));
   }
 
   /**
@@ -161,7 +169,7 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, MAX_LINEAR_SPEED);
 
-    Logger.recordOutput("Drive/Speeds", speeds);
+    // Logger.recordOutput("Drive/Speeds", speeds);
 
     // Send setpoints to modules
     SwerveModuleState[] optimizedSetpointStates = new SwerveModuleState[4];
@@ -171,8 +179,18 @@ public class Drive extends SubsystemBase {
     }
 
     // Log setpoint states
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
+    // Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    // Logger.recordOutput("SwerveStates/SetpointsOptimized",
+    // optimizedSetpointStates);
+  }
+
+  public void runFieldOrientedDirection(Translation2d translation) {
+    double currentDegrees = getRotation().getDegrees();
+    double omegaOutput = fieldOrientedDirectionController.calculate(currentDegrees);
+
+    runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            translation.getX(), translation.getY(), omegaOutput, getRotation()));
   }
 
   /**
@@ -215,8 +233,9 @@ public class Drive extends SubsystemBase {
     }
 
     // Log setpoint states
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
+    // Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    // Logger.recordOutput("SwerveStates/SetpointsOptimized",
+    // optimizedSetpointStates);
   }
 
   /** Stops the drive. */
@@ -250,6 +269,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public void setTargetDirection(double degrees) {
+    fieldOrientedDirectionController.setSetpoint(degrees);
+  }
+
   /** Returns the average drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
     double driveVelocityAverage = 0.0;
@@ -260,7 +283,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-  @AutoLogOutput(key = "SwerveStates/Measured")
+  // @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -270,7 +293,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the current odometry pose. */
-  @AutoLogOutput(key = "Odometry/Robot")
+  // @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return pose;
   }

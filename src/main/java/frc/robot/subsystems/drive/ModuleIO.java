@@ -31,9 +31,6 @@ public interface ModuleIO {
     public double turnAppliedVolts = 0.0;
     public double[] turnCurrentAmps = new double[] {};
 
-    public double[] odometryDrivePositionsRotations = new double[] {};
-    public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
-
     public double canCoderRotations = 0.0;
     public double canCoderAngle = 0.0;
   }
@@ -44,11 +41,14 @@ public interface ModuleIO {
   /** Run the drive motor at the specified voltage. */
   public default void setDriveVoltage(double volts) {}
 
-  /** Run the drive motor at the specified velocity. */
-  public default void setDriveVelocity(double velocity) {}
+  /** Run the drive motor at the specified velocity in rotations per second. */
+  public default void setDriveVelocityRPS(double velocity) {}
 
   /** Run the turn motor at the specified voltage. */
   public default void setTurnVoltage(double volts) {}
+
+  /** Run the turn motor at the specified velocity in radians per second. */
+  public default void setTurnPosition(Rotation2d position) {}
 
   /** Enable or disable brake mode on the drive motor. */
   public default void setDriveBrakeMode(boolean enable) {}

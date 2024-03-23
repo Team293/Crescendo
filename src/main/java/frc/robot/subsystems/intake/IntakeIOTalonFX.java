@@ -18,8 +18,8 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.util.Units;
 
 /**
  * This drive implementation is for Talon FXs driving brushless motors like the Falon 500 or Kraken
@@ -32,49 +32,56 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Double> motorVelocity;
   private final StatusSignal<Double> motorAppliedVolts;
   private final StatusSignal<Double> motorCurrent;
+  private final StatusSignal<Double> setPointError;
   private double setpoint = 0.0d;
   private final double m_gearRatio = (4.0 / 1.0); // 4 motor rotations per 1 intake rotation
 
+  private static VelocityVoltage velocityVoltageCommand = new VelocityVoltage(0.0).withSlot(0);
+
   public IntakeIOTalonFX(int canId) {
-    this.motor = new TalonFX(canId);
+    this.motor = new TalonFX(canId, "rio");
     var config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = 40.0;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.Feedback.SensorToMechanismRatio = m_gearRatio;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Set motor PID
     config.Slot0.kP = 0.11;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
-    config.Slot0.kV = 0.12;
+    config.Slot0.kV = 0.462;
     config.Slot0.kS = 0.05;
     motor.getConfigurator().apply(config);
 
     motorVelocity = motor.getVelocity();
     motorAppliedVolts = motor.getMotorVoltage();
     motorCurrent = motor.getStatorCurrent();
+    setPointError = motor.getClosedLoopError();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, motorVelocity, motorAppliedVolts, motorCurrent);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
     motor.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs, double robotSpeed) {
     this.robotSpeed = robotSpeed;
-    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent);
+    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
 
-    inputs.motorVelocityRadPerSec = Units.rotationsToRadians(motorVelocity.getValueAsDouble());
+    inputs.motorVelocityRotationsPerSecond = motorVelocity.getValueAsDouble();
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.setPointError = setPointError.getValueAsDouble();
     // inputs.robotSpeed = this.robotSpeed;
     inputs.setPoint = setpoint;
-    inputs.setPointError = motor.getClosedLoopError().getValueAsDouble();
   }
 
   // Takes in speed as pulley rotations per second
   @Override
   public void setSpeed(double speed) {
-    setpoint = speed * m_gearRatio; // Convert to motor rotations per second
-    motor.setControl(new VelocityVoltage(setpoint).withSlot(0));
+    velocityVoltageCommand.withVelocity(speed).withSlot(0); // Convert to motor rotations per second
+    motor.setControl(velocityVoltageCommand);
   }
 }
