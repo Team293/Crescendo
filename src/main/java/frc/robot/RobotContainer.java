@@ -169,7 +169,7 @@ public class RobotContainer {
     operatorController.y().whileTrue(Commands.runOnce(climber::climberDown));
     operatorController.y().whileFalse(Commands.runOnce(climber::stop));
     operatorController.b().whileFalse(Commands.runOnce(climber::stop));
-                
+
     /* Reset heading command */
     driverController
         .a()

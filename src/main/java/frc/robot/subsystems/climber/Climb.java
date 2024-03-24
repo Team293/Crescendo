@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climb extends SubsystemBase {
@@ -10,16 +11,15 @@ public class Climb extends SubsystemBase {
   private Compressor compressor;
 
   public Climb() {
-    compressor = new Compressor(PneumaticsModuleType.REVPH);
-
-    climbSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
-
-    compressor.enableAnalog(90, 120);
+    compressor = new Compressor(20, PneumaticsModuleType.REVPH);
+    climbSolenoid = new DoubleSolenoid(20, PneumaticsModuleType.REVPH, 0, 1);
+    compressor.enableAnalog(60, 75);
   }
 
   @Override
   public void periodic() {
-    // .getNumber("Compresser Pressure", )
+    // System.out.println(compressor.getConfigType());
+    SmartDashboard.putNumber("Compresser Pressure", compressor.getPressure());
     // This method will be called once per scheduler run
   }
 
@@ -33,6 +33,7 @@ public class Climb extends SubsystemBase {
   }
 
   public void stop() {
+
     climbSolenoid.set(DoubleSolenoid.Value.kOff);
   }
 }

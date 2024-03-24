@@ -66,7 +66,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
   // private static final double WHEEL_CIRCUMFERENCE = 2.0 * WHEEL_RADIUS * Math.PI;
-  private static final String CANBUS_ID = "Canivore_Drivetrain";
+  private static final String CANBUS_ID = "rio";
 
   private final double absoluteEncoderOffset;
 
