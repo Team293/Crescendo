@@ -51,14 +51,14 @@ public class ModuleIOTalonFX implements ModuleIO {
   // private final Queue<Double> drivePositionQueue;
   private final StatusSignal<Double> driveVelocity;
   // private final StatusSignal<Double> driveAppliedVolts;
-  private final StatusSignal<Double> driveCurrent;
+  // private final StatusSignal<Double> driveCurrent;
 
   private final StatusSignal<Double> turnAbsolutePosition;
   private final StatusSignal<Double> turnPosition;
   // private final Queue<Double> turnPositionQueue;
   private final StatusSignal<Double> turnVelocity;
-  private final StatusSignal<Double> turnAppliedVolts;
-  private final StatusSignal<Double> turnCurrent;
+  // private final StatusSignal<Double> turnAppliedVolts;
+  // private final StatusSignal<Double> turnCurrent;
 
   // Gear ratios for SDS MK4i L2, adjust as necessary
   private static final double DRIVE_GEAR_RATIO = SDSMK4L1Constants.driveGearRatio;
@@ -119,7 +119,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     //     PhoenixOdometryThread.getInstance().registerSignal(driveTalon, driveTalon.getPosition());
     driveVelocity = driveTalon.getVelocity();
     // driveAppliedVolts = driveTalon.getMotorVoltage();
-    driveCurrent = driveTalon.getStatorCurrent();
+    // driveCurrent = driveTalon.getStatorCurrent();
 
     // Turn motor
     turnTalon.getConfigurator().apply(getTurnConfig());
@@ -131,8 +131,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     // turnPositionQueue =
     //     PhoenixOdometryThread.getInstance().registerSignal(turnTalon, turnTalon.getPosition());
     turnVelocity = turnTalon.getVelocity();
-    turnAppliedVolts = turnTalon.getMotorVoltage();
-    turnCurrent = turnTalon.getStatorCurrent();
+    // turnAppliedVolts = turnTalon.getMotorVoltage();
+    // turnCurrent = turnTalon.getStatorCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
@@ -140,11 +140,12 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnPosition,
         driveVelocity,
         // driveAppliedVolts,
-        driveCurrent,
-        turnAbsolutePosition,
-        turnVelocity,
-        turnAppliedVolts,
-        turnCurrent);
+        // driveCurrent,
+        // turnAbsolutePosition,
+        turnVelocity
+        // turnAppliedVolts,
+        // turnCurrent
+        );
     driveTalon.optimizeBusUtilization();
     turnTalon.optimizeBusUtilization();
   }
@@ -155,12 +156,13 @@ public class ModuleIOTalonFX implements ModuleIO {
         drivePosition,
         driveVelocity,
         // driveAppliedVolts,
-        driveCurrent,
+        // driveCurrent,
         turnAbsolutePosition,
         turnPosition,
-        turnVelocity,
-        turnAppliedVolts,
-        turnCurrent);
+        turnVelocity
+        // turnAppliedVolts,
+        // turnCurrent
+        );
 
     inputs.canCoderRotations = cancoder.getAbsolutePosition().getValue();
     inputs.canCoderAngle = Units.rotationsToDegrees(inputs.canCoderRotations);
@@ -168,14 +170,14 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.drivePositionRotations = drivePosition.getValueAsDouble();
     inputs.driveVelocityRotationsPerSec = driveVelocity.getValueAsDouble();
     // inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
-    inputs.driveCurrentAmps = new double[] {driveCurrent.getValueAsDouble()};
+    // inputs.driveCurrentAmps = new double[] {driveCurrent.getValueAsDouble()};
 
     inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
     inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
     inputs.turnPositionAngle = inputs.turnPosition.getDegrees();
     inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
-    inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
-    inputs.turnCurrentAmps = new double[] {turnCurrent.getValueAsDouble()};
+    // inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
+    // inputs.turnCurrentAmps = new double[] {turnCurrent.getValueAsDouble()};
   }
 
   @Override
