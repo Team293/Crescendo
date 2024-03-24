@@ -27,7 +27,6 @@ import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
 import frc.robot.commands.note.ColorSensorIntake;
 import frc.robot.commands.note.Launch;
-import frc.robot.commands.OperatorCommands;
 import frc.robot.subsystems.climber.Climb;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -164,14 +163,13 @@ public class RobotContainer {
     driverController
         .y()
         .onTrue(Commands.runOnce(() -> drive.resetRotation(0.0), drive).ignoringDisable(true));
-        
 
     /* climb */
     operatorController.b().whileTrue(Commands.runOnce(climber::climberUp));
     operatorController.y().whileTrue(Commands.runOnce(climber::climberDown));
     operatorController.y().whileFalse(Commands.runOnce(climber::stop));
     operatorController.b().whileFalse(Commands.runOnce(climber::stop));
-
+                
     /* Reset heading command */
     driverController
         .a()
