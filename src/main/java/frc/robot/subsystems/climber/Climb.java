@@ -13,7 +13,7 @@ public class Climb extends SubsystemBase {
   public Climb() {
     compressor = new Compressor(20, PneumaticsModuleType.REVPH);
     climbSolenoid = new DoubleSolenoid(20, PneumaticsModuleType.REVPH, 0, 1);
-    compressor.enableAnalog(60, 75);
+    compressor.enableAnalog(110, 120);
   }
 
   @Override
