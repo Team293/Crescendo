@@ -27,6 +27,7 @@ import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.SubsystemControl;
 import frc.robot.commands.note.ColorSensorIntake;
 import frc.robot.commands.note.Launch;
+import frc.robot.subsystems.climber.Climb;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -49,6 +50,7 @@ public class RobotContainer {
   // private final Vision vision;
   private final Intake intake;
   private final Led led;
+  private final Climb climber;
 
   // Controller
   private static final double DEADBAND = 0.05;
@@ -104,6 +106,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("launchNote4", new Launch(intake, launcher));
     NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
 
+    // Initalize climber
+    climber = new Climb();
+
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -158,6 +163,12 @@ public class RobotContainer {
     driverController
         .y()
         .onTrue(Commands.runOnce(() -> drive.resetRotation(0.0), drive).ignoringDisable(true));
+
+    /* climb */
+    operatorController.b().whileTrue(Commands.runOnce(climber::climberUp));
+    operatorController.y().whileTrue(Commands.runOnce(climber::climberDown));
+    operatorController.y().whileFalse(Commands.runOnce(climber::stop));
+    operatorController.b().whileFalse(Commands.runOnce(climber::stop));
 
     /* Reset heading command */
     driverController
