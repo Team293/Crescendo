@@ -8,6 +8,7 @@ public class Led extends SubsystemBase {
   private int kPort;
   private Spark m_led;
   private Launcher m_launcher;
+  private boolean overridden = false;
 
   public Led(int port, Launcher launcher) {
     kPort = port;
@@ -19,10 +20,21 @@ public class Led extends SubsystemBase {
   public void periodic() {
     /* https://www.revrobotics.com/content/docs/REV-11-1105-UM.pdf */
     /* Page 14 for LED table */
-    if (m_launcher.isNoteDetected()) {
-      m_led.set(0.65); // orange
-    } else {
-      m_led.set(0.93); // Sky blue
+    if (!overridden) {
+      if (m_launcher.isNoteDetected()) {
+        m_led.set(0.65); // orange
+      } else {
+        m_led.set(0.93); // Sky blue
+      }
     }
+  }
+
+  public void setColor(double color) {
+    overridden = true;
+    m_led.set(color);
+  }
+
+  public void setDefault() {
+    overridden = false;
   }
 }

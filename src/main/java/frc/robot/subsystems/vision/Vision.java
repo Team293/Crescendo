@@ -1,83 +1,104 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.leds.Led;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class Vision extends SubsystemBase {
-  private static final double ANGULAR_INTEGRAL_LIMIT = 5;
 
   private final VisionIO m_visionIO;
   private final VisionIOInputsAutoLogged m_visionInputs = new VisionIOInputsAutoLogged();
-  private double m_angularP;
-  private double m_angularI;
-  private double m_angularD;
-  private double m_angularLastError;
-  private double m_angularError;
-  private double m_angularChange;
-  private double m_angularIntegralError;
-  private double m_angularVelOutput;
+  private Drive m_Drive;
+  private Led m_Led;
 
-  public Vision() {
-    m_angularP = 0.005;
-    m_angularI = 0.0;
-    m_angularD = 0.0001;
+  public Vision(Drive drive, Led led) {
     // Initialize the ColorSensorIORevV3 object
     m_visionIO = new VisionIOLimelight("limelight");
+    m_Drive = drive;
+    m_Led = led;
   }
 
   public boolean seesTarget() {
     return m_visionInputs.seesTarget;
   }
 
-  public double getTX() {
-    return m_visionInputs.tX;
-  }
-
-  public double getTY() {
-    return m_visionInputs.tY;
-  }
-
-  public void resetError() {
-    m_angularChange = 0.0;
-    m_angularIntegralError = 0.0;
-    m_angularError = 0.0;
-  }
-
-  public double getDesiredAngle() {
-    return m_angularVelOutput;
-  }
-
   @Override
   public void periodic() {
     m_visionIO.updateInputs(m_visionInputs);
-
-    // Save the last error
-    m_angularLastError = m_angularError;
-
-    // Update the error
-    // tX is in degrees from center
-    // Divide by horizontal FOV / 2 to get a value between -1.0 and 1.0
-    m_angularError = getTX() / (60.6 / 2.0);
-
-    // Calculatge the angular change
-    m_angularChange = m_angularError - m_angularLastError;
-
-    if (Math.abs(m_angularError) < ANGULAR_INTEGRAL_LIMIT) {
-      m_angularIntegralError += m_angularError;
+    if (m_visionInputs.seesTarget) {
+      m_Led.setColor(0.71);
+    } else {
+      m_Led.setDefault();
     }
+  }
 
-    //  Angular align
-    m_angularVelOutput =
-        (m_angularP * m_angularError)
-            + (m_angularI * m_angularIntegralError)
-            + (m_angularD * m_angularChange);
+  public Pose2d getBotPose() {
+    return LimelightHelpers.getBotPose2d("limelight");
+  }
 
-    // Error of 10% demand
-    if (Math.abs(m_angularError) < 0.1) {
-      /* Found the target */
-      m_angularVelOutput = 0.0d;
-      m_angularIntegralError = 0.0d;
+  public Pose2d getAprilTagPose() {
+    double[] position = LimelightHelpers.getTargetPose_RobotSpace("limelight");
+    double x = position[0];
+    if (position[0] > 0) {
+      x -= 3;
+    } else {
+      x += 3;
     }
+    return new Pose2d(x, position[1], new Rotation2d(position[2]));
+  }
 
-    // Logger.processInputs("Vision", m_visionInputs);
+  public Trajectory generateTrajectory(Pose2d end) {
+    TrajectoryConfig config = new TrajectoryConfig(3, 3);
+    config.setKinematics(m_Drive.getKinematics());
+    return TrajectoryGenerator.generateTrajectory(m_Drive.getPose(), List.of(), end, config);
+  }
+
+  Command currentCommand = new SequentialCommandGroup();
+
+  public Command runPath(Trajectory path) {
+    if (m_visionInputs.seesTarget == false) {
+      return new SequentialCommandGroup();
+    }
+    PIDController xController = new PIDController(0.1, 0, 0); // TODO: tune
+    PIDController yController = new PIDController(0.1, 0, 0); // TODO: tune
+    ProfiledPIDController tController =
+        new ProfiledPIDController(
+            0.1,
+            0.0,
+            0.0,
+            new TrapezoidProfile.Constraints(10, 10)); // TODO: tune and change values
+    HolonomicDriveController driveController =
+        new HolonomicDriveController(xController, yController, tController);
+    Consumer<SwerveModuleState[]> moduleStates = (states) -> {};
+    moduleStates.accept(m_Drive.getStates());
+    Supplier<Pose2d> pose = m_Drive::getPose;
+    SequentialCommandGroup command =
+        new SequentialCommandGroup(
+            new SwerveControllerCommand(
+                path, pose, m_Drive.getKinematics(), driveController, moduleStates));
+    currentCommand = command;
+    return command;
+  }
+
+  public void cancelCommand() {
+    if (currentCommand != null) {
+      currentCommand.cancel();
+    }
   }
 }

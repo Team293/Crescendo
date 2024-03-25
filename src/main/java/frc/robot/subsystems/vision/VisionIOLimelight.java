@@ -10,7 +10,9 @@ public class VisionIOLimelight implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    inputs.seesTarget = LimelightHelpers.getTV(m_limelightName);
+    inputs.seesTarget =
+        LimelightHelpers.getTV(m_limelightName)
+            && (inputs.aprilTagId == 4 || inputs.aprilTagId == 7);
     inputs.tX = LimelightHelpers.getTX(m_limelightName);
     inputs.tY = LimelightHelpers.getTY(m_limelightName);
     inputs.aprilTagId = LimelightHelpers.getFiducialID(m_limelightName);

@@ -36,6 +36,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.leds.Led;
+import frc.robot.subsystems.vision.Vision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -51,6 +52,7 @@ public class RobotContainer {
   // private final Vision vision;
   private final Intake intake;
   private final Led led;
+  private final Vision vision;
 
   // Controller
   private static final double DEADBAND = 0.05;
@@ -108,6 +110,7 @@ public class RobotContainer {
     launcher = new Launcher();
     intake = new Intake(drive);
     led = new Led(1, launcher);
+    vision = new Vision(drive, led);
 
     NamedCommands.registerCommand("launchNote", new Launch(intake, launcher));
     NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
@@ -185,6 +188,13 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .onTrue(Commands.runOnce(() -> new Launch(intake, launcher).schedule(), intake, launcher));
+
+    /* Limelight Drive (if targeted) */
+    operatorController
+        .a()
+        .onTrue(vision.runPath(vision.generateTrajectory(vision.getAprilTagPose())));
+
+    operatorController.a().onFalse(Commands.runOnce(() -> vision.cancelCommand()));
   }
 
   /**
