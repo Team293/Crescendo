@@ -1,0 +1,56 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7333893837709553,
+      "y": 6.726658714819166
+    },
+    "rotation": -121.99434407274026
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "launchNote"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "colorSensorIntake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "amp fly 2 note"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "launchNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "part 2 amp fly 2 note"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Amp",
+  "choreoAuto": false
+}

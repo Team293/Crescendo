@@ -30,6 +30,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -230,6 +231,12 @@ public class Drive extends SubsystemBase {
       }
 
       modules[i].setDriveBrakeMode(false);
+    }
+
+    if (LimelightHelpers.getTV("limelight") == true) {
+      Rotation2d direction = LimelightHelpers.getBotPose2d("limelight").getRotation();
+
+      setPose(LimelightHelpers.getBotPose2d("limelight"));
     }
 
     // Log setpoint states
