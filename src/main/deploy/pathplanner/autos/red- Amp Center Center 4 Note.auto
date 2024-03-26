@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3285273332531526,
-      "y": 5.537510149873118
+      "x": 0.6807503073695607,
+      "y": 6.642279723305886
     },
-    "rotation": 180.0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
@@ -22,15 +22,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "colorSensorIntake"
+                  "pathName": "Amp Center - red"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Center Center"
+                  "name": "colorSensorIntake"
                 }
               }
             ]
@@ -47,15 +47,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "colorSensorIntake2"
+                  "pathName": "Center Center"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "4 CENTER TOP"
+                  "name": "colorSensorIntake2"
                 }
               }
             ]
@@ -72,15 +72,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "colorSensorIntake3"
+                  "pathName": "CENTER BOTTOM"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "4 CENTER BOTTOM"
+                  "name": "colorSensorIntake3"
                 }
               }
             ]
@@ -95,6 +95,6 @@
       ]
     }
   },
-  "folder": "Center",
+  "folder": "Amp",
   "choreoAuto": false
 }

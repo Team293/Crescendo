@@ -2,7 +2,7 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3285273332531526,
+      "x": 1.3101396499822704,
       "y": 5.537510149873118
     },
     "rotation": 180.0
@@ -55,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CENTER BOTTOM"
+                  "pathName": "CENTER TOP"
                 }
               }
             ]
@@ -80,7 +80,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "4 CENTER TOP"
+                  "pathName": "CENTER BOTTOM"
                 }
               }
             ]
@@ -90,6 +90,12 @@
           "type": "named",
           "data": {
             "name": "launchNote4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "resetGyro180"
           }
         }
       ]

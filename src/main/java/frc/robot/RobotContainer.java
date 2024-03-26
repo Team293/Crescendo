@@ -104,6 +104,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("launchNote4", new Launch(intake, launcher));
     NamedCommands.registerCommand("colorSensorIntake", new ColorSensorIntake(intake, launcher));
 
+    // Initalize climber
+
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -158,6 +160,7 @@ public class RobotContainer {
     driverController
         .y()
         .onTrue(Commands.runOnce(() -> drive.resetRotation(0.0), drive).ignoringDisable(true));
+    ;
 
     /* Reset heading command */
     driverController

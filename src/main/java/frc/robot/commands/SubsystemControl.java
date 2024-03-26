@@ -156,6 +156,7 @@ public class SubsystemControl {
       BooleanSupplier runLauncher) {
     return Commands.run(
         () -> {
+          // manual control
           if (reverseIntake.getAsDouble() > 0.1) {
             intake.setVelocity(-10.0 * reverseIntake.getAsDouble());
             launcher.setVelocity(-5.0 * reverseIntake.getAsDouble());

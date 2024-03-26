@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3101396499822704,
-      "y": 5.537510149873118
+      "x": 0.6807503073695607,
+      "y": 6.642279723305886
     },
-    "rotation": 180.0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
@@ -22,15 +22,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "colorSensorIntake"
+                  "pathName": "Amp Center - blue"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Center Center"
+                  "name": "colorSensorIntake"
                 }
               }
             ]
@@ -47,15 +47,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "colorSensorIntake2"
+                  "pathName": "Center Center"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "CENTER BOTTOM"
+                  "name": "colorSensorIntake2"
                 }
               }
             ]
@@ -72,15 +72,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "colorSensorIntake3"
+                  "pathName": "CENTER BOTTOM"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "CENTER TOP"
+                  "name": "colorSensorIntake3"
                 }
               }
             ]
@@ -91,16 +91,10 @@
           "data": {
             "name": "launchNote4"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "resetGyro180"
-          }
         }
       ]
     }
   },
-  "folder": "Center",
+  "folder": "Amp",
   "choreoAuto": false
 }

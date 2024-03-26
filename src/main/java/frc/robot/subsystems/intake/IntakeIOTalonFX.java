@@ -30,8 +30,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   private double robotSpeed; // Robot speed from the drivetrain
 
   private final StatusSignal<Double> motorVelocity;
-  private final StatusSignal<Double> motorAppliedVolts;
-  private final StatusSignal<Double> motorCurrent;
+  // private final StatusSignal<Double> motorAppliedVolts;
+  // private final StatusSignal<Double> motorCurrent;
   private final StatusSignal<Double> setPointError;
   private double setpoint = 0.0d;
   private final double m_gearRatio = (4.0 / 1.0); // 4 motor rotations per 1 intake rotation
@@ -39,7 +39,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   private static VelocityVoltage velocityVoltageCommand = new VelocityVoltage(0.0).withSlot(0);
 
   public IntakeIOTalonFX(int canId) {
-    this.motor = new TalonFX(canId, "rio");
+    this.motor = new TalonFX(canId);
     var config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = 40.0;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -56,23 +56,30 @@ public class IntakeIOTalonFX implements IntakeIO {
     motor.getConfigurator().apply(config);
 
     motorVelocity = motor.getVelocity();
-    motorAppliedVolts = motor.getMotorVoltage();
-    motorCurrent = motor.getStatorCurrent();
+    // motorAppliedVolts = motor.getMotorVoltage();
+    // motorCurrent = motor.getStatorCurrent();
     setPointError = motor.getClosedLoopError();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
+        50.0,
+        motorVelocity,
+        // motorAppliedVolts,
+        // motorCurrent,
+        setPointError);
     motor.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs, double robotSpeed) {
     this.robotSpeed = robotSpeed;
-    BaseStatusSignal.refreshAll(motorVelocity, motorAppliedVolts, motorCurrent, setPointError);
+    BaseStatusSignal.refreshAll(
+        motorVelocity,
+        // motorAppliedVolts, motorCurrent,
+        setPointError);
 
     inputs.motorVelocityRotationsPerSecond = motorVelocity.getValueAsDouble();
-    inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
-    inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
+    // inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
+    // inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
     inputs.setPointError = setPointError.getValueAsDouble();
     // inputs.robotSpeed = this.robotSpeed;
     inputs.setPoint = setpoint;
